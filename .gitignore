@@ -1,0 +1,31 @@
+# Build outputs
+bin/
+obj/
+
+# User-specific files
+*.user
+*.vs/
+*.suo
+*.userosscache
+*.sln.docstates
+
+# System files
+.DS_Store
+Thumbs.db
+
+# MAUI/Android specific
+*.apk
+*.aab
+*.keystore
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+
+# Backups
+*.bak
+*.tmp
