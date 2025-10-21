@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10 d17.14
+VisualStudioVersion = 17.14.36616.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedHub_App", "FeedHub_App\FeedHub_App.csproj", "{290CB389-07BC-42AC-9125-04898E225D8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedHub.Core", "FeedHub.Core\FeedHub.Core.csproj", "{D0CDE80B-1945-42B0-A22A-58741C65AB4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedHub.Tests", "FeedHub.Tests\FeedHub.Tests.csproj", "{C84946CA-FFB9-4253-A4D7-F9F069FA8169}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{290CB389-07BC-42AC-9125-04898E225D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{290CB389-07BC-42AC-9125-04898E225D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{290CB389-07BC-42AC-9125-04898E225D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0CDE80B-1945-42B0-A22A-58741C65AB4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0CDE80B-1945-42B0-A22A-58741C65AB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0CDE80B-1945-42B0-A22A-58741C65AB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0CDE80B-1945-42B0-A22A-58741C65AB4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C84946CA-FFB9-4253-A4D7-F9F069FA8169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C84946CA-FFB9-4253-A4D7-F9F069FA8169}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C84946CA-FFB9-4253-A4D7-F9F069FA8169}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C84946CA-FFB9-4253-A4D7-F9F069FA8169}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
