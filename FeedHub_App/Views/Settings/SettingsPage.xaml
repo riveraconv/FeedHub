@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FeedHub_App.Views.Settings.SettingsPage"
+             Title="Settings">
+    
+    <VerticalStackLayout Padding="25" Spacing="10">
+        <Label 
+            Text="Configuration"
+            FontSize="24"
+            HorizontalOptions="Center" />
+        <Button Text="⬅️ Go back" 
+                Command="{Binding GoBackCommand}"
+                HorizontalOptions="Center"
+                WidthRequest="120"
+                Padding="5"
+                Margin="0,500,1200,0"/> 
+        <!--Switchers, pickers, etc-->
+    </VerticalStackLayout>
+</ContentPage>
