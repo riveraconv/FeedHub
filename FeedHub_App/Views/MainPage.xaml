@@ -9,7 +9,9 @@
         <vm:MainViewModel />
     </ContentPage.BindingContext>
 
-    <VerticalStackLayout Padding="30" Spacing="25">
+    <Grid>
+        <VerticalStackLayout Padding="30" Spacing="25" VerticalOptions="Center" HorizontalOptions="Center">
+            
         <Label Text="Welcome to FeedHub"
                Style="{StaticResource Headline}"
                HorizontalOptions="Center" />
@@ -33,4 +35,5 @@
                Margin="0,100,0,0"
                TextColor="Gray" />
     </VerticalStackLayout>
+        </Grid>
 </ContentPage>

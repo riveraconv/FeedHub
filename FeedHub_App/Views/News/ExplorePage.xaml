@@ -9,12 +9,6 @@
             Text="Explore by categories"
             FontSize="24"
             HorizontalOptions="Center" />
-        <Button Text="⬅️ Go back" 
-                Command="{Binding GoBackCommand}"
-                HorizontalOptions="Center"
-                WidthRequest="120"
-                Padding="5"
-                Margin="0,500,1200,0"/>
 
         <!--Buttons or CollectionView by categories-->
     </VerticalStackLayout>

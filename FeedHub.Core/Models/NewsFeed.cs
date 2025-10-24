@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FeedHub.Core.Models
+namespace FeedHub_Core.Models
 {
     internal class NewsFeed
     {

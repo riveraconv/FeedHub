@@ -8,7 +8,6 @@ namespace FeedHub_App.ViewModels
         public ICommand GoToLatestNewsCommand { get; }
         public ICommand GoToExploreCommand { get; }
         public ICommand GoToSettingsCommand { get; }
-        public ICommand GoBackCommand {  get; }
         public string AppVersion { get; }
 
         public MainViewModel()
@@ -18,7 +17,6 @@ namespace FeedHub_App.ViewModels
             GoToLatestNewsCommand = new AsyncRelayCommand(LatestOnClicked);
             GoToExploreCommand = new AsyncRelayCommand(ExploreOnClicked);
             GoToSettingsCommand = new AsyncRelayCommand(SettingsOnClicked);
-            GoBackCommand = new AsyncRelayCommand(GoBackOnClicked);
         }
         private async Task LatestOnClicked()
         {
@@ -31,10 +29,6 @@ namespace FeedHub_App.ViewModels
         private async Task SettingsOnClicked()
         {
             await Shell.Current.GoToAsync("///SettingsPage");
-        }
-        private async Task GoBackOnClicked()
-        {
-            await Shell.Current.GoToAsync("///MainPage");
         }
     }
 }

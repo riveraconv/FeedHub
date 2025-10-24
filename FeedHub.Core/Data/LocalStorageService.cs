@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FeedHub.Core.Data
+namespace FeedHub_Core.Data
 {
     internal class LocalStorageService
     {

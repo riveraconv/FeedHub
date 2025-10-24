@@ -1,21 +1,79 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FeedHub_App.ViewModels.News"
              x:Class="FeedHub_App.Views.News.LatestNewsPage"
+             x:Name="Page"
              Title="Latest News">
-    <VerticalStackLayout Padding="20" Spacing="10">
-        <Label 
-            Text="Latest News"
-            FontSize="24" 
-            HorizontalOptions="Center" />
-        <Button Text="⬅️ Go back" 
-                Command="{Binding GoBackCommand}"
-                HorizontalOptions="Center"
-                WidthRequest="120"
-                Padding="5"
-                Margin="0,500,1200,0"/>
-        
-        <!-- Collection View-->
 
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10">
+            <Label Text="Latest News" FontSize="24" HorizontalOptions="Center" />
+            <RefreshView Command="{Binding LoadNewsCommand}">
+                <CollectionView
+                    ItemsSource="{Binding News}"
+                    SelectionMode="Single"
+                    x:Name="NewsCollection"
+                    SelectionChanged="OnSelectionChanged">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Stroke="LightGray"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10"
+                                Margin="0,5"
+
+                                Padding="0"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Center">
+
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="15" ColumnSpacing="0">
+                                    <Border
+                                        Grid.Row="0"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 10,10,10,10"
+                                        HeightRequest="180">
+                                        <Grid Grid.Row="0" HeightRequest="180">
+                                            <Image Source="{Binding ImageUrl}" Aspect="AspectFit" HorizontalOptions="Start" VerticalOptions="Fill" IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}" />
+                                            <Label Text="Image not available" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}, ConverterParameter=invert}" />
+                                        </Grid>
+                                        
+                                    </Border>
+
+                                    <Label
+                                        Grid.Row="1"
+                                        Text="{Binding Title}"
+                                        FontAttributes="Bold"
+                                        FontSize="16"
+                                        Margin="0,8,10,5" />
+
+                                    <HorizontalStackLayout Grid.Row="2" Margin="10,0,10,0" Spacing="6">
+                                        <Label Text="{Binding Source}" 
+                                               FontSize="12" 
+                                               TextColor="Gray"
+                                               Margin="-10,0,0,0"/>
+                                        <Label Text="•" TextColor="Gray" />
+                                        <Label Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
+                                               FontSize="12"
+                                               TextColor="Gray"
+                                               Margin="0,0,0,0"/>
+                                    </HorizontalStackLayout>
+                                    <Label
+                                            Grid.Row="3"
+                                            Text="{Binding Description}"
+                                            FontSize="13"
+                                            Margin="0,5,10,10"
+                                            LineBreakMode="WordWrap"
+                                            MaxLines="3" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+            </RefreshView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
