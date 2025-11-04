@@ -1,12 +1,13 @@
 ﻿using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel.Syndication;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FeedHub_Core.Services
 {
@@ -102,6 +103,7 @@ namespace FeedHub_Core.Services
                     ImageUrl = imageUrl
                 });
             }
+
             return await Task.FromResult(news);
         }
     }

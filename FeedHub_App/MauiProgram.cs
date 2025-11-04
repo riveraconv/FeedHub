@@ -2,6 +2,7 @@
 using FeedHub_Core.Interfaces;
 using FeedHub_Core.Services;
 using FeedHub_App.ViewModels.News;
+using FeedHub_App.Views.News;
 
 namespace FeedHub_App
 {
@@ -18,11 +19,23 @@ namespace FeedHub_App
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+
+            //Services
             builder.Services.AddSingleton<IRssService, RssService>();
-            builder.Services.AddTransient<LatestNewsViewModel>();
+            builder.Services.AddSingleton<IArticleReaderService, ArticleReaderService>();
+            builder.Services.AddSingleton<QuickArticleResult>();
+
+            //ViewModels
+            builder.Services.AddSingleton<LatestNewsViewModel>();
+
+            //Primary Pages
+            builder.Services.AddSingleton<LatestNewsPage>();
+            
+            //Secondary Pages
+            builder.Services.AddTransient<QuickViewPage>();
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

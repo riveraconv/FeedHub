@@ -6,6 +6,7 @@ using FeedHub_Core.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Microsoft.Maui.ApplicationModel;
+using FeedHub_App.Views.News;
 
 namespace FeedHub_App.ViewModels.News
 {
@@ -17,21 +18,19 @@ namespace FeedHub_App.ViewModels.News
         private bool isLoading;
 
         [ObservableProperty]
-        private ObservableCollection<NewsItem> news;
+        private ObservableCollection<NewsItem> news = new();
+        public IAsyncRelayCommand LoadNewsCommand { get; }
 
         public LatestNewsViewModel(IRssService rssService)
         {
             _rssService = rssService;
-            News = new ObservableCollection<NewsItem>();
             LoadNewsCommand = new AsyncRelayCommand(LoadNewsAsync);
         }
-        public IAsyncRelayCommand LoadNewsCommand { get; }
 
         private readonly Dictionary<string, string> _rssFeeds = new()
         {
             //El Pais
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
-            { "https://e00-elmundo.uecdn.es/rss/politica.xml", "Política" },
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada", "international" },
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada" ,"economy"},
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada ", "cience" },
@@ -40,53 +39,75 @@ namespace FeedHub_App.ViewModels.News
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada", "sports" },
             {"https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente", "climatology"}
         };
-        private async Task LoadNewsAsync()
+        public async Task LoadNewsAsync()
         {
+            Debug.WriteLine("LoadNewsAsync started");
+
+            if (IsLoading) return;
+
             try
             {
                 IsLoading = true;
                 var allItems = new List<NewsItem>();
 
-                foreach (var kvp in _rssFeeds)
+                var results = await Task.Run(async () =>
                 {
-                    var feedUrl = kvp.Key;
-                    var category = kvp.Value;
-
-                    try
+                    var tempList = new List<NewsItem>();
+                    var tasks = _rssFeeds.Select(async kvp =>
                     {
-                        var items = await _rssService.GetNewsAsync(feedUrl);
-                        var latest = items
-                            .OrderByDescending(i => i.PublishDate)
-                            .FirstOrDefault();
+                        var feedUrl = kvp.Key;
+                        var category = kvp.Value;
 
-                        if (latest != null)
+                        try
                         {
-                            latest.Category = category;
-                            allItems.Add(latest);
+                            var items = await _rssService.GetNewsAsync(feedUrl);
+                            var latest = items
+                                .OrderByDescending(i => i.PublishDate)
+                                .FirstOrDefault();
+
+                            if (latest != null)
+                            {
+                                latest.Category = category;
+                                lock (tempList)
+                                    tempList.Add(latest);
+                            }
                         }
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        Debug.WriteLine($"Error on load the feed {feedUrl}: {ex.Message}");
-
-                        allItems.Add(new NewsItem
+                        catch (HttpRequestException ex)
                         {
-                            Title = "⚠️ Maybe the feed is broken or url was modified by the owner",
-                            Description = ex.Message,
-                            Source = feedUrl,
-                            PublishDate = DateTime.Now,
-                            Category = category
-                        });
-                    }
-                }
+                            Debug.WriteLine($"Error loading feed {feedUrl}: {ex.Message}");
 
+                            lock (tempList)
+                            {
+                                tempList.Add(new NewsItem
+                                {
+                                    Title = "⚠️ Feed might be broken or URL changed",
+                                    Description = ex.Message,
+                                    Source = feedUrl,
+                                    PublishDate = DateTime.Now,
+                                    Category = category
+                                });
+                            }
+                        }
+                    });
+
+                    await Task.WhenAll(tasks);
+                    return tempList;
+                });
+
+                // Seleccionar aleatoriamente algunas noticias
                 var random = new Random();
-                var shuffled = allItems.OrderBy(x => random.Next()).ToList();
-                var selected = shuffled.Take(7);
+                var selected = results
+                    .Where(item => item != null)
+                    .OrderBy(x => random.Next())
+                    .Take(7)
+                    .ToList();
 
-                News.Clear();
-                foreach (var item in selected)
-                    News.Add(item);
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    News.Clear();
+                    foreach (var item in selected)
+                        News.Add(item);
+                });
             }
             finally
             {
@@ -94,19 +115,13 @@ namespace FeedHub_App.ViewModels.News
             }
         }
         [RelayCommand]
-        private async Task OpenNewsAsync(NewsItem news)
+        private async Task OpenNewsAsync(NewsItem item)
         {
-            if (news == null || string.IsNullOrWhiteSpace(news.Link))
-                return;
+            if (item == null) return;
 
-            try
-            {
-                await Launcher.OpenAsync(new Uri(news.Link));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error opening link: {ex.Message}");
-            }
+            await Shell.Current.GoToAsync($"QuickViewPage?link={Uri.EscapeDataString(item.Link)}" +
+                                          $"&title={Uri.EscapeDataString(item.Title)}" +
+                                          $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}");
         }
     }
 }

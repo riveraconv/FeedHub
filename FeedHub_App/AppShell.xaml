@@ -6,16 +6,23 @@
     xmlns:views="clr-namespace:FeedHub_App.Views"
     xmlns:news="clr-namespace:FeedHub_App.Views.News"
     xmlns:settings="clr-namespace:FeedHub_App.Views.Settings"
-    Title="FeedHub_App">
+    Title="FeedHub">
 
-    <ShellContent
-        Title="Home" ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
-    <ShellContent
-        Title="LatestNews" ContentTemplate="{DataTemplate news:LatestNewsPage}" Route="LatestNewsPage" />
-    <ShellContent
-        Title="Explore" ContentTemplate="{DataTemplate news:ExplorePage}" Route="ExplorePage" />
-    <ShellContent
-        Title="Settings" ContentTemplate="{DataTemplate settings:SettingsPage}" Route="SettingsPage" />
+    <FlyoutItem Title="Home" Route="MainPage">
+        <ShellContent ContentTemplate="{DataTemplate views:MainPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Latest News" Route="LatestNewsPage">
+        <ShellContent ContentTemplate="{DataTemplate news:LatestNewsPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Explore" Route="ExplorePage">
+        <ShellContent ContentTemplate="{DataTemplate news:ExplorePage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Settings" Route="SettingsPage">
+        <ShellContent ContentTemplate="{DataTemplate settings:SettingsPage}" />
+    </FlyoutItem>
 </Shell>
 
 

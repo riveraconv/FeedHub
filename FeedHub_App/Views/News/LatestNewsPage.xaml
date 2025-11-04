@@ -6,74 +6,88 @@
              x:Name="Page"
              Title="Latest News">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10">
-            <Label Text="Latest News" FontSize="24" HorizontalOptions="Center" />
-            <RefreshView Command="{Binding LoadNewsCommand}">
-                <CollectionView
+    <Grid Padding="20" RowDefinitions="Auto,*" ColumnDefinitions="*">
+        
+        <RefreshView Command="{Binding LoadNewsCommand}" Grid.Row="1">
+            <CollectionView
                     ItemsSource="{Binding News}"
                     SelectionMode="Single"
                     x:Name="NewsCollection"
                     SelectionChanged="OnSelectionChanged">
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="30" Spacing="10" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="{Binding IsLoading}" />
+                        <Label Text="Loading" TextColor="Gray" FontAttributes="Italic" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border
                                 Stroke="LightGray"
                                 StrokeThickness="1"
-                                StrokeShape="RoundRectangle 10"
-                                Margin="0,5"
-
+                                StrokeShape="RoundRectangle 12"
+                                Margin="10,10,20,0"
                                 Padding="0"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Center">
+                                HorizontalOptions="Center"
+                                VerticalOptions="Start"
+                                MaximumWidthRequest="800">
+                            
+                           
+                            <VerticalStackLayout Spacing="10" Padding="20" MaximumWidthRequest="800" HorizontalOptions="Fill">
 
-                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="15" ColumnSpacing="0">
-                                    <Border
-                                        Grid.Row="0"
-                                        StrokeThickness="0"
-                                        StrokeShape="RoundRectangle 10,10,10,10"
-                                        HeightRequest="180">
-                                        <Grid Grid.Row="0" HeightRequest="180">
-                                            <Image Source="{Binding ImageUrl}" Aspect="AspectFit" HorizontalOptions="Start" VerticalOptions="Fill" IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}" />
-                                            <Label Text="Image not available" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}, ConverterParameter=invert}" />
-                                        </Grid>
-                                        
-                                    </Border>
+                                <Label Text="{Binding Title}"
+                                       FontAttributes="Bold"
+                                       FontSize="15"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Start" 
+                                       Margin="0,5,0,0"/>
 
-                                    <Label
-                                        Grid.Row="1"
-                                        Text="{Binding Title}"
-                                        FontAttributes="Bold"
-                                        FontSize="16"
-                                        Margin="0,8,10,5" />
+                                <Grid HeightRequest="180" HorizontalOptions="Fill" VerticalOptions="Start">
+                                    <Label Text="Image not available"
+                                           FontSize="14"
+                                           HorizontalOptions="Fill"
+                                           VerticalOptions="Fill"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center"
+                                           IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}, ConverterParameter=invert}" />
+                                    
+                                    <Image Source="{Binding ImageUrl}"
+                                           HorizontalOptions="Fill"
+                                           VerticalOptions="Fill"
+                                           IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
 
-                                    <HorizontalStackLayout Grid.Row="2" Margin="10,0,10,0" Spacing="6">
-                                        <Label Text="{Binding Source}" 
-                                               FontSize="12" 
-                                               TextColor="Gray"
-                                               Margin="-10,0,0,0"/>
-                                        <Label Text="•" TextColor="Gray" />
-                                        <Label Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
-                                               FontSize="12"
-                                               TextColor="Gray"
-                                               Margin="0,0,0,0"/>
-                                    </HorizontalStackLayout>
-                                    <Label
-                                            Grid.Row="3"
-                                            Text="{Binding Description}"
-                                            FontSize="13"
-                                            Margin="0,5,10,10"
-                                            LineBreakMode="WordWrap"
-                                            MaxLines="3" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
+                                        <Image.Aspect>
+                                            <OnPlatform x:TypeArguments="Aspect">
+                                                <On Platform="Android" Value="AspectFill"/>
+                                                <On Platform="WinUI" Value="AspectFit"/>
+                                            </OnPlatform>
+                                        </Image.Aspect>
+                                    </Image>
+                            </Grid>
 
-                </CollectionView>
+                                <HorizontalStackLayout Spacing="8" VerticalOptions="Start" HorizontalOptions="Center">
+                                    <Label Text="{Binding Source}" 
+                                           FontSize="13" 
+                                           TextColor="Gray" />
+                                    <Label Text="•" TextColor="Gray" />
+                                    <Label Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}" 
+                                           FontSize="13" 
+                                           TextColor="Gray" />
+                                </HorizontalStackLayout>
 
-            </RefreshView>
-        </VerticalStackLayout>
-    </ScrollView>
+                                <Label Text="{Binding Description}"
+                                   FontSize="14"
+                                   LineBreakMode="WordWrap"
+                                   VerticalOptions="End"
+                                   Margin="0,0,0,0"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+        </RefreshView>
+    </Grid>
 </ContentPage>

@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
+using FeedHub_App.Views.News;
+using FeedHub_App.Views.Settings;
 
 namespace FeedHub_App.ViewModels
 {

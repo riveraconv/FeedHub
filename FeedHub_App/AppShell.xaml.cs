@@ -1,10 +1,14 @@
-﻿namespace FeedHub_App
+﻿using FeedHub_App.Views.News;
+
+namespace FeedHub_App
 {
     public partial class AppShell : Shell
     {
         public AppShell()
         {
             InitializeComponent();
+            Routing.RegisterRoute(nameof(NewsDetailPage), typeof(NewsDetailPage));
+            Routing.RegisterRoute(nameof(QuickViewPage), typeof(QuickViewPage));
         }
     }
 }

@@ -1,0 +1,43 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FeedHub_App.Views.News.QuickViewPage"
+             Title="">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Título -->
+        <Label x:Name="TitleLabel"
+               Text="Cargando..."
+               FontSize="20"
+               TextColor="White"
+               FontAttributes="Bold"
+               Padding="10"
+               BackgroundColor="#1e2430"/>
+
+        <!-- Imagen principal -->
+        <Image x:Name="ArticleImage"
+               Grid.Row="1"
+               Aspect="AspectFill"
+               HeightRequest="200"
+               Margin="10"/>
+
+        <!-- Contenido HTML -->
+        <WebView x:Name="ArticleWebView"
+                 Grid.Row="2"
+                 VerticalOptions="Fill"
+                 HorizontalOptions="Fill"
+                 BackgroundColor="Transparent"/>
+
+        <!-- Botón cerrar -->
+        <Button Text="Close"
+                Clicked="OnCloseClicked"
+                Grid.Row="3"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="20"
+                WidthRequest="100"
+                HeightRequest="40"/>
+    </Grid>
+</ContentPage>
+
+
+
