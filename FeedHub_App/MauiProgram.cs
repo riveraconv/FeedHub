@@ -10,6 +10,7 @@ namespace FeedHub_App
     {
         public static MauiApp CreateMauiApp()
         {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()

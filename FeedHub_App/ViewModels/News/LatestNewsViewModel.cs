@@ -33,11 +33,20 @@ namespace FeedHub_App.ViewModels.News
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada", "international" },
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada" ,"economy"},
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada ", "cience" },
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada", "tecnology"},
+            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada ", "science" },
+            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada", "technology"},
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/cultura/portada", "culture" },
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada", "sports" },
-            {"https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente", "climatology"}
+            {"https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente", "climatology"},
+            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada", "Spain" },
+
+            //El Mundo
+            {"https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml", "international"},
+            {"https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml", "economy"},
+            {"https://e00-elmundo.uecdn.es/elmundo/rss/ciencia.xml", "science/ecology" },
+            {"https://e00-elmundo.uecdn.es/elmundo/rss/cultura.xml", "culture" },
+            {"https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml", "sports" },
+            {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "Spain" }
         };
         public async Task LoadNewsAsync()
         {
