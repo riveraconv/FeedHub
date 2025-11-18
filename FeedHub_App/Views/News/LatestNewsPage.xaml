@@ -32,7 +32,8 @@
                                 Padding="0"
                                 HorizontalOptions="Center"
                                 VerticalOptions="Start"
-                                MaximumWidthRequest="800">
+                                MaximumWidthRequest="800"
+                                MinimumWidthRequest="350">
                             
                            
                             <VerticalStackLayout Spacing="10" Padding="20" MaximumWidthRequest="800" HorizontalOptions="Fill">
@@ -67,21 +68,43 @@
                                     </Image>
                             </Grid>
 
-                                <HorizontalStackLayout Spacing="8" VerticalOptions="Start" HorizontalOptions="Center">
-                                    <Label Text="{Binding Source}" 
-                                           FontSize="13" 
-                                           TextColor="Gray" />
-                                    <Label Text="•" TextColor="Gray" />
-                                    <Label Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}" 
-                                           FontSize="13" 
-                                           TextColor="Gray" />
-                                </HorizontalStackLayout>
-
+                                <Grid ColumnDefinitions="Auto,Auto,*"
+                                      ColumnSpacing="8"
+                                      VerticalOptions="Start"
+                                      HorizontalOptions="Fill">
+                                  
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Source}"
+                                           FontSize="13"
+                                           TextColor="Gray"
+                                           VerticalOptions="Center"
+                                           LineBreakMode="TailTruncation"
+                                           IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
+                                    
+                                    <Label Grid.Column="1"
+                                           Text="•"
+                                           TextColor="Gray"
+                                           VerticalOptions="Center"
+                                           IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
+                                    
+                                    <Label Grid.Column="2"
+                                           Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
+                                           FontSize="13"
+                                           TextColor="Gray"
+                                           LineBreakMode="TailTruncation"
+                                           HorizontalOptions="Fill"
+                                           VerticalOptions="Center"
+                                           IsVisible="{Binding PublishDate, Converter={StaticResource NullToBoolConverter}}"/>
+                                </Grid>
+                                
                                 <Label Text="{Binding Description}"
-                                   FontSize="14"
-                                   LineBreakMode="WordWrap"
-                                   VerticalOptions="End"
-                                   Margin="0,0,0,0"/>
+                                       FontSize="14"
+                                       LineBreakMode="WordWrap"
+                                       HorizontalOptions="Fill"
+                                       Margin="0,0,0,0"
+                                       MaxLines="4"
+                                       IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
+
                             </VerticalStackLayout>
                         </Border>
                     </DataTemplate>

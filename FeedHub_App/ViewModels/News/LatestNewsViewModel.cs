@@ -43,10 +43,56 @@ namespace FeedHub_App.ViewModels.News
             //El Mundo
             {"https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml", "international"},
             {"https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml", "economy"},
-            {"https://e00-elmundo.uecdn.es/elmundo/rss/ciencia.xml", "science/ecology" },
+            {"https://www.elmundo.es/elmundo/rss/ciencia.xml", "science/ecology" },
             {"https://e00-elmundo.uecdn.es/elmundo/rss/cultura.xml", "culture" },
             {"https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml", "sports" },
-            {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "Spain" }
+            {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "Spain" },
+
+            //La Vanguardia
+            {"https://www.lavanguardia.com/rss/internacional.xml", "international"},
+            {"https://www.lavanguardia.com/rss/politica.xml", "politics" },
+            {"https://www.lavanguardia.com/rss/deportes.xml", "sports" },
+            {"https://www.lavanguardia.com/rss/economia.xml", "economy" },
+            {"https://www.lavanguardia.com/rss/cultura.xml", "culture" },
+            {"https://www.lavanguardia.com/rss/natural.xml", "science, ecology" },
+
+            //ABC
+            {"https://www.abc.es/rss/atom/espana/", "Spain" },
+            {"https://www.abc.es/rss/atom/internacional/", "international" },
+            {"https://www.abc.es/rss/atom/economia/", "economy" },
+            {"https://www.abc.es/rss/atom/sociedad/", "society" },
+            {"https://www.abc.es/rss/atom/ciencia/", "science" },
+            {"https://www.abc.es/rss/atom/cultura/", "culture" },
+            {"https://www.abc.es/rss/atom/tecnologia/", "technology"},
+            {"https://www.abc.es/rss/atom/deportes/", "sports" },
+
+            
+            //El Periodico
+            {"https://www.elperiodico.com/es/rss/internacional/rss.xml", "international" },
+            {"https://www.elperiodico.com/es/rss/politica/rss.xml", "politics" },
+            {"https://www.elperiodico.com/es/rss/economia/rss.xml", "economy" },
+            {"https://www.elperiodico.com/es/rss/tecnologia/rss.xml", "technology" },
+            {"https://www.elperiodico.com/es/rss/sociedad/rss.xml", "society" },
+            {"https://www.elperiodico.com/es/rss/ciencia/rss.xml", "science" },
+            {"https://www.elperiodico.com/es/rss/deportes/rss.xml", "sports" },
+            {"https://www.elperiodico.com/es/rss/ocio-y-cultura/rss.xml", "culture" },
+
+            //20 Minutos
+            {"https://www.20minutos.es/rss/internacional/", "international" },
+            {"https://www.20minutos.es/rss/deportes/", "sports" },
+            {"https://www.20minutos.es/rss/economia", "economy" },
+            {"https://www.20minutos.es/rss/tecnologia/", "technology" },
+            {"https://www.20minutos.es/rss/salud/", "health" },
+
+            //El Confidencial
+            {"https://rss.elconfidencial.com/espana/", "Spain" },
+            {"https://rss.elconfidencial.com/mundo/", "international" },
+            {"https://rss.elconfidencial.com/economia/", "econonmy" },
+            {"https://rss.elconfidencial.com/deportes/", "sports" },
+            {"https://rss.elconfidencial.com/cultura/", "culture" },
+            {"https://rss.elconfidencial.com/tecnologia/", "technology" },
+            
+
         };
         public async Task LoadNewsAsync()
         {

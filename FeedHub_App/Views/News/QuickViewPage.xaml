@@ -19,6 +19,16 @@
                Aspect="AspectFill"
                HeightRequest="200"
                Margin="10"/>
+        
+        <!-- Banner -->
+        <Label x:Name="InfoBanner"
+               Text=""
+               BackgroundColor="#334155"
+               TextColor="White"
+               FontSize="14"
+               Padding="10"
+               IsVisible="False"
+               Grid.Row="0"/>
 
         <!-- Contenido HTML -->
         <WebView x:Name="ArticleWebView"

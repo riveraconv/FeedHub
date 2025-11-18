@@ -1,5 +1,7 @@
 ﻿using HtmlAgilityPack;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Net;
 
 namespace FeedHub_Core.Services
 {
@@ -130,41 +132,42 @@ body::selection {{
 
         private string CleanText(string html)
         {
-            if (string.IsNullOrEmpty(html)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(html)) return string.Empty;
 
-            // Quitar scripts, estilos, comentarios
-            html = Regex.Replace(html, @"<script.*?>.*?</script>", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            html = Regex.Replace(html, @"<style.*?>.*?</style>", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            html = Regex.Replace(html, @"<!--.*?-->", "", RegexOptions.Singleline);
+            // 1️⃣ Quitar scripts, estilos y comentarios en un solo paso
+            html = Regex.Replace(html, @"<script.*?>.*?</script>|<style.*?>.*?</style>|<!--.*?-->", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            // Eliminar secciones típicas de basura
-            string[] spamPatterns = {
-                "síguenos", "suscríbete", "publicidad", "te puede interesar",
-                "leer más", "comparte", "newsletter", "tweet", "facebook", "compartir",
-                "suscripción", "regístrate", "pago", "premium",
-                "añadir usuario", "continuar leyendo", "leer más en", "solo para suscriptores",
-                "inicia sesión", "tu cuenta", "tu suscripción", "compartir en",
-                "newsletter", "síguenos en", "comentarios",
-                "cambiar tu contraseña", "modo premium", "accede aquí"
-            };
+            // 2️⃣ Decodificar entidades HTML
+            html = WebUtility.HtmlDecode(html);
 
-            foreach (var pattern in spamPatterns)
-                html = Regex.Replace(html, $@"<[^>]*>{pattern}.*?</[^>]*>", "", RegexOptions.IgnoreCase);
+            // 3️⃣ Convertir saltos de línea HTML a \n
+            html = Regex.Replace(html, @"<br\s*/?>|</p>", "\n", RegexOptions.IgnoreCase);
 
-            // Quitar etiquetas innecesarias y normalizar
-            html = Regex.Replace(html, @"<br\s*/?>", "\n", RegexOptions.IgnoreCase);
-            html = Regex.Replace(html, @"</p>", "\n", RegexOptions.IgnoreCase);
+            // 4️⃣ Quitar todas las etiquetas restantes
             html = Regex.Replace(html, @"<.*?>", "");
+
+            // 5️⃣ Limpiar espacios redundantes
             html = Regex.Replace(html, @"\s{2,}", " ").Trim();
 
-            // Reconstruir en párrafos
-            var paragraphs = html.Split('\n')
-                                 .Select(p => p.Trim())
-                                 .Where(p => !string.IsNullOrEmpty(p))
-                                 .Select(p => $"<p>{p}</p>");
+            // 6️⃣ Filtrar palabras de spam sobre cada línea
+            string[] spamPatterns = {
+        "síguenos", "suscríbete", "publicidad", "te puede interesar",
+        "leer más", "comparte", "newsletter", "tweet", "facebook", "compartir",
+        "suscripción", "regístrate", "pago", "premium",
+        "añadir usuario", "continuar leyendo", "leer más en", "solo para suscriptores",
+        "inicia sesión", "tu cuenta", "tu suscripción", "compartir en",
+        "comentarios", "cambiar tu contraseña", "modo premium", "accede aquí"
+    };
+
+            var paragraphs = html
+                .Split('\n')
+                .Select(p => p.Trim())
+                .Where(p => !string.IsNullOrEmpty(p) && !spamPatterns.Any(spam => p.Contains(spam, StringComparison.OrdinalIgnoreCase)))
+                .Select(p => $"<p>{p}</p>");
 
             return string.Join("\n", paragraphs);
         }
+
         private string RemoveResidualGarbage(string html)
         {
             string[] residuals =
@@ -225,24 +228,24 @@ body::selection {{
             // Eliminar nodos de ruido
             var unwantedSelectors = new[]
             {
-        "//aside", "//footer", "//nav",
-        "//*[contains(@class,'share')]",
-        "//*[contains(@class,'social')]",
-        "//*[contains(@class,'related')]",
-        "//*[contains(@class,'recommend')]",
-        "//*[contains(@class,'comments')]",
-        "//*[contains(@class,'newsletter')]",
-        "//*[contains(@class,'advert')]",     // anuncios
-        "//*[contains(@id,'comments')]",
-        "//*[contains(@id,'subscription')]",  // 🔥 paywalls
-        "//*[contains(@class,'subscription')]",
-        "//*[contains(@class,'paywall')]",    // 🔥 bloqueos de lectura
-        "//*[contains(@class,'modal')]",      // popups
-        "//*[contains(@class,'overlay')]",    // capas grises
-        "//*[contains(@class,'access')]",     // mensajes de acceso restringido
-        "//*[contains(@id,'paywall')]",       // id específicos
-        "//*[contains(@id,'overlay')]"        // id overlays
-    };
+                "//aside", "//footer", "//nav",
+                "//*[contains(@class,'share')]",
+                "//*[contains(@class,'social')]",
+                "//*[contains(@class,'related')]",
+                "//*[contains(@class,'recommend')]",
+                "//*[contains(@class,'comments')]",
+                "//*[contains(@class,'newsletter')]",
+                "//*[contains(@class,'advert')]",     // anuncios
+                "//*[contains(@id,'comments')]",
+                "//*[contains(@id,'subscription')]",  // 🔥 paywalls
+                "//*[contains(@class,'subscription')]",
+                "//*[contains(@class,'paywall')]",    // 🔥 bloqueos de lectura
+                "//*[contains(@class,'modal')]",      // popups
+                "//*[contains(@class,'overlay')]",    // capas grises
+                "//*[contains(@class,'access')]",     // mensajes de acceso restringido
+                "//*[contains(@id,'paywall')]",       // id específicos
+                "//*[contains(@id,'overlay')]"        // id overlays
+            };
 
             foreach (var selector in unwantedSelectors)
             {
@@ -255,7 +258,29 @@ body::selection {{
 
             return articleNode;
         }
+        public string DecodeHtml(byte[] bytes, string? charset)
+        {
+            // 1️⃣ Detect or fallback to UTF-8
+            Encoding encoding;
+            try
+            {
+                encoding = !string.IsNullOrEmpty(charset)
+                    ? Encoding.GetEncoding(charset)
+                    : Encoding.UTF8;
+            }
+            catch
+            {
+                encoding = Encoding.UTF8;
+            }
 
+            // 2️⃣ Decode safely
+            string html = encoding.GetString(bytes);
+
+            // 3️⃣ Clean up whitespaces and invisible chars
+            html = Regex.Replace(html, @"\s+", " ").Trim();
+
+            return html;
+        }
     }
 }
 
