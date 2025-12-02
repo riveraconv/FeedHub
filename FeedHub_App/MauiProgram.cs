@@ -3,6 +3,8 @@ using FeedHub_Core.Interfaces;
 using FeedHub_Core.Services;
 using FeedHub_App.ViewModels.News;
 using FeedHub_App.Views.News;
+using FeedHub_App.Utilities;
+using FeedHub_Core.Utilities;
 
 namespace FeedHub_App
 {
@@ -25,6 +27,7 @@ namespace FeedHub_App
             builder.Services.AddSingleton<IRssService, RssService>();
             builder.Services.AddSingleton<IArticleReaderService, ArticleReaderService>();
             builder.Services.AddSingleton<QuickArticleResult>();
+            builder.Services.AddSingleton<FeedHub_Core.Utilities.ILogger, PlatformLogger>();
 
             //ViewModels
             builder.Services.AddSingleton<LatestNewsViewModel>();

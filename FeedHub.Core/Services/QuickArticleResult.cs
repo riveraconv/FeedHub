@@ -115,8 +115,6 @@ body::selection {{
 </style>
 </head>
 <body>
-<h1>{titleText}</h1>
-{(string.IsNullOrEmpty(imageNode) ? "" : $"<img src='{imageNode}' />")}
 {textContent}
 </body>
 </html>";

@@ -6,12 +6,13 @@ using System.Text;
 namespace FeedHub_App.Views.News;
 
 [QueryProperty(nameof(Link), "link")]
-public partial class QuickViewPage : ContentPage
+public partial class QuickViewPage : ContentPage, IQueryAttributable
 {
     private readonly QuickArticleService _articleService = new();
     private readonly HttpClient _httpClient;
 
     public string? Link { get; set; }
+    private bool _articleLoaded = false;
 
     public QuickViewPage()
     {
@@ -34,6 +35,20 @@ public partial class QuickViewPage : ContentPage
 
         Loaded += async (s, e) => await LoadArticleAsync();
     }
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue("link", out var linkObj))
+        {
+            Link = Uri.UnescapeDataString(linkObj.ToString());
+        }
+
+        // Evitar doble carga si Shell reinyecta parámetros
+        if (!_articleLoaded)
+        {
+            _articleLoaded = true;
+            _ = LoadArticleAsync();
+        }
+    }
 
     private async Task LoadArticleAsync()
     {
@@ -43,7 +58,7 @@ public partial class QuickViewPage : ContentPage
         try
         {
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15)); // Timeout razonable
-            HttpResponseMessage response = null;
+            HttpResponseMessage? response = null;
             int maxRetries = 2;
             int attempt = 0;
 
@@ -90,20 +105,57 @@ public partial class QuickViewPage : ContentPage
 
                 if (htmlIsWeak)
                 {
+                    // SOLO FULL WEB MODE
+                    QuickViewContainer.IsVisible = false;
+                    FullWebView.IsVisible = true;
+
                     InfoBanner.IsVisible = true;
-                    InfoBanner.Text = "You were redirected to the original website; " +
-                                      "the content cannot be displayed in Quick View " +
-                                      "due to reasons beyond the application's control.";
+                    InfoBanner.Text = "You were redirected to the original website.";
 
-                    ArticleWebView.Source = new UrlWebViewSource { Url = Link };
-
-                    await Task.Delay(6000);
-                    InfoBanner.IsVisible = false;
+                    FullWebView.Source = new UrlWebViewSource { Url = Link };
                 }
                 else
                 {
+                    // SOLO QUICKVIEW MODE
+                    QuickViewContainer.IsVisible = true;
+                    FullWebView.IsVisible = false;
+
+                    TitleLabel.Text = result.Title ?? "Sin título";
+
+                    if (!string.IsNullOrEmpty(result.ImageUrl))
+                        ArticleImage.Source = result.ImageUrl;
+
                     ArticleWebView.Source = new HtmlWebViewSource { Html = result.Html };
                 }
+
+                ArticleWebView.Navigated += async (s, e) =>
+                {
+                    if (Link.Contains("elconfidencial.com"))
+                    {
+                        string js = @"
+            const removeOverlay = () => {
+                const selectors = [
+                    '.Mrc_popin', '.modal-overlay', '.paywall', '.overlay',
+                    '.dscc__overlay', '#paywall', '#overlay', '.ec-ads-overlay'
+                ];
+                selectors.forEach(sel => {
+                    document.querySelectorAll(sel).forEach(n => n.remove());
+                });
+                document.body.style.overflow = 'auto';
+            };
+            setTimeout(removeOverlay, 300);
+            removeOverlay();
+        ";
+
+                        try
+                        {
+                            await ArticleWebView.EvaluateJavaScriptAsync(js);
+                        }
+                        catch { }
+                    }
+                };
+
+
             });
         }
         catch (TaskCanceledException)
@@ -122,6 +174,17 @@ public partial class QuickViewPage : ContentPage
         }
     }
 
+    private void ShowQuickView()
+    {
+        QuickViewContainer.IsVisible = true;
+        FullWebView.IsVisible = false;
+    }
+
+    private void ShowFullWeb()
+    {
+        QuickViewContainer.IsVisible = false;
+        FullWebView.IsVisible = true;
+    }
 
 
     private async void OnCloseClicked(object sender, EventArgs e)

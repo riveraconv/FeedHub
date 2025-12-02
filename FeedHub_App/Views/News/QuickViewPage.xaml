@@ -4,50 +4,75 @@
              Title="">
 
     <Grid RowDefinitions="Auto, *">
-        <!-- Título -->
-        <Label x:Name="TitleLabel"
-               Text="Cargando..."
-               FontSize="20"
-               TextColor="White"
-               FontAttributes="Bold"
-               Padding="10"
-               BackgroundColor="#1e2430"/>
 
-        <!-- Imagen principal -->
-        <Image x:Name="ArticleImage"
-               Grid.Row="1"
-               Aspect="AspectFill"
-               HeightRequest="200"
-               Margin="10"/>
-        
-        <!-- Banner -->
+        <!-- Info banner (siempre arriba) -->
         <Label x:Name="InfoBanner"
+               Grid.Row="0"
                Text=""
                BackgroundColor="#334155"
                TextColor="White"
                FontSize="14"
                Padding="10"
                IsVisible="False"
-               Grid.Row="0"/>
+               HorizontalOptions="Fill"/>
 
-        <!-- Contenido HTML -->
-        <WebView x:Name="ArticleWebView"
-                 Grid.Row="2"
-                 VerticalOptions="Fill"
-                 HorizontalOptions="Fill"
-                 BackgroundColor="Transparent"/>
+        <!-- Contenedor principal -->
+        <Grid Grid.Row="1">
+
+            <!-- QuickView Container -->
+            <Grid x:Name="QuickViewContainer" IsVisible="False" RowDefinitions="Auto, *, Auto">
+
+                <!-- Scrollable content -->
+                <ScrollView Grid.Row="1">
+                    <StackLayout>
+                        <!-- Imagen principal -->
+                        <Image x:Name="ArticleImage"
+                               Aspect="AspectFill"
+                               HeightRequest="200"
+                               Margin="10"/>
+
+                        <!-- Contenido HTML -->
+                        <WebView x:Name="ArticleWebView"
+                                 VerticalOptions="Fill"/>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Título flotante -->
+                <Label x:Name="TitleLabel"
+                       Text="Cargando..."
+                       FontSize="20"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       BackgroundColor="#1e2430"
+                       Padding="10"
+                       VerticalOptions="Start"
+                       HorizontalOptions="Fill"
+                       LineBreakMode="WordWrap"/>
+
+                
+            </Grid>
+
+            <!-- Full Web fallback -->
+            <WebView x:Name="FullWebView"
+                     IsVisible="False"
+                     VerticalOptions="Fill"
+                     HorizontalOptions="Fill"/>
+        </Grid>
 
         <!-- Botón cerrar -->
-        <Button Text="Close"
-                Clicked="OnCloseClicked"
-                Grid.Row="3"
-                HorizontalOptions="End"
-                VerticalOptions="End"
-                Margin="20"
-                WidthRequest="100"
-                HeightRequest="40"/>
+        <Button Text="X"
+        Clicked="OnCloseClicked"
+        HorizontalOptions="End"
+        VerticalOptions="End"
+        Margin="20"
+        WidthRequest="60"
+        HeightRequest="40"
+        Grid.Row="1"/>
+        
     </Grid>
 </ContentPage>
+
+
 
 
 

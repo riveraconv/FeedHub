@@ -4,27 +4,37 @@ using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using Microsoft.Maui.ApplicationModel;
-using FeedHub_App.Views.News;
+using FeedHub_Core.Utilities;
+
 
 namespace FeedHub_App.ViewModels.News
 {
     public partial class LatestNewsViewModel : ObservableObject
     {
         private readonly IRssService _rssService;
-
-        [ObservableProperty]
-        private bool isLoading;
+        private readonly ILogger _logger;
 
         [ObservableProperty]
         private ObservableCollection<NewsItem> news = new();
+
+        [ObservableProperty]
+        private bool isRefreshing = false;
+
+        [ObservableProperty]
+        private bool isLoading = false;
+
+        [ObservableProperty]
+        private bool isInitialLoadComplete = false;
+
         public IAsyncRelayCommand LoadNewsCommand { get; }
 
-        public LatestNewsViewModel(IRssService rssService)
+        public LatestNewsViewModel(IRssService rssService, ILogger logger)
         {
             _rssService = rssService;
+            _logger = logger;
+
             LoadNewsCommand = new AsyncRelayCommand(LoadNewsAsync);
+            _logger.Info("Initialized");
         }
 
         private readonly Dictionary<string, string> _rssFeeds = new()
@@ -43,7 +53,6 @@ namespace FeedHub_App.ViewModels.News
             //El Mundo
             {"https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml", "international"},
             {"https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml", "economy"},
-            {"https://www.elmundo.es/elmundo/rss/ciencia.xml", "science/ecology" },
             {"https://e00-elmundo.uecdn.es/elmundo/rss/cultura.xml", "culture" },
             {"https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml", "sports" },
             {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "Spain" },
@@ -94,18 +103,19 @@ namespace FeedHub_App.ViewModels.News
             
 
         };
+
         public async Task LoadNewsAsync()
         {
-            Debug.WriteLine("LoadNewsAsync started");
-
-            if (IsLoading) return;
-
-            try
+            IsRefreshing = true;
+            if (!IsInitialLoadComplete)
             {
                 IsLoading = true;
-                var allItems = new List<NewsItem>();
+            }
+            try
+            {
+                _logger.Info("Started");
 
-                var results = await Task.Run(async () =>
+                await Task.Run(async () =>
                 {
                     var tempList = new List<NewsItem>();
                     var tasks = _rssFeeds.Select(async kvp =>
@@ -116,20 +126,16 @@ namespace FeedHub_App.ViewModels.News
                         try
                         {
                             var items = await _rssService.GetNewsAsync(feedUrl);
-                            var latest = items
-                                .OrderByDescending(i => i.PublishDate)
-                                .FirstOrDefault();
-
+                            var latest = items.OrderByDescending(i => i.PublishDate).FirstOrDefault();
                             if (latest != null)
                             {
                                 latest.Category = category;
-                                lock (tempList)
-                                    tempList.Add(latest);
+                                lock (tempList) tempList.Add(latest);
                             }
                         }
                         catch (HttpRequestException ex)
                         {
-                            Debug.WriteLine($"Error loading feed {feedUrl}: {ex.Message}");
+                            _logger.Warn($"Error loading the feed {feedUrl}: {ex.Message}");
 
                             lock (tempList)
                             {
@@ -146,29 +152,37 @@ namespace FeedHub_App.ViewModels.News
                     });
 
                     await Task.WhenAll(tasks);
-                    return tempList;
+
+                    var random = new Random();
+                    var selected = tempList
+                        .Where(item => item != null)
+                        .OrderBy(x => random.Next())
+                        .Take(7)
+                        .ToList();
+
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        News.Clear();
+                        foreach (var item in selected)
+                            News.Add(item);
+                    });
                 });
 
-                // Seleccionar aleatoriamente algunas noticias
-                var random = new Random();
-                var selected = results
-                    .Where(item => item != null)
-                    .OrderBy(x => random.Next())
-                    .Take(7)
-                    .ToList();
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    News.Clear();
-                    foreach (var item in selected)
-                        News.Add(item);
-                });
+                _logger.Info("Finished");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Unhandled error during LoadNewAync:{ex.Message}");
             }
             finally
             {
                 IsLoading = false;
+                IsRefreshing = false;
+                IsInitialLoadComplete = true;
+
             }
         }
+
         [RelayCommand]
         private async Task OpenNewsAsync(NewsItem item)
         {
@@ -177,6 +191,8 @@ namespace FeedHub_App.ViewModels.News
             await Shell.Current.GoToAsync($"QuickViewPage?link={Uri.EscapeDataString(item.Link)}" +
                                           $"&title={Uri.EscapeDataString(item.Title)}" +
                                           $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}");
+
+            _logger.Info("Worked");
         }
     }
 }

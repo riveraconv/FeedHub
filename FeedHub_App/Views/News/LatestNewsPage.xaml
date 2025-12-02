@@ -7,8 +7,13 @@
              Title="Latest News">
 
     <Grid Padding="20" RowDefinitions="Auto,*" ColumnDefinitions="*">
-        
-        <RefreshView Command="{Binding LoadNewsCommand}" Grid.Row="1">
+
+        <RefreshView Command="{Binding LoadNewsCommand}" 
+                     Grid.Row="1" 
+                     IsRefreshing="{Binding IsRefreshing}"
+                     RefreshColor="#4a9eff">
+            
+
             <CollectionView
                     ItemsSource="{Binding News}"
                     SelectionMode="Single"
@@ -16,9 +21,10 @@
                     SelectionChanged="OnSelectionChanged">
 
                 <CollectionView.EmptyView>
-                    <VerticalStackLayout Padding="30" Spacing="10" HorizontalOptions="Center">
-                        <ActivityIndicator IsRunning="{Binding IsLoading}" />
-                        <Label Text="Loading" TextColor="Gray" FontAttributes="Italic" />
+                    <VerticalStackLayout Padding="30" 
+                                         Spacing="10" 
+                                         HorizontalOptions="Center">
+                        
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
 
@@ -34,9 +40,12 @@
                                 VerticalOptions="Start"
                                 MaximumWidthRequest="800"
                                 MinimumWidthRequest="350">
-                            
-                           
-                            <VerticalStackLayout Spacing="10" Padding="20" MaximumWidthRequest="800" HorizontalOptions="Fill">
+
+
+                            <VerticalStackLayout Spacing="10" 
+                                                 Padding="20" 
+                                                 MaximumWidthRequest="800" 
+                                                 HorizontalOptions="Fill">
 
                                 <Label Text="{Binding Title}"
                                        FontAttributes="Bold"
@@ -46,14 +55,11 @@
                                        Margin="0,5,0,0"/>
 
                                 <Grid HeightRequest="180" HorizontalOptions="Fill" VerticalOptions="Start">
-                                    <Label Text="Image not available"
-                                           FontSize="14"
-                                           HorizontalOptions="Fill"
-                                           VerticalOptions="Fill"
-                                           HorizontalTextAlignment="Center"
-                                           VerticalTextAlignment="Center"
+
+                                    <Image Source="no_image_available.png"
+                                           Aspect="AspectFill"
                                            IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}, ConverterParameter=invert}" />
-                                    
+
                                     <Image Source="{Binding ImageUrl}"
                                            HorizontalOptions="Fill"
                                            VerticalOptions="Fill"
@@ -66,13 +72,13 @@
                                             </OnPlatform>
                                         </Image.Aspect>
                                     </Image>
-                            </Grid>
+                                </Grid>
 
                                 <Grid ColumnDefinitions="Auto,Auto,*"
                                       ColumnSpacing="8"
                                       VerticalOptions="Start"
                                       HorizontalOptions="Fill">
-                                  
+
                                     <Label Grid.Column="0"
                                            Text="{Binding Source}"
                                            FontSize="13"
@@ -80,13 +86,13 @@
                                            VerticalOptions="Center"
                                            LineBreakMode="TailTruncation"
                                            IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
-                                    
+
                                     <Label Grid.Column="1"
                                            Text="•"
                                            TextColor="Gray"
                                            VerticalOptions="Center"
                                            IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
-                                    
+
                                     <Label Grid.Column="2"
                                            Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
                                            FontSize="13"
@@ -96,7 +102,7 @@
                                            VerticalOptions="Center"
                                            IsVisible="{Binding PublishDate, Converter={StaticResource NullToBoolConverter}}"/>
                                 </Grid>
-                                
+
                                 <Label Text="{Binding Description}"
                                        FontSize="14"
                                        LineBreakMode="WordWrap"

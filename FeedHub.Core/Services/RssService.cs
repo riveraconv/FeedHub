@@ -1,27 +1,35 @@
 ﻿using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceModel.Syndication;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using FeedHub_Core.Utilities;
 
 namespace FeedHub_Core.Services
 {
     public class RssService : IRssService
     {
+        private readonly ILogger _logger;
+        public RssService(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<List<NewsItem>> GetNewsAsync(string feedUrl)
         {
+            _logger.Info("Worked");
+            _logger.Info($"Downloading feed from {feedUrl}");
+
             var news = new List<NewsItem>();
 
             try
             {
                 using var reader = XmlReader.Create(feedUrl, new XmlReaderSettings { Async = true });
                 var feed = SyndicationFeed.Load(reader);
+
+                _logger.Info($"Feed downloaded succesfully. Items: {feed?.Items.Count()}");
 
                 if (feed == null)
                     return news;
@@ -113,9 +121,9 @@ namespace FeedHub_Core.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading RSS feed {feedUrl}: {ex.Message}");
+                _logger.Error($"Error loading RSS feed {feedUrl}: {ex.Message}");
             }
-            return await Task.FromResult(news);
+            return news;
         }
         private string StripHtml(string input)
         {
