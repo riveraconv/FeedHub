@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace FeedHub_Core.Services
 {
@@ -14,7 +15,7 @@ namespace FeedHub_Core.Services
 
     public class QuickArticleService
     {
-        public QuickArticleResult Extract(string rawHtml)
+        public async Task<QuickArticleResult> Extract(string rawHtml)
         {
             if (string.IsNullOrWhiteSpace(rawHtml))
                 return EmptyResult();
@@ -45,86 +46,11 @@ namespace FeedHub_Core.Services
 
             // 🔹 HTML ligero para WebView
 
-string html = $@"
-<html>
-<head>
-<meta charset='utf-8'>
-<style>
-:root {{
-    color-scheme: light dark;
-}}
-
-html, body {{
-    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-    line-height: 1.75;
-    color: #f8f8f8;
-    background-color: #1e2430;
-    padding: 1.5em;
-    max-width: 800px;
-    margin: auto;
-    border-radius: 16px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.25);
-}}
-
-/* 🔹 Soporte automático tema claro */
-@media (prefers-color-scheme: light) {{
-    body {{
-        background-color: #1e2430;
-        color: #f8f8f8;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }}
-}}
-
-h1 {{
-    font-size: 1.9em;
-    margin-bottom: 0.8em;
-    font-weight: 700;
-    color: #ffffff;
-    text-align: center;
-}}
-
-img {{
-    max-width: 100%;
-    height: auto;
-    margin: 1em 0;
-    border-radius: 10px;
-    display: block;
-}}
-
-p {{
-    margin: 1em 0;
-    text-align: justify;
-    font-size: 1.1em;
-    font-weight: 500;
-}}
-
-a {{
-    color: #4a9eff;
-    text-decoration: none;
-    font-weight: 600;
-}}
-
-a:hover {{
-    text-decoration: underline;
-}}
-
-body::selection {{
-    background: #4a9eff;
-    color: #fff;
-}}
-</style>
-</head>
-<body>
-{textContent}
-</body>
-</html>";
-
-
             return new QuickArticleResult
             {
-                Html = html,
+                Html = textContent,
                 Title = titleText,
-                ImageUrl = imageNode
+                ImageUrl = imageNode?? string.Empty
             };
         }
 
@@ -132,20 +58,22 @@ body::selection {{
         {
             if (string.IsNullOrWhiteSpace(html)) return string.Empty;
 
-            // 1️⃣ Quitar scripts, estilos y comentarios en un solo paso
-            html = Regex.Replace(html, @"<script.*?>.*?</script>|<style.*?>.*?</style>|<!--.*?-->", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            // 1️⃣ Quitar scripts, estilos y comentarios
+            html = Regex.Replace(html, @"<script.*?>.*?</script>|<style.*?>.*?</style>|", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            // 2️⃣ Decodificar entidades HTML
+            // 2️⃣ IMPORTANTE: Antes de borrar etiquetas, reemplazamos bloques que separan texto por un espacio
+            // Esto evita que "Barcelona" y "17" se peguen si estaban en celdas o divs distintos.
+            html = Regex.Replace(html, @"(?i)</?(address|blockquote|center|div|dt|dd|fieldset|form|h1|h2|h3|h4|h5|h6|li|p|pre|tr|td|section|article|aside|header|footer)>", " ");
+
+            // 3️⃣ Limpieza selectiva: Borramos todo EXCEPTO negritas, cursivas y enlaces
+            html = Regex.Replace(html, @"<(?!/?(b|strong|i|em|a)\b)[^>]*>", "");
+
+            // 4️⃣ Decodificar entidades HTML (ej: &nbsp; o &aacute;)
             html = WebUtility.HtmlDecode(html);
 
-            // 3️⃣ Convertir saltos de línea HTML a \n
-            html = Regex.Replace(html, @"<br\s*/?>|</p>", "\n", RegexOptions.IgnoreCase);
-
-            // 4️⃣ Quitar todas las etiquetas restantes
-            html = Regex.Replace(html, @"<.*?>", "");
-
-            // 5️⃣ Limpiar espacios redundantes
-            html = Regex.Replace(html, @"\s{2,}", " ").Trim();
+            // 5️⃣ SOLUCIÓN A LAS FECHAS: Limpiar espacios múltiples, tabuladores y saltos de línea internos
+            // Reemplaza cualquier secuencia de espacios/tabs/saltos por UN solo espacio
+            html = Regex.Replace(html, @"\s+", " ");
 
             // 6️⃣ Filtrar palabras de spam sobre cada línea
             string[] spamPatterns = {
@@ -154,14 +82,17 @@ body::selection {{
         "suscripción", "regístrate", "pago", "premium",
         "añadir usuario", "continuar leyendo", "leer más en", "solo para suscriptores",
         "inicia sesión", "tu cuenta", "tu suscripción", "compartir en",
-        "comentarios", "cambiar tu contraseña", "modo premium", "accede aquí"
+        "comentarios", "cambiar tu contraseña", "modo premium", "accede aquí", "Por qué estás viendo esto?", "Por qué confiar en el Periódico",
+        "Cada uno accederá con su propia cuenta de email, lo que os permitirá personalizar vuestra experiencia en el PAÍS."
     };
+            var lines = html.Split(new[] { ". " }, StringSplitOptions.RemoveEmptyEntries);
 
-            var paragraphs = html
-                .Split('\n')
+            var paragraphs = lines
                 .Select(p => p.Trim())
-                .Where(p => !string.IsNullOrEmpty(p) && !spamPatterns.Any(spam => p.Contains(spam, StringComparison.OrdinalIgnoreCase)))
-                .Select(p => $"<p>{p}</p>");
+                .Where(p => !string.IsNullOrWhiteSpace(p)
+                         && p.Length > 5
+                         && !spamPatterns.Any(spam => p.Contains(spam, StringComparison.OrdinalIgnoreCase)))
+                .Select(p => p.EndsWith(".") ? $"<p>{p}</p>" : $"<p>{p}.</p>");
 
             return string.Join("\n", paragraphs);
         }

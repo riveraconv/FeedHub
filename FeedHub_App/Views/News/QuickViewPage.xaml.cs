@@ -2,6 +2,8 @@
 using Microsoft.Maui.Dispatching;
 using System.Net.Http;
 using System.Text;
+using FeedHub_Core.Utilities;
+
 
 namespace FeedHub_App.Views.News;
 
@@ -10,12 +12,16 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
 {
     private readonly QuickArticleService _articleService = new();
     private readonly HttpClient _httpClient;
+    private readonly ILogger _logger;
 
     public string? Link { get; set; }
     private bool _articleLoaded = false;
 
-    public QuickViewPage()
+    public QuickViewPage(ILogger logger)
     {
+        _logger = logger;
+        _logger.Info("Worked");
+
         InitializeComponent();
 
         //header for not seem a bot
@@ -98,34 +104,28 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
 
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
-                TitleLabel.Text = result.Title ?? "Sin título";
-
-                if (!string.IsNullOrEmpty(result.ImageUrl))
-                    ArticleImage.Source = result.ImageUrl;
+                string template = await GetHtmlTemplateAsync();
 
                 if (htmlIsWeak)
                 {
                     // SOLO FULL WEB MODE
-                    QuickViewContainer.IsVisible = false;
-                    FullWebView.IsVisible = true;
-
+                    ShowFullWeb();
                     InfoBanner.IsVisible = true;
                     InfoBanner.Text = "You were redirected to the original website.";
-
                     FullWebView.Source = new UrlWebViewSource { Url = Link };
                 }
                 else
                 {
                     // SOLO QUICKVIEW MODE
-                    QuickViewContainer.IsVisible = true;
-                    FullWebView.IsVisible = false;
+                    ShowQuickView();
+                    string finalHtml = template.Replace("@ArticleContent@", result.Html);
 
                     TitleLabel.Text = result.Title ?? "Sin título";
 
                     if (!string.IsNullOrEmpty(result.ImageUrl))
                         ArticleImage.Source = result.ImageUrl;
 
-                    ArticleWebView.Source = new HtmlWebViewSource { Html = result.Html };
+                    ArticleWebView.Source = new HtmlWebViewSource { Html = finalHtml };
                 }
 
                 ArticleWebView.Navigated += async (s, e) =>
@@ -133,19 +133,19 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
                     if (Link.Contains("elconfidencial.com"))
                     {
                         string js = @"
-            const removeOverlay = () => {
-                const selectors = [
-                    '.Mrc_popin', '.modal-overlay', '.paywall', '.overlay',
-                    '.dscc__overlay', '#paywall', '#overlay', '.ec-ads-overlay'
-                ];
-                selectors.forEach(sel => {
-                    document.querySelectorAll(sel).forEach(n => n.remove());
-                });
-                document.body.style.overflow = 'auto';
-            };
-            setTimeout(removeOverlay, 300);
-            removeOverlay();
-        ";
+                                    const removeOverlay = () => {
+                                    const selectors = [
+                                    '.Mrc_popin', '.modal-overlay', '.paywall', '.overlay',
+                                    '.dscc__overlay', '#paywall', '#overlay', '.ec-ads-overlay'
+                        ];
+                            selectors.forEach(sel => {
+                            document.querySelectorAll(sel).forEach(n => n.remove());
+                        });
+                        document.body.style.overflow = 'auto';
+                        };
+                        setTimeout(removeOverlay, 300);
+                        removeOverlay();
+                        ";
 
                         try
                         {
@@ -178,14 +178,30 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
     {
         QuickViewContainer.IsVisible = true;
         FullWebView.IsVisible = false;
+        _logger.Info("Worked");
     }
 
     private void ShowFullWeb()
     {
         QuickViewContainer.IsVisible = false;
         FullWebView.IsVisible = true;
+        _logger.Info("Worked");
     }
 
+    private async Task<string> GetHtmlTemplateAsync()
+    {
+        try
+        {
+            using var stream = await FileSystem.OpenAppPackageFileAsync("ArticleTemplate.html");
+            using var reader = new StreamReader(stream);
+            return await reader.ReadToEndAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"Error loading HTML template:{ex.Message}");
+            return "<html>>body>@ArticleContent@</body></html>";
+        }
+    }
 
     private async void OnCloseClicked(object sender, EventArgs e)
     {
