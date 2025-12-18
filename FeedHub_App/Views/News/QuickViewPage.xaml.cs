@@ -178,6 +178,7 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
     {
         QuickViewContainer.IsVisible = true;
         FullWebView.IsVisible = false;
+        SourceButton.IsVisible = true;
         _logger.Info("Worked");
     }
 
@@ -185,6 +186,7 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
     {
         QuickViewContainer.IsVisible = false;
         FullWebView.IsVisible = true;
+        SourceButton.IsVisible = false;
         _logger.Info("Worked");
     }
 
@@ -206,6 +208,21 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
     private async void OnCloseClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("..");
+    }
+    private void OnSourceClicked(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrEmpty(Link))
+        {
+            ShowFullWeb();
+            FullWebView.Source = new UrlWebViewSource { Url = Link };
+        }
+    }
+    private async void OnShareClicked(object sender, EventArgs e)
+    {
+        await Share.Default.RequestAsync(new ShareTextRequest
+        {
+            Uri = Link,
+        });
     }
 }
 

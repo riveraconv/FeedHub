@@ -15,7 +15,6 @@
                Padding="10"
                IsVisible="False"
                HorizontalOptions="Fill"/>
-
         <!-- Contenedor principal -->
         <Grid Grid.Row="1">
 
@@ -60,15 +59,41 @@
         </Grid>
 
         <!-- Botón cerrar -->
-        <Button Text="X"
-        Clicked="OnCloseClicked"
-        HorizontalOptions="End"
-        VerticalOptions="End"
-        Margin="20"
-        WidthRequest="60"
-        HeightRequest="40"
-        Grid.Row="1"/>
-        
+        <Button Text="✕"
+                Clicked="OnCloseClicked"
+                BackgroundColor="White"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="20"
+                WidthRequest="30"
+                HeightRequest="10"
+                Opacity="0.8"
+                Grid.Row="1"/>
+
+        <Button x:Name="SourceButton"
+                Text="🌐"
+                Clicked="OnSourceClicked"
+                BackgroundColor="White"
+                VerticalOptions="End"
+                HorizontalOptions="Start"
+                Margin="70,20,20,20"
+                WidthRequest="30"
+                HeightRequest="10"
+                Opacity="0.8"
+                Grid.Row="1"/>
+        <Button x:Name="ShareButton"
+                Text="🔗"
+                Clicked="OnShareClicked"
+                BackgroundColor="White"
+                VerticalOptions="End"
+                HorizontalOptions="Start"
+                Margin="20,20,20,20"
+                WidthRequest="30"
+                HeightRequest="10"
+                Opacity="0.8"
+                Grid.Row="1"/>
+                
+
     </Grid>
 </ContentPage>
 
