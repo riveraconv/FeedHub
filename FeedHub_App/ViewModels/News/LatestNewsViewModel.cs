@@ -93,7 +93,11 @@ namespace FeedHub_App.ViewModels.News
             //eldiario.es
             {"https://www.eldiario.es/rss/politica", "politics" },
             {"http://www.eldiario.es/rss/economia ", "economy" },
-            {"http://www.eldiario.es/rss/cultura", "culture" }
+            {"http://www.eldiario.es/rss/cultura", "culture" },
+            {"https://www.eldiario.es/rss/internacional/", "international"},
+            {"https://www.eldiario.es/rss/economia/", "economy" },
+            {"https://www.eldiario.es/rss/focos/crisis-climatica/", "climatology" },
+            {"https://www.eldiario.es/rss/tecnologia/", "tecnology" },
         };
 
         public async Task LoadNewsAsync()
