@@ -179,6 +179,7 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
         QuickViewContainer.IsVisible = true;
         FullWebView.IsVisible = false;
         SourceButton.IsVisible = true;
+        ShareButton.IsVisible = true;
         _logger.Info("Worked");
     }
 
@@ -187,6 +188,7 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
         QuickViewContainer.IsVisible = false;
         FullWebView.IsVisible = true;
         SourceButton.IsVisible = false;
+        ShareButton.IsVisible = true;
         _logger.Info("Worked");
     }
 
@@ -222,6 +224,7 @@ public partial class QuickViewPage : ContentPage, IQueryAttributable
         await Share.Default.RequestAsync(new ShareTextRequest
         {
             Uri = Link,
+            Title = "Share the new"
         });
     }
 }

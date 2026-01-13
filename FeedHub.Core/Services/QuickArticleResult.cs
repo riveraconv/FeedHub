@@ -23,35 +23,117 @@ namespace FeedHub_Core.Services
             var doc = new HtmlDocument();
             doc.LoadHtml(rawHtml);
 
-            // 🔹 Imagen principal (og:image)
-            var imageNode = doc.DocumentNode
-                .SelectSingleNode("//meta[@property='og:image']")
-                ?.GetAttributeValue("content", null);
-
             // 🔹 Título
             var titleNode = doc.DocumentNode.SelectSingleNode("//h1") ??
                             doc.DocumentNode.SelectSingleNode("//title");
+
             var titleText = titleNode?.InnerText.Trim() ?? "Sin título";
 
             // 🔹 Texto del artículo
             var articleNode = GetCleanArticleNode(doc);
+            if (articleNode == null)
+                return EmptyResult();
 
-            if (articleNode == null) return EmptyResult();
-
-            string textContent = articleNode != null
-                ? CleanText(articleNode.InnerHtml)
-                : "No se pudo extraer el contenido.";
-
+            string textContent = CleanText(articleNode.InnerHtml);
             textContent = RemoveResidualGarbage(textContent);
 
-            // 🔹 HTML ligero para WebView
+            // 🔹 Imagen principal (robusta)
+            var imageUrl = ExtractBestImage(doc, articleNode) ?? string.Empty;
 
             return new QuickArticleResult
             {
                 Html = textContent,
                 Title = titleText,
-                ImageUrl = imageNode?? string.Empty
+                ImageUrl = imageUrl
             };
+        }
+
+
+        private string? ExtractBestImage(HtmlDocument doc, HtmlNode articleNode)
+        {
+            var baseUrl =
+                doc.DocumentNode
+                   .SelectSingleNode("//meta[@property='og:url']")
+                   ?.GetAttributeValue("content", null);
+
+            // 1️⃣ og:image
+            var ogImage =
+                doc.DocumentNode
+                   .SelectSingleNode("//meta[@property='og:image']")
+                   ?.GetAttributeValue("content", null);
+
+            var normalized = NormalizeImageUrl(ogImage, baseUrl);
+            if (IsValidImageUrl(normalized))
+                return normalized;
+
+            // 2️⃣ twitter:image
+            var twitterImage =
+                doc.DocumentNode
+                   .SelectSingleNode("//meta[@name='twitter:image']")
+                   ?.GetAttributeValue("content", null);
+
+            normalized = NormalizeImageUrl(twitterImage, baseUrl);
+            if (IsValidImageUrl(normalized))
+                return normalized;
+
+            // 3️⃣ Primera imagen real del artículo
+            var imgSrc = articleNode
+    .Descendants("img")
+    .Select(img =>
+        img.GetAttributeValue("data-src", null) ??
+        img.GetAttributeValue("data-original", null) ??
+        ExtractFromSrcSet(img.GetAttributeValue("srcset", null)) ??
+        img.GetAttributeValue("src", null))
+    .FirstOrDefault(src =>
+        !string.IsNullOrWhiteSpace(src) &&
+        !src.Contains("sprite") &&
+        !src.Contains("logo") &&
+        !src.StartsWith("data:"));
+
+            normalized = NormalizeImageUrl(imgSrc, baseUrl);
+            if (IsValidImageUrl(normalized))
+                return normalized;
+
+            return null;
+        }
+        private string? ExtractFromSrcSet(string? srcset)
+        {
+            if (string.IsNullOrWhiteSpace(srcset))
+                return null;
+
+            // Formato: url1 300w, url2 600w
+            var candidates = srcset.Split(',')
+                .Select(p => p.Trim().Split(' '))
+                .Where(p => p.Length > 0)
+                .Select(p => p[0])
+                .ToList();
+
+            return candidates.LastOrDefault();
+        }
+        private bool IsValidImageUrl(string? url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return false;
+
+            return url.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
+                || url.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)
+                || url.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+                || url.EndsWith(".webp", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private string? NormalizeImageUrl(string? rawUrl, string? baseUrl)
+        {
+            if (string.IsNullOrWhiteSpace(rawUrl))
+                return null;
+
+            if (Uri.TryCreate(rawUrl, UriKind.Absolute, out var absolute))
+                return absolute.ToString();
+
+            if (!string.IsNullOrWhiteSpace(baseUrl) &&
+                Uri.TryCreate(new Uri(baseUrl), rawUrl, out var combined))
+                return combined.ToString();
+
+            return null;
         }
 
         private string CleanText(string html)

@@ -64,17 +64,6 @@ namespace FeedHub_App.ViewModels.News
             {"https://www.lavanguardia.com/rss/economia.xml", "economy" },
             {"https://www.lavanguardia.com/rss/cultura.xml", "culture" },
             {"https://www.lavanguardia.com/rss/natural.xml", "science, ecology" },
-
-            //ABC
-            {"https://www.abc.es/rss/atom/espana/", "Spain" },
-            {"https://www.abc.es/rss/atom/internacional/", "international" },
-            {"https://www.abc.es/rss/atom/economia/", "economy" },
-            {"https://www.abc.es/rss/atom/sociedad/", "society" },
-            {"https://www.abc.es/rss/atom/ciencia/", "science" },
-            {"https://www.abc.es/rss/atom/cultura/", "culture" },
-            {"https://www.abc.es/rss/atom/tecnologia/", "technology"},
-            {"https://www.abc.es/rss/atom/deportes/", "sports" },
-
             
             //El Periodico
             {"https://www.elperiodico.com/es/rss/internacional/rss.xml", "international" },
@@ -100,8 +89,11 @@ namespace FeedHub_App.ViewModels.News
             {"https://rss.elconfidencial.com/deportes/", "sports" },
             {"https://rss.elconfidencial.com/cultura/", "culture" },
             {"https://rss.elconfidencial.com/tecnologia/", "technology" },
-            
 
+            //eldiario.es
+            {"https://www.eldiario.es/rss/politica", "politics" },
+            {"http://www.eldiario.es/rss/economia ", "economy" },
+            {"http://www.eldiario.es/rss/cultura", "culture" }
         };
 
         public async Task LoadNewsAsync()
