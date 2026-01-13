@@ -39,6 +39,7 @@ namespace FeedHub_App.ViewModels.News
 
         private readonly Dictionary<string, string> _rssFeeds = new()
         {
+            
             //El Pais
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada", "international" },
@@ -91,13 +92,13 @@ namespace FeedHub_App.ViewModels.News
             {"https://rss.elconfidencial.com/tecnologia/", "technology" },
 
             //eldiario.es
-            {"https://www.eldiario.es/rss/politica", "politics" },
-            {"http://www.eldiario.es/rss/economia ", "economy" },
-            {"http://www.eldiario.es/rss/cultura", "culture" },
-            {"https://www.eldiario.es/rss/internacional/", "international"},
+            {"https://www.eldiario.es/rss/politica/", "politics" },
             {"https://www.eldiario.es/rss/economia/", "economy" },
+            {"https://www.eldiario.es/rss/cultura/", "culture" },
+            {"https://www.eldiario.es/rss/internacional/", "international"},
             {"https://www.eldiario.es/rss/focos/crisis-climatica/", "climatology" },
             {"https://www.eldiario.es/rss/tecnologia/", "tecnology" },
+
         };
 
         public async Task LoadNewsAsync()

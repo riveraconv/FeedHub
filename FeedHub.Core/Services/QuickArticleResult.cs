@@ -49,8 +49,10 @@ namespace FeedHub_Core.Services
         }
 
 
-        private string? ExtractBestImage(HtmlDocument doc, HtmlNode articleNode)
+        private string? ExtractBestImage(HtmlDocument doc, HtmlNode? articleNode = null)
         {
+            if (doc == null) return null;
+
             var baseUrl =
                 doc.DocumentNode
                    .SelectSingleNode("//meta[@property='og:url']")
@@ -228,10 +230,21 @@ namespace FeedHub_Core.Services
             if (doc.DocumentNode == null)
                 return null;
 
-            var articleNode = doc.DocumentNode.SelectSingleNode("//article") ??
-                              doc.DocumentNode.SelectSingleNode("//div[contains(@class,'content')]") ??
-                              doc.DocumentNode.SelectSingleNode("//div[@itemprop='articleBody']") ??
-                              GetLargestTextNode(doc.DocumentNode);
+            var articleNode =
+        // 1️⃣ articleBody semántico (eldiario.es friendly)
+        doc.DocumentNode.SelectSingleNode("//div[@itemprop='articleBody']") ??
+
+        // 2️⃣ Cuerpo interno habitual
+        doc.DocumentNode.SelectSingleNode("//div[contains(@class,'article__body')]") ??
+
+        // 3️⃣ Otros content comunes
+        doc.DocumentNode.SelectSingleNode("//div[contains(@class,'content')]") ??
+
+        // 4️⃣ Fallback genérico
+        doc.DocumentNode.SelectSingleNode("//article") ??
+
+        // 5️⃣ Último recurso
+        GetLargestTextNode(doc.DocumentNode);
 
             if (articleNode == null)
                 return null;
