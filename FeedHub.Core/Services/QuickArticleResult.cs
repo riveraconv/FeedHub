@@ -227,60 +227,88 @@ namespace FeedHub_Core.Services
 
         private HtmlNode? GetCleanArticleNode(HtmlDocument doc)
         {
-            if (doc.DocumentNode == null)
-                return null;
+            if (doc.DocumentNode == null) return null;
 
-            var articleNode =
-        // 1️⃣ articleBody semántico (eldiario.es friendly)
-        doc.DocumentNode.SelectSingleNode("//div[@itemprop='articleBody']") ??
-
-        // 2️⃣ Cuerpo interno habitual
-        doc.DocumentNode.SelectSingleNode("//div[contains(@class,'article__body')]") ??
-
-        // 3️⃣ Otros content comunes
-        doc.DocumentNode.SelectSingleNode("//div[contains(@class,'content')]") ??
-
-        // 4️⃣ Fallback genérico
-        doc.DocumentNode.SelectSingleNode("//article") ??
-
-        // 5️⃣ Último recurso
-        GetLargestTextNode(doc.DocumentNode);
-
-            if (articleNode == null)
-                return null;
-
-            // Eliminar nodos de ruido
             var unwantedSelectors = new[]
             {
-                "//aside", "//footer", "//nav",
-                "//*[contains(@class,'share')]",
+                "//aside", "//footer", "//nav", "//header",
+                "//*[contains(@class,'ed-sections')]",  // El menú azul de la imagen 1
+                "//*[contains(@class,'site-map')]",
+                "//*[contains(@class,'related')]",     // Bloques de "Te puede interesar"
+                "//*[contains(@class,'featured-related')]", // Noticias sugeridas (Imagen 2 y 3)
+                "//*[contains(@class,'ad-')]",
                 "//*[contains(@class,'social')]",
-                "//*[contains(@class,'related')]",
-                "//*[contains(@class,'recommend')]",
-                "//*[contains(@class,'comments')]",
                 "//*[contains(@class,'newsletter')]",
-                "//*[contains(@class,'advert')]",     // anuncios
-                "//*[contains(@id,'comments')]",
-                "//*[contains(@id,'subscription')]",  // 🔥 paywalls
-                "//*[contains(@class,'subscription')]",
-                "//*[contains(@class,'paywall')]",    // 🔥 bloqueos de lectura
-                "//*[contains(@class,'modal')]",      // popups
-                "//*[contains(@class,'overlay')]",    // capas grises
-                "//*[contains(@class,'access')]",     // mensajes de acceso restringido
-                "//*[contains(@id,'paywall')]",       // id específicos
-                "//*[contains(@id,'overlay')]"        // id overlays
+                "//*[contains(@class,'magazine-promo')]"
             };
 
             foreach (var selector in unwantedSelectors)
             {
-                var nodes = articleNode.SelectNodes(selector)?.ToList();
-                if (nodes == null) continue;
+                var nodes = doc.DocumentNode.SelectNodes(selector)?.ToList();
+                if (nodes != null) foreach (var n in nodes) n.Remove();
+            }
 
-                foreach (var node in nodes)
-                    node.Remove();
+            // 1️⃣ Intentar selectores semánticos muy específicos primero
+            // elDiario.es usa "article-text" para el cuerpo real
+            var articleNode =
+                doc.DocumentNode.SelectSingleNode("//div[@itemprop='articleBody']") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class,'article-text')]") ??
+                doc.DocumentNode.SelectSingleNode("//article") ??
+                doc.DocumentNode.SelectSingleNode("//main") ??
+
+                GetBestContentNode(doc.DocumentNode);
+            // 2️⃣ Si no hay suerte, buscamos el nodo con más párrafos reales
+            GetBestContentNode(doc.DocumentNode);
+
+            if (articleNode == null) return null;
+
+            
+
+            // 4️⃣ LIMPIEZA FINAL: Si después de todo, el nodo resultante sigue siendo 
+            // mayoritariamente enlaces, buscamos dentro de él solo los párrafos.
+            if (CalculateLinkDensity(articleNode) > 0.5)
+            {
+                // Si falló y pilló un menú, intentamos buscar solo los párrafos <p> 
+                // que tengan una longitud decente dentro del nodo.
+                var paragraphs = articleNode.SelectNodes(".//p[string-length(text()) > 40]");
+                if (paragraphs != null)
+                {
+                    var cleanNode = HtmlNode.CreateNode("<div></div>");
+                    foreach (var p in paragraphs) cleanNode.AppendChild(p.Clone());
+                    return cleanNode;
+                }
             }
 
             return articleNode;
+        }
+        private HtmlNode? GetBestContentNode(HtmlNode root)
+        {
+            // Buscamos el nodo que tenga la mejor relación entre párrafos y longitud
+            return root.Descendants()
+                .Where(n => (n.Name == "div" || n.Name == "section") && n.HasChildNodes)
+                .OrderByDescending(n => {
+                    var ps = n.SelectNodes("./p");
+                    if (ps == null) return 0;
+
+                    // PUNTUACIÓN:
+                    // +100 por cada párrafo largo (>50 caracteres)
+                    // -50 si el nodo tiene demasiados enlaces (densidad de links)
+                    int score = ps.Count(p => p.InnerText.Trim().Length > 50) * 100;
+
+                    if (CalculateLinkDensity(n) > 0.5) score -= 1000; // Penalizar menús
+
+                    return score;
+                })
+                .FirstOrDefault();
+        }
+
+        private double CalculateLinkDensity(HtmlNode node)
+        {
+            var text = node.InnerText.Trim();
+            if (string.IsNullOrWhiteSpace(text)) return 0;
+
+            var linkText = string.Join("", node.SelectNodes(".//a")?.Select(a => a.InnerText) ?? Enumerable.Empty<string>());
+            return (double)linkText.Length / text.Length;
         }
         public string DecodeHtml(byte[] bytes, string? charset)
         {
