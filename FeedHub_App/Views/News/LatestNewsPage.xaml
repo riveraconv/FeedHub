@@ -60,7 +60,7 @@
                                            Aspect="AspectFill"
                                            IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}, ConverterParameter=invert}" />
 
-                                    <Image Source="{Binding ImageUrl}"
+                                    <Image Source="{Binding EffectiveImageUrl}"
                                            HorizontalOptions="Fill"
                                            VerticalOptions="Fill"
                                            IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">

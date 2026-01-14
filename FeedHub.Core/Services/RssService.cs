@@ -40,67 +40,51 @@ namespace FeedHub_Core.Services
 
                     try
                     {
+                        // 1️⃣ media:content (prioritario)
                         var mediaContents = item.ElementExtensions
                             .Where(e => e.OuterName == "content" &&
                                         e.OuterNamespace == "http://search.yahoo.com/mrss/")
                             .Select(e => e.GetObject<XElement>())
-                            .ToList();
+                            .Where(x => x?.Attribute("url") != null)
+                            .Select(x => new
+                            {
+                                Url = x!.Attribute("url")!.Value,
+                                Width = int.TryParse(x.Attribute("width")?.Value, out var w) ? w : -1
+                            })
+                            .OrderByDescending(x => x.Width)
+                            .FirstOrDefault();
 
-                        if (mediaContents.Any())
-                        {
-                            var bestImage = mediaContents
-                                .Select(x => new
-                                {
-                                    Url = x?.Attribute("url")?.Value,
-                                    Width = int.TryParse(x?.Attribute("width")?.Value, out var w) ? w : 0
-                                })
-                                .OrderByDescending(x => x.Width)
-                                .FirstOrDefault(x => !string.IsNullOrEmpty(x.Url));
+                        imageUrl = mediaContents?.Url;
 
-                            imageUrl = bestImage?.Url;
-                        }
-
-                        if (string.IsNullOrEmpty(imageUrl))
+                        // 2️⃣ enclosure image/*
+                        if (string.IsNullOrWhiteSpace(imageUrl))
                         {
                             var enclosure = item.Links.FirstOrDefault(l =>
                                 !string.IsNullOrEmpty(l.MediaType) &&
                                 l.MediaType.StartsWith("image", StringComparison.OrdinalIgnoreCase));
 
-                            if (enclosure != null &&
-                                enclosure.MediaType != null &&
-                                enclosure.MediaType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
-                            {
+                            if (enclosure?.Uri != null)
                                 imageUrl = enclosure.Uri.ToString();
-                            }
                         }
 
-                        if (string.IsNullOrEmpty(imageUrl) && !string.IsNullOrEmpty(item.Summary?.Text))
+                        // 3️⃣ HTML embebido en Summary (fallback)
+                        if (string.IsNullOrWhiteSpace(imageUrl) && !string.IsNullOrEmpty(item.Summary?.Text))
                         {
-                            var desc = item.Summary.Text;
-                            var start = desc.IndexOf("<img");
-                            if (start >= 0)
-                            {
-                                var urlStart = desc.IndexOf("src=\"", start);
-                                if (urlStart > 0)
-                                {
-                                    urlStart += 5;
-                                    var urlEnd = desc.IndexOf("\"", urlStart);
-                                    if (urlEnd > urlStart)
-                                        imageUrl = desc.Substring(urlStart, urlEnd - urlStart);
-                                }
-                            }
+                            var match = Regex.Match(
+                                item.Summary.Text,
+                                "<img[^>]+src=[\"']([^\"'>]+)[\"']",
+                                RegexOptions.IgnoreCase);
+
+                            if (match.Success)
+                                imageUrl = match.Groups[1].Value;
                         }
 
-                        if (!string.IsNullOrEmpty(imageUrl))
+                        // 4️⃣ Validación final MUY laxa (solo URL válida)
+                        if (!string.IsNullOrWhiteSpace(imageUrl))
                         {
-                            var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
-                            var uriWithoutQuery = new Uri(imageUrl).AbsolutePath;
-                            if (!validExtensions.Any(ext => uriWithoutQuery.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
-                            {
+                            if (!Uri.TryCreate(imageUrl, UriKind.Absolute, out _))
                                 imageUrl = null;
-                            }
                         }
-
                     }
                     catch
                     {

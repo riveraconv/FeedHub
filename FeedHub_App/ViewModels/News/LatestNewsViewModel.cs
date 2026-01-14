@@ -3,8 +3,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
-using System.Collections.ObjectModel;
+using FeedHub_Core.Services;
 using FeedHub_Core.Utilities;
+using System.Collections.ObjectModel;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace FeedHub_App.ViewModels.News
@@ -154,7 +156,7 @@ namespace FeedHub_App.ViewModels.News
                     var selected = tempList
                         .Where(item => item != null)
                         .OrderBy(x => random.Next())
-                        .Take(7)
+                        .Take(12)
                         .ToList();
 
                     MainThread.BeginInvokeOnMainThread(() =>
@@ -183,11 +185,46 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         private async Task OpenNewsAsync(NewsItem item)
         {
-            if (item == null) return;
+            if (item == null)
+                return;
 
-            await Shell.Current.GoToAsync($"QuickViewPage?link={Uri.EscapeDataString(item.Link)}" +
-                                          $"&title={Uri.EscapeDataString(item.Title)}" +
-                                          $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}");
+            string finalImageUrl = item.ImageUrl ?? string.Empty;
+
+            try
+            {
+                // 1️⃣ Solo si NO tenemos imagen desde el RSS
+                if (string.IsNullOrWhiteSpace(finalImageUrl))
+                {
+                    // Descargamos el HTML de la noticia
+                    using var http = new HttpClient();
+                    var html = await http.GetStringAsync(item.Link);
+
+                    // Extraemos artículo + imagen
+                    var quickArticleService = new QuickArticleService();
+                    var result = await quickArticleService.Extract(html);
+
+                    // Si encontramos imagen buena, la usamos
+                    if (!string.IsNullOrWhiteSpace(result.ImageUrl))
+                    {
+                        finalImageUrl = result.ImageUrl;
+
+                        // 👇 MUY IMPORTANTE:
+                        // actualiza el item de la lista para futuras veces
+                        item.ImageUrl = finalImageUrl;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn($"QuickArticle failed for {item.Link}: {ex.Message}");
+            }
+
+            // 2️⃣ Navegación NORMAL
+            await Shell.Current.GoToAsync(
+                $"QuickViewPage?link={Uri.EscapeDataString(item.Link)}" +
+                $"&title={Uri.EscapeDataString(item.Title)}" +
+                $"&imageUrl={Uri.EscapeDataString(finalImageUrl)}"
+            );
 
             _logger.Info("Worked");
         }
