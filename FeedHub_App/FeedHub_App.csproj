@@ -88,7 +88,7 @@
 	  <MauiXaml Update="Views\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\News\ExplorePage.xaml">
+	  <MauiXaml Update="Views\News\CategoryNewsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\News\LatestNewsPage.xaml">

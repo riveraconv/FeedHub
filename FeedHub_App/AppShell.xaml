@@ -16,8 +16,8 @@
         <ShellContent ContentTemplate="{DataTemplate news:LatestNewsPage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Explore" Route="ExplorePage">
-        <ShellContent ContentTemplate="{DataTemplate news:ExplorePage}" />
+    <FlyoutItem Title="Explore" Route="CategoryNewsPage">
+        <ShellContent ContentTemplate="{DataTemplate news:CategoryNewsPage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Settings" Route="SettingsPage">

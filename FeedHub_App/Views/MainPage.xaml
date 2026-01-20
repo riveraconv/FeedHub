@@ -22,7 +22,7 @@
                 Margin="0,125,0,0"/>
 
         <Button Text="Explore by category"
-                Command="{Binding GoToExploreCommand}" 
+                Command="{Binding GoToCategoryCommand}" 
                 WidthRequest="200"/>
 
         <Button Text="Settings"
