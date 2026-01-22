@@ -1,36 +1,101 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage 
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="FeedHub_App.Views.News.CategoryNewsPage"
-    Title="Explore by categories">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FeedHub_App.ViewModels.News"
+             x:Class="FeedHub_App.Views.News.CategoryNewsPage"
+             Title="{Binding Category}">
+    <Grid Padding="20" RowDefinitions="Auto,*" ColumnDefinitions="*">
 
-    <Grid Padding="20"
-          RowDefinitions="Auto,Auto"
-          ColumnDefinitions="*"
-          RowSpacing="10"
-          ColumnSpacing="0">
+        <RefreshView Command="{Binding LoadNewsCommand}" 
+                     Grid.Row="1" 
+                     IsRefreshing="{Binding IsRefreshing}"
+                     RefreshColor="#4a9eff">
 
-        <!-- Primer label en la primera fila -->
-        <Label 
-            Text="📰 Primera fila"
-            FontSize="24"
-            TextColor="Black"
-            Grid.Row="0"
-            Grid.Column="0"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"/>
+            <CollectionView
+                    ItemsSource="{Binding Articles}" 
+                    SelectionMode="Single"
+                    x:Name="NewsCollection"
+                    SelectionChanged="OnSelectionChanged">
 
-        <!-- Segundo label en la segunda fila -->
-        <Label 
-            Text="📚 Segunda fila"
-            FontSize="24"
-            TextColor="Black"
-            BackgroundColor="#ffd0e8"
-            Grid.Row="1"
-            Grid.Column="0"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"/>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="30" Spacing="10" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                           Color="#4a9eff"
+                                           HeightRequest="50" WidthRequest="50">
+                            <ActivityIndicator.Triggers>
+                                <DataTrigger TargetType="ActivityIndicator" Binding="{Binding IsRefreshing}" Value="True">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="ActivityIndicator" Binding="{Binding IsRefreshing}" Value="False">
+                                    <Setter Property="IsVisible" Value="{Binding IsLoading}" />
+                                </DataTrigger>
+                            </ActivityIndicator.Triggers>
+                        </ActivityIndicator>
 
+                        <Label Text="Fetching category news..." 
+                               HorizontalTextAlignment="Center"
+                               TextColor="Gray">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsRefreshing}" Value="True">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Stroke="LightGray"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Margin="10,10,20,0"
+                                Padding="0"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Start"
+                                MaximumWidthRequest="800"
+                                MinimumWidthRequest="350">
+
+                            <VerticalStackLayout Spacing="10" Padding="20" HorizontalOptions="Fill">
+
+                                <Label Text="{Binding Title}"
+                                       FontAttributes="Bold"
+                                       FontSize="15"
+                                       LineBreakMode="WordWrap"
+                                       Margin="0,5,0,0"/>
+
+                                <Grid HeightRequest="180" HorizontalOptions="Fill">
+                                    <Image Source="no_image_available.png"
+                                           Aspect="AspectFill"
+                                           IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}, ConverterParameter=invert}" />
+
+                                    <Image Source="{Binding ImageUrl}"
+                                           Aspect="AspectFill"
+                                           IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
+                                        <Image.Aspect>
+                                            <OnPlatform x:TypeArguments="Aspect">
+                                                <On Platform="Android" Value="AspectFill"/>
+                                                <On Platform="WinUI" Value="AspectFit"/>
+                                            </OnPlatform>
+                                        </Image.Aspect>
+                                    </Image>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+                                    <Label Grid.Column="0" Text="{Binding Source}" FontSize="13" TextColor="Gray" IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
+                                    <Label Grid.Column="1" Text="•" TextColor="Gray" IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
+                                    <Label Grid.Column="2" Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="13" TextColor="Gray" IsVisible="{Binding PublishDate, Converter={StaticResource NullToBoolConverter}}"/>
+                                </Grid>
+
+                                <Label Text="{Binding Description}"
+                                       FontSize="14"
+                                       MaxLines="4"
+                                       IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
     </Grid>
 </ContentPage>

@@ -36,11 +36,12 @@ namespace FeedHub_App
 
             //ViewModels
             builder.Services.AddSingleton<LatestNewsViewModel>();
-            builder.Services.AddSingleton<CategoryNewsViewModel>();
+            builder.Services.AddSingleton<CategoryListViewModel>();
 
             //Pages
             builder.Services.AddSingleton<LatestNewsPage>();
             builder.Services.AddTransient<QuickViewPage>();
+            builder.Services.AddTransient<CategoryListPage>();
             builder.Services.AddTransient<CategoryNewsPage>();
 
 #if DEBUG

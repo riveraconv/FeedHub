@@ -36,7 +36,7 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.lavanguardia.com/rss/deportes.xml", "sports" },
             {"https://www.lavanguardia.com/rss/economia.xml", "economy" },
             {"https://www.lavanguardia.com/rss/cultura.xml", "culture" },
-            {"https://www.lavanguardia.com/rss/natural.xml", "science, ecology" },
+            {"https://www.lavanguardia.com/rss/natural.xml", "science" },
             
             //El Periodico
             {"https://www.elperiodico.com/es/rss/internacional/rss.xml", "international" },
@@ -53,7 +53,7 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.20minutos.es/rss/deportes/", "sports" },
             {"https://www.20minutos.es/rss/economia", "economy" },
             {"https://www.20minutos.es/rss/tecnologia/", "technology" },
-            {"https://www.20minutos.es/rss/salud/", "health" },
+            {"https://www.20minutos.es/rss/salud/", "science" },
 
             //El Confidencial
             {"https://rss.elconfidencial.com/espana/", "Spain" },
@@ -117,30 +117,26 @@ public class NewsAggregatorService : INewsAggregatorService
 
     public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
     {
-        var feeds = _feeds
-            .Where(f => f.Value.Equals(category, StringComparison.OrdinalIgnoreCase))
-            .ToList();
+        var allItems = new ConcurrentBag<NewsItem>();
 
-        var temp = new List<NewsItem>();
+        // Filtramos solo los feeds que pertenecen a esa categoría
+        var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
 
-        var tasks = feeds.Select(async kvp =>
+        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 5 }, async (kvp, ct) =>
         {
             try
             {
-                var items = await _rssService.GetNewsAsync(kvp.Key);
-                lock (temp) temp.AddRange(items);
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                var items = await _rssService.GetNewsAsync(kvp.Key, cts.Token);
+                foreach (var item in items.Take(10)) // Tomamos más aquí porque es una categoría específica
+                {
+                    item.Category = kvp.Value;
+                    allItems.Add(item);
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.Warn($"Feed error {kvp.Key}: {ex.Message}");
-            }
+            catch { /* Ignorar errores de red */ }
         });
 
-        await Task.WhenAll(tasks);
-
-        return temp
-            .OrderByDescending(n => n.PublishDate)
-            .Take(limit)
-            .ToList();
+        return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
     }
 }

@@ -1,25 +1,26 @@
 using FeedHub_App.ViewModels.News;
 using FeedHub_Core.Models;
 
-namespace FeedHub_App.Views.News;
-
-public partial class CategoryNewsPage : ContentPage
+namespace FeedHub_App.Views.News
 {
-    private readonly CategoryNewsViewModel _viewModel;
-
-    public CategoryNewsPage(CategoryNewsViewModel viewModel)
+    public partial class CategoryNewsPage : ContentPage
     {
-        InitializeComponent();
-        _viewModel = viewModel;
-        BindingContext = _viewModel;
-    }
+        private readonly CategoryListViewModel _viewModel;
 
-    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (e.CurrentSelection.FirstOrDefault() is NewsItem selected)
+        public CategoryNewsPage(CategoryListViewModel viewModel)
         {
-            _viewModel.OpenNewsCommand.Execute(selected);
-            ((CollectionView)sender).SelectedItem = null;
+            InitializeComponent();
+            _viewModel = viewModel;
+            BindingContext = _viewModel;
+        }
+
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.CurrentSelection.FirstOrDefault() is NewsItem selected)
+            {
+                _viewModel.OpenNewsCommand.Execute(selected);
+                ((CollectionView)sender).SelectedItem = null; // Limpiar selección
+            }
         }
     }
 }
