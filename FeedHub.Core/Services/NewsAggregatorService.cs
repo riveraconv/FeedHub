@@ -21,14 +21,14 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/cultura/portada", "culture" },
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada", "sports" },
             {"https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente", "climatology"},
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada", "Spain" },
+            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada", "politics" },
 
             //El Mundo
             {"https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml", "international"},
             {"https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml", "economy"},
             {"https://e00-elmundo.uecdn.es/elmundo/rss/cultura.xml", "culture" },
             {"https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml", "sports" },
-            {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "Spain" },
+            {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "politics" },
 
             //La Vanguardia
             {"https://www.lavanguardia.com/rss/internacional.xml", "international"},
@@ -122,13 +122,13 @@ public class NewsAggregatorService : INewsAggregatorService
         // Filtramos solo los feeds que pertenecen a esa categoría
         var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
 
-        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 5 }, async (kvp, ct) =>
+        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 5 }, async (kvp, ct) => //number of HTTP conections
         {
             try
             {
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
                 var items = await _rssService.GetNewsAsync(kvp.Key, cts.Token);
-                foreach (var item in items.Take(10)) // Tomamos más aquí porque es una categoría específica
+                foreach (var item in items.Take(10)) //news filter by individual source
                 {
                     item.Category = kvp.Value;
                     allItems.Add(item);

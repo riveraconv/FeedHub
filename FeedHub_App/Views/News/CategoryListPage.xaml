@@ -1,7 +1,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FeedHub_App.Views.News.CategoryListPage"
-             Title="Categorías">
+             Title="Categories">
 
     <CollectionView ItemsSource="{Binding Categories}">
         <CollectionView.ItemsLayout>

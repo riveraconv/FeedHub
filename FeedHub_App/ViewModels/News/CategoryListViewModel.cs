@@ -45,21 +45,22 @@ namespace FeedHub_App.ViewModels.News
         {
             if (query.ContainsKey("category"))
             {
-                Category = query["category"]?.ToString();
-                LoadNewsCommand.Execute(category);
+                Category = Uri.UnescapeDataString(query["category"]?.ToString() ?? "");
+                // Ejecutamos el comando sin pasarle nada, él leerá la propiedad 'Category'
+                LoadNewsCommand.Execute(null);
             }
         }
 
         [RelayCommand]
-        public async Task LoadNewsAsync(string cat)
+        public async Task LoadNewsAsync()
         {
-            if (string.IsNullOrWhiteSpace(cat) || IsLoading) return;
+            if (string.IsNullOrWhiteSpace(Category) || IsLoading) return;
 
             try
             {
                 if (!IsRefreshing) IsLoading = true;
             
-            var items = await _aggregator.GetByCategoryAsync(cat, 30);
+            var items = await _aggregator.GetByCategoryAsync(Category, 30);
             
                 Articles.Clear();
                 foreach (var item in items)
