@@ -4,7 +4,7 @@ namespace FeedHub_Core.Interfaces
 {
     public interface IRssService
     {
-        Task<List<NewsItem>> GetNewsAsync(string feedUrl);
+        Task<List<NewsItem>> GetNewsAsync(string feedUrl, CancellationToken ct = default);
     }
 
 }

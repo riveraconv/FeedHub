@@ -4,7 +4,9 @@ using FeedHub_Core.Services;
 using FeedHub_App.ViewModels.News;
 using FeedHub_App.Views.News;
 using FeedHub_App.Utilities;
-using FeedHub_Core.Utilities;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace FeedHub_App
 {
@@ -24,19 +26,22 @@ namespace FeedHub_App
 
 
             //Services
-            builder.Services.AddSingleton<IRssService, RssService>();
+            builder.Services.AddHttpClient<IRssService, RssService>(client => {
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) FeedHub/1.0");
+            });
             builder.Services.AddSingleton<IArticleReaderService, ArticleReaderService>();
             builder.Services.AddSingleton<QuickArticleResult>();
             builder.Services.AddSingleton<FeedHub_Core.Utilities.ILogger, PlatformLogger>();
+            builder.Services.AddSingleton<INewsAggregatorService, NewsAggregatorService>();
 
             //ViewModels
             builder.Services.AddSingleton<LatestNewsViewModel>();
+            builder.Services.AddSingleton<CategoryNewsViewModel>();
 
-            //Primary Pages
+            //Pages
             builder.Services.AddSingleton<LatestNewsPage>();
-            
-            //Secondary Pages
             builder.Services.AddTransient<QuickViewPage>();
+            builder.Services.AddTransient<CategoryNewsPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

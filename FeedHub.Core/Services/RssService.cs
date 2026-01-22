@@ -1,134 +1,120 @@
 ﻿using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
-using System.Diagnostics;
+using FeedHub_Core.Utilities;
 using System.ServiceModel.Syndication;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using System.Text.RegularExpressions;
-using FeedHub_Core.Utilities;
 
-namespace FeedHub_Core.Services
+public class RssService : IRssService
 {
-    public class RssService : IRssService
-    {
-        private readonly ILogger _logger;
-        public RssService(ILogger logger)
-        {
-            _logger = logger;
-        }
+    private readonly ILogger _logger;
+    private readonly HttpClient _httpClient; // Inyectamos HttpClient para usar el token
 
-        public async Task<List<NewsItem>> GetNewsAsync(string feedUrl)
+    public RssService(ILogger logger, HttpClient httpClient)
+    {
+        _logger = logger;
+        _httpClient = httpClient;
+    }
+
+    public async Task<List<NewsItem>> GetNewsAsync(string feedUrl, CancellationToken ct = default)
+    {
+        var news = new List<NewsItem>();
+
+        try
         {
-            _logger.Info("Worked");
             _logger.Info($"Downloading feed from {feedUrl}");
 
-            var news = new List<NewsItem>();
+            // 1. Descargamos el XML usando el CancellationToken
+            // Si pasan 5 segundos (según el Aggregator), esta línea lanzará la excepción y detendrá el proceso
+            using var response = await _httpClient.GetAsync(feedUrl, ct);
+            response.EnsureSuccessStatusCode();
 
-            try
+            using var stream = await response.Content.ReadAsStreamAsync(ct);
+
+            // 2. Cargamos el Feed desde el stream descargado
+            using var reader = XmlReader.Create(stream);
+            var feed = SyndicationFeed.Load(reader);
+
+            if (feed == null) return news;
+
+            _logger.Info($"Feed downloaded successfully. Items: {feed.Items.Count()}");
+
+            foreach (var item in feed.Items.Take(1))
             {
-                using var reader = XmlReader.Create(feedUrl, new XmlReaderSettings { Async = true });
-                var feed = SyndicationFeed.Load(reader);
+                // Verificamos si se ha solicitado cancelar en cada iteración del bucle
+                ct.ThrowIfCancellationRequested();
 
-                _logger.Info($"Feed downloaded succesfully. Items: {feed?.Items.Count()}");
+                string? imageUrl = ExtractImageUrl(item);
 
-                if (feed == null)
-                    return news;
-
-                foreach (var item in feed.Items)
+                news.Add(new NewsItem
                 {
-                    string? imageUrl = null;
-
-                    try
-                    {
-                        // 1️⃣ media:content (prioritario)
-                        var mediaContents = item.ElementExtensions
-                            .Where(e => e.OuterName == "content" &&
-                                        e.OuterNamespace == "http://search.yahoo.com/mrss/")
-                            .Select(e => e.GetObject<XElement>())
-                            .Where(x => x?.Attribute("url") != null)
-                            .Select(x => new
-                            {
-                                Url = x!.Attribute("url")!.Value,
-                                Width = int.TryParse(x.Attribute("width")?.Value, out var w) ? w : -1
-                            })
-                            .OrderByDescending(x => x.Width)
-                            .FirstOrDefault();
-
-                        imageUrl = mediaContents?.Url;
-
-                        // 2️⃣ enclosure image/*
-                        if (string.IsNullOrWhiteSpace(imageUrl))
-                        {
-                            var enclosure = item.Links.FirstOrDefault(l =>
-                                !string.IsNullOrEmpty(l.MediaType) &&
-                                l.MediaType.StartsWith("image", StringComparison.OrdinalIgnoreCase));
-
-                            if (enclosure?.Uri != null)
-                                imageUrl = enclosure.Uri.ToString();
-                        }
-
-                        // 3️⃣ HTML embebido en Summary (fallback)
-                        if (string.IsNullOrWhiteSpace(imageUrl) && !string.IsNullOrEmpty(item.Summary?.Text))
-                        {
-                            var match = Regex.Match(
-                                item.Summary.Text,
-                                "<img[^>]+src=[\"']([^\"'>]+)[\"']",
-                                RegexOptions.IgnoreCase);
-
-                            if (match.Success)
-                                imageUrl = match.Groups[1].Value;
-                        }
-
-                        // 4️⃣ Validación final MUY laxa (solo URL válida)
-                        if (!string.IsNullOrWhiteSpace(imageUrl))
-                        {
-                            if (!Uri.TryCreate(imageUrl, UriKind.Absolute, out _))
-                                imageUrl = null;
-                        }
-                    }
-                    catch
-                    {
-                        imageUrl = null;
-                    }
-                    news.Add(new NewsItem
-                    {
-                        Title = StripHtml(item.Title?.Text ?? ""),
-                        Link = item.Links.FirstOrDefault()?.Uri.ToString() ?? "",
-                        Description = StripHtml(item.Summary?.Text ?? ""),
-                        PublishDate = item.PublishDate.DateTime,
-                        Category = item.Categories.FirstOrDefault()?.Name ?? "",
-                        Source = feed.Title?.Text ?? new Uri(feedUrl).Host,
-                        ImageUrl = imageUrl
-                    });
-
-                }
+                    Title = StripHtml(item.Title?.Text ?? ""),
+                    Link = item.Links.FirstOrDefault()?.Uri.ToString() ?? "",
+                    Description = StripHtml(item.Summary?.Text ?? item.Copyright?.Text ?? ""),
+                    PublishDate = item.PublishDate.DateTime == DateTime.MinValue
+                                  ? item.LastUpdatedTime.DateTime
+                                  : item.PublishDate.DateTime,
+                    Category = item.Categories.FirstOrDefault()?.Name ?? "",
+                    Source = feed.Title?.Text ?? new Uri(feedUrl).Host,
+                    ImageUrl = imageUrl
+                });
             }
-            catch (Exception ex)
-            {
-                _logger.Error($"Error loading RSS feed {feedUrl}: {ex.Message}");
-            }
-            return news;
         }
-        private string StripHtml(string input)
+        catch (OperationCanceledException)
         {
-            if (string.IsNullOrWhiteSpace(input))
-                return string.Empty;
-
-            // Quita todas las etiquetas HTML
-            input = Regex.Replace(input, "<.*?>", string.Empty, RegexOptions.Singleline);
-
-            // Decodifica entidades HTML (&amp;, &quot;, etc.)
-            input = System.Net.WebUtility.HtmlDecode(input);
-
-            // Elimina espacios repetidos
-            input = Regex.Replace(input, @"\s{2,}", " ").Trim();
-
-            // Quita frases residuales típicas al final como "Leer", "Leer más", "Ver más", etc.
-            input = Regex.Replace(input, @"(Leer(\s+más)?|Ver(\s+más)?|Sigue\s+leyendo)\s*$",
-                                  string.Empty, RegexOptions.IgnoreCase);
-
-            return input.Trim();
+            _logger.Warn($"Download timed out for: {feedUrl}");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"Error loading RSS feed {feedUrl}: {ex.Message}");
         }
 
+        return news;
+    }
+
+    // He movido la lógica de la imagen a un método aparte para limpiar el código principal
+    private string? ExtractImageUrl(SyndicationItem item)
+    {
+        // 1. media:content
+        var media = item.ElementExtensions
+            .Where(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/")
+            .Select(e =>
+            {
+                try { return e.GetObject<XElement>(); }
+                catch { return null; }
+            })
+            .Where(x => x != null && x.Attribute("url") != null)
+            .OrderByDescending(x => int.TryParse(x.Attribute("width")?.Value, out var w) ? w : 0)
+            .FirstOrDefault();
+
+        if (media != null) return media.Attribute("url")?.Value;
+
+        // 2. Enclosures
+        var enclosure = item.Links.FirstOrDefault(l => 
+                        l.RelationshipType == "enclosure" &&
+                        (l.MediaType?.StartsWith("image/") ?? false));
+
+        if (enclosure != null) return enclosure.Uri.ToString();
+
+        // 3. Regex Fallback
+
+        var summary = item.Summary?.Text ?? item.Content?.ToString() ?? "";
+        if (!string.IsNullOrEmpty(summary))
+        {
+            var match = Regex.Match(summary, @"<img.+?src=[""'](.+?)[""']", RegexOptions.IgnoreCase);
+            if (match.Success) return match.Groups[1].Value;
+        }
+
+        return null;
+    }
+
+    private string StripHtml(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+        input = Regex.Replace(input, "<.*?>", string.Empty, RegexOptions.Singleline);
+        input = System.Net.WebUtility.HtmlDecode(input);
+        input = Regex.Replace(input, @"\s{2,}", " ").Trim();
+        return Regex.Replace(input, @"(Leer(\s+más)?|Ver(\s+más)?|Sigue\s+leyendo)\s*$", "", RegexOptions.IgnoreCase).Trim();
     }
 }

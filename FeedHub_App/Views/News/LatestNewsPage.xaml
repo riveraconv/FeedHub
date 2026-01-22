@@ -24,7 +24,29 @@
                     <VerticalStackLayout Padding="30" 
                                          Spacing="10" 
                                          HorizontalOptions="Center">
-                        
+                        <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                           Color="#4a9eff"
+                           HeightRequest="50" WidthRequest="50">
+                            <ActivityIndicator.Triggers>
+                                <DataTrigger TargetType="ActivityIndicator" Binding="{Binding IsRefreshing}" Value="True">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="ActivityIndicator" Binding="{Binding IsRefreshing}" Value="False">
+                                    <Setter Property="IsVisible" Value="{Binding IsLoading}" />
+                                </DataTrigger>
+                            </ActivityIndicator.Triggers>
+                        </ActivityIndicator>
+
+                        <Label Text="Preparing news..." 
+                               HorizontalTextAlignment="Center"
+                               TextColor="Gray">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsRefreshing}" Value="True">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
 
