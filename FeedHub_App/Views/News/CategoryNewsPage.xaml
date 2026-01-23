@@ -18,10 +18,13 @@
                     SelectionChanged="OnSelectionChanged">
 
                 <CollectionView.EmptyView>
-                    <VerticalStackLayout Padding="30" Spacing="10" HorizontalOptions="Center">
+                    <VerticalStackLayout Padding="30" 
+                                         Spacing="10" 
+                                         HorizontalOptions="Center">
                         <ActivityIndicator IsRunning="{Binding IsLoading}" 
                                            Color="#4a9eff"
-                                           HeightRequest="50" WidthRequest="50">
+                                           HeightRequest="50" 
+                                           WidthRequest="50">
                             <ActivityIndicator.Triggers>
                                 <DataTrigger TargetType="ActivityIndicator" Binding="{Binding IsRefreshing}" Value="True">
                                     <Setter Property="IsVisible" Value="False" />
@@ -56,7 +59,9 @@
                                 MaximumWidthRequest="800"
                                 MinimumWidthRequest="350">
 
-                            <VerticalStackLayout Spacing="10" Padding="20" HorizontalOptions="Fill">
+                            <VerticalStackLayout Spacing="10" 
+                                                 Padding="20" 
+                                                 HorizontalOptions="Fill">
 
                                 <Label Text="{Binding Title}"
                                        FontAttributes="Bold"
@@ -81,14 +86,36 @@
                                     </Image>
                                 </Grid>
 
-                                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
-                                    <Label Grid.Column="0" Text="{Binding Source}" FontSize="13" TextColor="Gray" IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
-                                    <Label Grid.Column="1" Text="•" TextColor="Gray" IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
-                                    <Label Grid.Column="2" Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="13" TextColor="Gray" IsVisible="{Binding PublishDate, Converter={StaticResource NullToBoolConverter}}"/>
+                                <Grid ColumnDefinitions="Auto,Auto,*" 
+                                      ColumnSpacing="8"
+                                      VerticalOptions="Start"
+                                      HorizontalOptions="Fill">
+                                    <Label Grid.Column="0" 
+                                           Text="{Binding Source}" 
+                                           FontSize="13" 
+                                           TextColor="Gray"
+                                           VerticalOptions="Center"
+                                           LineBreakMode="TailTruncation"
+                                           IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
+                                    <Label Grid.Column="1" 
+                                           Text="•" TextColor="Gray"
+                                           VerticalOptions="Center"
+                                           IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
+                                    <Label Grid.Column="2" 
+                                           Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}" 
+                                           FontSize="13" 
+                                           TextColor="Gray" 
+                                           LineBreakMode="TailTruncation"
+                                           HorizontalOptions="Fill"
+                                           VerticalOptions="Center"
+                                           IsVisible="{Binding PublishDate, Converter={StaticResource NullToBoolConverter}}"/>
                                 </Grid>
 
                                 <Label Text="{Binding Description}"
                                        FontSize="14"
+                                       LineBreakMode="WordWrap"
+                                       HorizontalOptions="Fill"
+                                       Margin="0,0,0,0"
                                        MaxLines="4"
                                        IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
                             </VerticalStackLayout>

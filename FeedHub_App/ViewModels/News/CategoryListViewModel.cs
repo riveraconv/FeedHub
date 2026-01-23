@@ -61,10 +61,13 @@ namespace FeedHub_App.ViewModels.News
                 if (!IsRefreshing) IsLoading = true;
             
             var items = await _aggregator.GetByCategoryAsync(Category, 30);
-            
-                Articles.Clear();
-                foreach (var item in items)
-                    Articles.Add(item);
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Articles.Clear();
+                    foreach (var item in items)
+                        Articles.Add(item);
+                });
             }
             catch (Exception ex)
             {
