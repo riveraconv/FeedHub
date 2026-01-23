@@ -40,7 +40,7 @@ public class RssService : IRssService
 
             _logger.Info($"Feed downloaded successfully. Items: {feed.Items.Count()}");
 
-            foreach (var item in feed.Items.Take(1))
+            foreach (var item in feed.Items.Take(20))
             {
                 // Verificamos si se ha solicitado cancelar en cada iteración del bucle
                 ct.ThrowIfCancellationRequested();

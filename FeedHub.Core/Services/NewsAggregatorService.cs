@@ -118,17 +118,20 @@ public class NewsAggregatorService : INewsAggregatorService
     public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
     {
         var allItems = new ConcurrentBag<NewsItem>();
+        DateTime cutOffDate = DateTime.Now.AddDays(-2); // Filtered by temporal limit, 48h
 
-        // Filtramos solo los feeds que pertenecen a esa categoría
         var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
 
-        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 5 }, async (kvp, ct) => //number of HTTP conections
+        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (kvp, ct) => //number of HTTP conections
         {
             try
             {
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
                 var items = await _rssService.GetNewsAsync(kvp.Key, cts.Token);
-                foreach (var item in items.Take(10)) //news filter by individual source
+
+                var recentItems = items.Where(x => x.PublishDate >= cutOffDate);
+
+                foreach (var item in recentItems)
                 {
                     item.Category = kvp.Value;
                     allItems.Add(item);
@@ -137,6 +140,14 @@ public class NewsAggregatorService : INewsAggregatorService
             catch { /* Ignorar errores de red */ }
         });
 
-        return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+        var finalResult = allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+
+        // If the filter cannot pull any result, will pull any date available to not made an empty list.
+        if (!finalResult.Any())
+        {
+            return allItems.OrderByDescending(x => x.PublishDate).Take(5).ToList();
+        }
+
+        return finalResult;
     }
 }

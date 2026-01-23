@@ -42,7 +42,7 @@ namespace FeedHub_App.ViewModels.News
                 if (!IsRefreshing)
                     IsLoading = true;
 
-                var selected = await _aggregatorService.GetLatestMixedAsync(7);
+                var selected = await _aggregatorService.GetLatestMixedAsync(12);
 
                 News.Clear();
                 foreach (var item in selected) News.Add(item);
