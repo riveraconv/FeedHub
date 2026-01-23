@@ -23,7 +23,8 @@ namespace FeedHub_App.ViewModels.News
             "Sports",
             "Society",
             "Culture",
-            "Climatology"
+            "Climatology",
+            
         };
 
         [ObservableProperty]

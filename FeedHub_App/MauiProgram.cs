@@ -26,9 +26,16 @@ namespace FeedHub_App
 
 
             //Services
-            builder.Services.AddHttpClient<IRssService, RssService>(client => {
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) FeedHub/1.0");
-            });
+            builder.Services.AddHttpClient<IRssService, RssService>()
+                    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                    {
+                        AutomaticDecompression = System.Net.DecompressionMethods.All, // Aceptamos TODO (Gzip, Deflate, Brotli)
+                        AllowAutoRedirect = true,
+                        MaxAutomaticRedirections = 10,
+                        // Esto ignora errores de certificado que a veces dan los emuladores
+                        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                    });
+
             builder.Services.AddSingleton<IArticleReaderService, ArticleReaderService>();
             builder.Services.AddSingleton<QuickArticleResult>();
             builder.Services.AddSingleton<FeedHub_Core.Utilities.ILogger, PlatformLogger>();
@@ -36,7 +43,7 @@ namespace FeedHub_App
 
             //ViewModels
             builder.Services.AddSingleton<LatestNewsViewModel>();
-            builder.Services.AddSingleton<CategoryListViewModel>();
+            builder.Services.AddTransient<CategoryListViewModel>();
 
             //Pages
             builder.Services.AddSingleton<LatestNewsPage>();

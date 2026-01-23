@@ -71,7 +71,14 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.eldiario.es/rss/focos/crisis-climatica/", "climatology" },
             {"https://www.eldiario.es/rss/tecnologia/", "technology" },
 
-        };
+        //Specific Science sections from other sources
+
+            { "https://www.agenciasinc.es/rss", "science" },
+
+        //Specific Technology sections from other sources
+    };
+
+
 
     public NewsAggregatorService(IRssService rssService, ILogger logger)
     {
@@ -118,7 +125,9 @@ public class NewsAggregatorService : INewsAggregatorService
     public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
     {
         var allItems = new ConcurrentBag<NewsItem>();
-        DateTime cutOffDate = DateTime.Now.AddDays(-2); // Filtered by temporal limit, 48h
+        DateTime cutOffDate = category == "Science" || category == "Culture"
+                            ? DateTime.Now.AddDays(-2)
+                            : DateTime.Now.AddDays(-7); 
 
         var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
 

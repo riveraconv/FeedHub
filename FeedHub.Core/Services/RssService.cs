@@ -20,14 +20,28 @@ public class RssService : IRssService
     public async Task<List<NewsItem>> GetNewsAsync(string feedUrl, CancellationToken ct = default)
     {
         var news = new List<NewsItem>();
+        HttpResponseMessage? response = null;
 
         try
         {
+            // 1. Limpieza segura
+            _httpClient.DefaultRequestHeaders.Clear();
+
+            // 2. Usamos un User-Agent sencillo pero moderno (sin tantas "pistas" que complican la Key)
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/xml, text/xml, */*");
+
             _logger.Info($"Downloading feed from {feedUrl}");
 
-            // 1. Descargamos el XML usando el CancellationToken
-            // Si pasan 5 segundos (según el Aggregator), esta línea lanzará la excepción y detendrá el proceso
-            using var response = await _httpClient.GetAsync(feedUrl, ct);
+            // 2. Descarga
+            response = await _httpClient.GetAsync(feedUrl, ct);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _logger.Warn($"Acceso denegado (403) en {feedUrl}. Saltando fuente.");
+                return news;
+            }
+
             response.EnsureSuccessStatusCode();
 
             using var stream = await response.Content.ReadAsStreamAsync(ct);
@@ -44,7 +58,7 @@ public class RssService : IRssService
             {
                 // Verificamos si se ha solicitado cancelar en cada iteración del bucle
                 ct.ThrowIfCancellationRequested();
-
+                var categoryName = item.Categories.FirstOrDefault()?.Name ?? "General";
                 string? imageUrl = ExtractImageUrl(item);
 
                 news.Add(new NewsItem
@@ -68,6 +82,10 @@ public class RssService : IRssService
         catch (Exception ex)
         {
             _logger.Error($"Error loading RSS feed {feedUrl}: {ex.Message}");
+        }
+        finally
+        {
+            response?.Dispose();
         }
 
         return news;
