@@ -12,17 +12,19 @@ public class NewsAggregatorService : INewsAggregatorService
 
     private readonly Dictionary<string, string> _feeds = new()
     {
-            //El Pais
+        //El Pais 
+
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada", "international" },
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada" ,"economy"},
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada ", "science" },
+            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada", "science" },
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada", "technology"},
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/cultura/portada", "culture" },
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada", "sports" },
             {"https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente", "climatology"},
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada", "politics" },
-
+           
+            
             //El Mundo
             {"https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml", "international"},
             {"https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml", "economy"},
@@ -30,6 +32,7 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml", "sports" },
             {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "politics" },
 
+           
             //La Vanguardia
             {"https://www.lavanguardia.com/rss/internacional.xml", "international"},
             {"https://www.lavanguardia.com/rss/politica.xml", "politics" },
@@ -37,6 +40,7 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.lavanguardia.com/rss/economia.xml", "economy" },
             {"https://www.lavanguardia.com/rss/cultura.xml", "culture" },
             {"https://www.lavanguardia.com/rss/natural.xml", "science" },
+       
             
             //El Periodico
             {"https://www.elperiodico.com/es/rss/internacional/rss.xml", "international" },
@@ -47,14 +51,16 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.elperiodico.com/es/rss/ciencia/rss.xml", "science" },
             {"https://www.elperiodico.com/es/rss/deportes/rss.xml", "sports" },
             {"https://www.elperiodico.com/es/rss/ocio-y-cultura/rss.xml", "culture" },
-
+        
             //20 Minutos
             {"https://www.20minutos.es/rss/internacional/", "international" },
             {"https://www.20minutos.es/rss/deportes/", "sports" },
             {"https://www.20minutos.es/rss/economia", "economy" },
             {"https://www.20minutos.es/rss/tecnologia/", "technology" },
             {"https://www.20minutos.es/rss/salud/", "science" },
-
+            {"https://www.20minutos.es/rss/videojuegos/", "videogames" },
+            {"https://www.20minutos.es/rss/cultura/", "culture" },
+        
             //El Confidencial
             {"https://rss.elconfidencial.com/espana/", "Spain" },
             {"https://rss.elconfidencial.com/mundo/", "international" },
@@ -70,12 +76,42 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.eldiario.es/rss/internacional/", "international"},
             {"https://www.eldiario.es/rss/focos/crisis-climatica/", "climatology" },
             {"https://www.eldiario.es/rss/tecnologia/", "technology" },
+           
 
-        //Specific Science sections from other sources
+        //Xataka
+        {"https://feeds.feedburner.com/xataka2", "technology" },
 
-            { "https://www.agenciasinc.es/rss", "science" },
+        //Applesfera
+        {"https://www.applesfera.com/index.xml", "technology" },
 
-        //Specific Technology sections from other sources
+        //IGN España
+        {"https://es.ign.com/news.xml", "videogames" },
+
+        // VidaExtra 
+        {"https://www.vidaextra.com/index.xml", "videogames"},
+
+        //Eltiempo.es
+        {"https://www.eurogamer.es/feed/news", "climatology" },
+
+        // 3DJuegos 
+        {"https://www.3djuegos.com/index.xml", "videogames"},
+
+        // Eurogamer España 
+        {"https://www.eurogamer.es/feed", "videogames"},
+
+  
+
+        // Meristation 
+        {"https://as.com/rss/meristation/portada.xml", "videogames"},
+
+        // ComputerHoy 
+        {"https://computerhoy.com/noticias.xml", "technology"},   
+
+        // HobbyConsolas 
+        {"https://www.hobbyconsolas.com/noticias.xml", "videogames"},
+
+        // Vandal 
+        {"https://vandal.elespanol.com/vandal.xml", "videogames"},
     };
 
 
@@ -100,7 +136,7 @@ public class NewsAggregatorService : INewsAggregatorService
             {
                 // TIMEOUT: Si un feed tarda > 5 segundos, se ignora
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-                var items = await _rssService.GetNewsAsync(kvp.Key, cts.Token);
+                var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
                 var latest = items.OrderByDescending(i => i.PublishDate).FirstOrDefault();
 
                 if (latest != null)
@@ -125,7 +161,7 @@ public class NewsAggregatorService : INewsAggregatorService
     public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
     {
         var allItems = new ConcurrentBag<NewsItem>();
-        DateTime cutOffDate = category == "Science" || category == "Culture"
+        DateTime cutOffDate = category == "science" || category == "culture" || category == "videogames"
                             ? DateTime.Now.AddDays(-2)
                             : DateTime.Now.AddDays(-7); 
 
@@ -136,7 +172,7 @@ public class NewsAggregatorService : INewsAggregatorService
             try
             {
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-                var items = await _rssService.GetNewsAsync(kvp.Key, cts.Token);
+                var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
 
                 var recentItems = items.Where(x => x.PublishDate >= cutOffDate);
 

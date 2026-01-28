@@ -17,7 +17,7 @@ public class RssService : IRssService
         _httpClient = httpClient;
     }
 
-    public async Task<List<NewsItem>> GetNewsAsync(string feedUrl, CancellationToken ct = default)
+    public async Task<List<NewsItem>> GetNewsAsync(string feedUrl, string categoryFromDict, CancellationToken ct = default)
     {
         var news = new List<NewsItem>();
         HttpResponseMessage? response = null;
@@ -27,10 +27,14 @@ public class RssService : IRssService
             // 1. Limpieza segura
             _httpClient.DefaultRequestHeaders.Clear();
 
-            // 2. Usamos un User-Agent sencillo pero moderno (sin tantas "pistas" que complican la Key)
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/xml, text/xml, */*");
+            //1.5 DISFRAZ DINAMICO
+            var uri = new Uri(feedUrl);
+            _httpClient.DefaultRequestHeaders.Referrer = new Uri($"{uri.Scheme}://{uri.Host}");
 
+            // 2. Usamos un User-Agent sencillo pero moderno (sin tantas "pistas" que complican la Key)
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/xml, application/xml, application/rss+xml, */*");
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "es-ES,es;q=0.9");
             _logger.Info($"Downloading feed from {feedUrl}");
 
             // 2. Descarga
@@ -46,8 +50,16 @@ public class RssService : IRssService
 
             using var stream = await response.Content.ReadAsStreamAsync(ct);
 
+            // CONFIGURACIÓN PARA EVITAR EL ERROR DE DTD
+            var settings = new XmlReaderSettings
+            {
+                Async = true,
+                DtdProcessing = DtdProcessing.Parse, // Permite leer feeds con declaraciones DTD
+                IgnoreWhitespace = true
+            };
+
             // 2. Cargamos el Feed desde el stream descargado
-            using var reader = XmlReader.Create(stream);
+            using var reader = XmlReader.Create(stream, settings);
             var feed = SyndicationFeed.Load(reader);
 
             if (feed == null) return news;
@@ -69,7 +81,7 @@ public class RssService : IRssService
                     PublishDate = item.PublishDate.DateTime == DateTime.MinValue
                                   ? item.LastUpdatedTime.DateTime
                                   : item.PublishDate.DateTime,
-                    Category = item.Categories.FirstOrDefault()?.Name ?? "",
+                    Category = categoryFromDict,
                     Source = feed.Title?.Text ?? new Uri(feedUrl).Host,
                     ImageUrl = imageUrl
                 });
