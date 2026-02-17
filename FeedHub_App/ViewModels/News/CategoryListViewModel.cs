@@ -15,16 +15,16 @@ namespace FeedHub_App.ViewModels.News
         public ObservableCollection<NewsItem> Articles { get; } = new();
         public ObservableCollection<string> Categories { get; } = new()
         {
-            "international",
-            "politics",
-            "economy",
-            "technology",
-            "science",
-            "sports",
-            "society",
-            "culture",
-            "climatology",
-            "videogames",
+            "International",
+            "Politics",
+            "Economy",
+            "Technology",
+            "Science",
+            "Sports",
+            "Society",
+            "Culture",
+            "Climatology",
+            "Videogames",
             
         };
 

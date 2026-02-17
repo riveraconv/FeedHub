@@ -24,20 +24,23 @@ public class RssService : IRssService
 
         try
         {
-            // 1. Limpieza segura
+            // REEMPLAZA TU BLOQUE DE CABECERAS POR ESTE:
             _httpClient.DefaultRequestHeaders.Clear();
 
-            //1.5 DISFRAZ DINAMICO
-            var uri = new Uri(feedUrl);
-            _httpClient.DefaultRequestHeaders.Referrer = new Uri($"{uri.Scheme}://{uri.Host}");
+            if (string.IsNullOrEmpty(feedUrl)) return news;
 
-            // 2. Usamos un User-Agent sencillo pero moderno (sin tantas "pistas" que complican la Key)
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/xml, application/xml, application/rss+xml, */*");
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "es-ES,es;q=0.9");
+            var uri = new Uri(feedUrl);
+            // User-Agent de Windows (el que mejor nos ha ido)
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+
+            // Referer genérico de Google (nunca falla)
+            _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://www.google.com/");
+
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/xml,application/xml,application/rss+xml,*/*");
+
             _logger.Info($"Downloading feed from {feedUrl}");
 
-            // 2. Descarga
+            //Descarga
             response = await _httpClient.GetAsync(feedUrl, ct);
 
             if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
@@ -62,29 +65,31 @@ public class RssService : IRssService
             using var reader = XmlReader.Create(stream, settings);
             var feed = SyndicationFeed.Load(reader);
 
-            if (feed == null) return news;
-
-            _logger.Info($"Feed downloaded successfully. Items: {feed.Items.Count()}");
-
-            foreach (var item in feed.Items.Take(20))
+            if (feed != null)
             {
-                // Verificamos si se ha solicitado cancelar en cada iteración del bucle
-                ct.ThrowIfCancellationRequested();
-                var categoryName = item.Categories.FirstOrDefault()?.Name ?? "General";
-                string? imageUrl = ExtractImageUrl(item);
+                _logger.Info($"Feed downloaded successfully. Items: {feed.Items.Count()}");
 
-                news.Add(new NewsItem
+
+                foreach (var item in feed.Items.Take(20))
                 {
-                    Title = StripHtml(item.Title?.Text ?? ""),
-                    Link = item.Links.FirstOrDefault()?.Uri.ToString() ?? "",
-                    Description = StripHtml(item.Summary?.Text ?? item.Copyright?.Text ?? ""),
-                    PublishDate = item.PublishDate.DateTime == DateTime.MinValue
-                                  ? item.LastUpdatedTime.DateTime
-                                  : item.PublishDate.DateTime,
-                    Category = categoryFromDict,
-                    Source = feed.Title?.Text ?? new Uri(feedUrl).Host,
-                    ImageUrl = imageUrl
-                });
+                    // Verificamos si se ha solicitado cancelar en cada iteración del bucle
+                    ct.ThrowIfCancellationRequested();
+                    var categoryName = item.Categories.FirstOrDefault()?.Name ?? "General";
+                    string? imageUrl = ExtractImageUrl(item);
+
+                    news.Add(new NewsItem
+                    {
+                        Title = StripHtml(item.Title?.Text ?? ""),
+                        Link = item.Links.FirstOrDefault()?.Uri.ToString() ?? "",
+                        Description = StripHtml(item.Summary?.Text ?? item.Copyright?.Text ?? ""),
+                        PublishDate = item.PublishDate.DateTime == DateTime.MinValue
+                                      ? item.LastUpdatedTime.DateTime
+                                      : item.PublishDate.DateTime,
+                        Category = categoryFromDict,
+                        Source = feed.Title?.Text ?? new Uri(feedUrl).Host,
+                        ImageUrl = imageUrl
+                    });
+                }
             }
         }
         catch (OperationCanceledException)

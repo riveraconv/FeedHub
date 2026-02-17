@@ -12,6 +12,7 @@ public class NewsAggregatorService : INewsAggregatorService
 
     private readonly Dictionary<string, string> _feeds = new()
     {
+        /*
         //El Pais 
 
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
@@ -76,42 +77,34 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.eldiario.es/rss/internacional/", "international"},
             {"https://www.eldiario.es/rss/focos/crisis-climatica/", "climatology" },
             {"https://www.eldiario.es/rss/tecnologia/", "technology" },
-           
 
-        //Xataka
-        {"https://feeds.feedburner.com/xataka2", "technology" },
+            //Xataka
+            {"https://feeds.feedburner.com/xataka2", "technology" },
 
-        //Applesfera
-        {"https://www.applesfera.com/index.xml", "technology" },
+            //Applesfera
+            {"https://www.applesfera.com/index.xml", "technology" },
+        */
+            //IGN España
+            {"https://es.ign.com/news.xml", "videogames" },
 
-        //IGN España
-        {"https://es.ign.com/news.xml", "videogames" },
+            // VidaExtra 
+            {"https://www.vidaextra.com/index.xml", "videogames"},
 
-        // VidaExtra 
-        {"https://www.vidaextra.com/index.xml", "videogames"},
+            //Eltiempo.es
+            {"https://www.eurogamer.es/feed/news", "climatology" },
 
-        //Eltiempo.es
-        {"https://www.eurogamer.es/feed/news", "climatology" },
+            // 3DJuegos 
+            {"https://www.3djuegos.com/index.xml", "videogames"},
 
-        // 3DJuegos 
-        {"https://www.3djuegos.com/index.xml", "videogames"},
+            // Eurogamer España 
+            {"https://www.eurogamer.es/feed", "videogames"},
 
-        // Eurogamer España 
-        {"https://www.eurogamer.es/feed", "videogames"},
+            // ComputerHoy 
+            {"https://feeds.feedburner.com/computerhoy", "technology"},   
 
-  
-
-        // Meristation 
-        {"https://as.com/rss/meristation/portada.xml", "videogames"},
-
-        // ComputerHoy 
-        {"https://computerhoy.com/noticias.xml", "technology"},   
-
-        // HobbyConsolas 
-        {"https://www.hobbyconsolas.com/noticias.xml", "videogames"},
-
-        // Vandal 
-        {"https://vandal.elespanol.com/vandal.xml", "videogames"},
+            // HobbyConsolas 
+            {"https://feeds.feedburner.com/hobbyconsolas", "videogames"},
+        
     };
 
 

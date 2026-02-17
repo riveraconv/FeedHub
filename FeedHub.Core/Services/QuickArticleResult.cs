@@ -17,8 +17,7 @@ namespace FeedHub_Core.Services
     {
         public async Task<QuickArticleResult> Extract(string rawHtml)
         {
-            if (string.IsNullOrWhiteSpace(rawHtml))
-                return EmptyResult();
+            if (string.IsNullOrWhiteSpace(rawHtml)) return EmptyResult();
 
             var doc = new HtmlDocument();
             doc.LoadHtml(rawHtml);
@@ -31,14 +30,16 @@ namespace FeedHub_Core.Services
 
             // 🔹 Texto del artículo
             var articleNode = GetCleanArticleNode(doc);
-            if (articleNode == null)
-                return EmptyResult();
+            if (articleNode == null) return EmptyResult();
+
+            // Image
+            var imageUrl = ExtractBestImage(doc, articleNode) ?? string.Empty;
 
             string textContent = CleanText(articleNode.InnerHtml);
             textContent = RemoveResidualGarbage(textContent);
 
             // 🔹 Imagen principal (robusta)
-            var imageUrl = ExtractBestImage(doc, articleNode) ?? string.Empty;
+            
 
             return new QuickArticleResult
             {
@@ -53,97 +54,49 @@ namespace FeedHub_Core.Services
         {
             if (doc == null) return null;
 
-            var baseUrl =
-                doc.DocumentNode
-                   .SelectSingleNode("//meta[@property='og:url']")
-                   ?.GetAttributeValue("content", null);
+            // Intentar OpenGraph primero (Suele ser la mejor calidad en Xataka)
+            var ogImage = doc.DocumentNode.SelectSingleNode("//meta[@property='og:image']")?.GetAttributeValue("content", null);
+            if (IsValidImageUrl(ogImage)) return ogImage;
 
-            // 1️⃣ og:image
-            var ogImage =
-                doc.DocumentNode
-                   .SelectSingleNode("//meta[@property='og:image']")
-                   ?.GetAttributeValue("content", null);
+            // Buscar en el contenido
+            if (articleNode != null)
+            {
+                var img = articleNode.Descendants("img")
+                    .Where(x => {
+                        var src = x.GetAttributeValue("src", "") ?? x.GetAttributeValue("data-src", "");
+                        return !src.Contains("avatar") && !src.Contains("icon") && !src.Contains("logo");
+                    })
+                    .FirstOrDefault();
 
-            var normalized = NormalizeImageUrl(ogImage, baseUrl);
-            if (IsValidImageUrl(normalized))
-                return normalized;
-
-            // 2️⃣ twitter:image
-            var twitterImage =
-                doc.DocumentNode
-                   .SelectSingleNode("//meta[@name='twitter:image']")
-                   ?.GetAttributeValue("content", null);
-
-            normalized = NormalizeImageUrl(twitterImage, baseUrl);
-            if (IsValidImageUrl(normalized))
-                return normalized;
-
-            // 3️⃣ Primera imagen real del artículo
-            var imgSrc = articleNode
-    .Descendants("img")
-    .Select(img =>
-        img.GetAttributeValue("data-src", null) ??
-        img.GetAttributeValue("data-original", null) ??
-        ExtractFromSrcSet(img.GetAttributeValue("srcset", null)) ??
-        img.GetAttributeValue("src", null))
-    .FirstOrDefault(src =>
-        !string.IsNullOrWhiteSpace(src) &&
-        !src.Contains("sprite") &&
-        !src.Contains("logo") &&
-        !src.StartsWith("data:"));
-
-            normalized = NormalizeImageUrl(imgSrc, baseUrl);
-            if (IsValidImageUrl(normalized))
-                return normalized;
-
+                if (img != null)
+                {
+                    return img.GetAttributeValue("data-src", null) ??
+                           img.GetAttributeValue("src", null);
+                }
+            }
             return null;
-        }
-        private string? ExtractFromSrcSet(string? srcset)
-        {
-            if (string.IsNullOrWhiteSpace(srcset))
-                return null;
-
-            // Formato: url1 300w, url2 600w
-            var candidates = srcset.Split(',')
-                .Select(p => p.Trim().Split(' '))
-                .Where(p => p.Length > 0)
-                .Select(p => p[0])
-                .ToList();
-
-            return candidates.LastOrDefault();
         }
         private bool IsValidImageUrl(string? url)
         {
-            if (string.IsNullOrWhiteSpace(url))
-                return false;
-
-            return url.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                || url.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)
-                || url.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
-                || url.EndsWith(".webp", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private string? NormalizeImageUrl(string? rawUrl, string? baseUrl)
-        {
-            if (string.IsNullOrWhiteSpace(rawUrl))
-                return null;
-
-            if (Uri.TryCreate(rawUrl, UriKind.Absolute, out var absolute))
-                return absolute.ToString();
-
-            if (!string.IsNullOrWhiteSpace(baseUrl) &&
-                Uri.TryCreate(new Uri(baseUrl), rawUrl, out var combined))
-                return combined.ToString();
-
-            return null;
+            return !string.IsNullOrWhiteSpace(url) &&
+                   !url.Contains("svg") &&
+                   (url.StartsWith("http") || url.StartsWith("//"));
         }
 
         private string CleanText(string html)
         {
             if (string.IsNullOrWhiteSpace(html)) return string.Empty;
 
+            html = WebUtility.HtmlDecode(html);
+
+            //reemplaza cierre de bloques por nueva linea, no por espacio
+            html = Regex.Replace(html, @"(?i)</(div|p|h[1-6]|li|blockquote|section|article)>", "\n");
+
             // 1️⃣ Quitar scripts, estilos y comentarios
             html = Regex.Replace(html, @"<script.*?>.*?</script>|<style.*?>.*?</style>|", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            // Reemplazar <br> por nueva línea
+            html = Regex.Replace(html, @"(?i)<br\s*/?>", "\n");
 
             // 2️⃣ IMPORTANTE: Antes de borrar etiquetas, reemplazamos bloques que separan texto por un espacio
             // Esto evita que "Barcelona" y "17" se peguen si estaban en celdas o divs distintos.
@@ -181,47 +134,13 @@ namespace FeedHub_Core.Services
             return string.Join("\n", paragraphs);
         }
 
-        private string RemoveResidualGarbage(string html)
-        {
-            string[] residuals =
-            {
-        "©", "Copyright", "Reuters", "Europa Press", "EFE",
-        "Redacción", "Actualizado", "Publicado", "Fuente:"
-    };
-
-            foreach (var r in residuals)
-                html = Regex.Replace(html, @$"<p>.*{r}.*</p>", "", RegexOptions.IgnoreCase);
-
-            return html;
-        }
-
-
-        private HtmlNode? GetLargestTextNode(HtmlNode root)
-        {
-            if (root == null) return null;
-            HtmlNode? largest = null;
-            int maxLength = 0;
-
-            foreach (var node in root.Descendants("div").Concat(root.Descendants("section")).Concat(root.Descendants("article")))
-            {
-                var text = node.InnerText?.Trim() ?? "";
-                if (text.Length > maxLength)
-                {
-                    maxLength = text.Length;
-                    largest = node;
-                }
-            }
-
-            return largest ?? root;
-        }
-
         private QuickArticleResult EmptyResult()
         {
             return new QuickArticleResult
             {
-                Html = "<html><body><p>No se pudo cargar el contenido.</p></body></html>",
-                Title = "Sin título",
-                ImageUrl = string.Empty
+                Html = "",
+                Title = "",
+                ImageUrl = ""
             };
         }
 
@@ -231,15 +150,21 @@ namespace FeedHub_Core.Services
 
             var unwantedSelectors = new[]
             {
-                "//aside", "//footer", "//nav", "//header",
+                "//aside", "//footer", "//nav", "//header", "//script", "//style",
                 "//*[contains(@class,'ed-sections')]",  // El menú azul de la imagen 1
                 "//*[contains(@class,'site-map')]",
                 "//*[contains(@class,'related')]",     // Bloques de "Te puede interesar"
                 "//*[contains(@class,'featured-related')]", // Noticias sugeridas (Imagen 2 y 3)
                 "//*[contains(@class,'ad-')]",
-                "//*[contains(@class,'social')]",
+                "//*[contains(@class,'video-player')]", // Vídeos que rompen el texto
+                "//*[contains(@class,'m-entry-slot')]", // "Te puede interesar" interno
+                "//*[contains(@class,'social-share')]",
+                "//div[contains(@id, 'js-article-video')]",
+                "//div[contains(@class, 'ad-wrapper')]",
                 "//*[contains(@class,'newsletter')]",
-                "//*[contains(@class,'magazine-promo')]"
+                "//*[contains(@class,'magazine-promo')]",
+                "//div[contains(@class, 'shop-product')]",  // Cajas de compra (Amazon, etc)
+                "//div[contains(@class, 'toc')]"
             };
 
             foreach (var selector in unwantedSelectors)
@@ -251,18 +176,25 @@ namespace FeedHub_Core.Services
             // 1️⃣ Intentar selectores semánticos muy específicos primero
             // elDiario.es usa "article-text" para el cuerpo real
             var articleNode =
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class,'blob-container')]") ??
                 doc.DocumentNode.SelectSingleNode("//div[@itemprop='articleBody']") ??
                 doc.DocumentNode.SelectSingleNode("//div[contains(@class,'article-text')]") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class,'article-content')]") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class,'post-content')]") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class,'article-content')]") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class,'post-content')]") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@id,'main-content')]") ??
+                //general standars
+                doc.DocumentNode.SelectSingleNode("//div[@itemprop='articleBody']") ??
                 doc.DocumentNode.SelectSingleNode("//article") ??
                 doc.DocumentNode.SelectSingleNode("//main") ??
-
                 GetBestContentNode(doc.DocumentNode);
-            // 2️⃣ Si no hay suerte, buscamos el nodo con más párrafos reales
-            GetBestContentNode(doc.DocumentNode);
+
 
             if (articleNode == null) return null;
 
-            
+            var shortLinks = articleNode.SelectNodes(".//p[count(a) = 1 and string-length(text()) < 50]");
+            if (shortLinks != null) foreach (var sl in shortLinks) sl.Remove();
 
             // 4️⃣ LIMPIEZA FINAL: Si después de todo, el nodo resultante sigue siendo 
             // mayoritariamente enlaces, buscamos dentro de él solo los párrafos.
@@ -277,26 +209,33 @@ namespace FeedHub_Core.Services
                     foreach (var p in paragraphs) cleanNode.AppendChild(p.Clone());
                     return cleanNode;
                 }
+                //limpia links
+                var linkOnlyParagraphs = articleNode.SelectNodes(".//p[count(a)=1 and string-length(text()) < 60]");
+                if (linkOnlyParagraphs != null)
+                {
+                    foreach (var p in linkOnlyParagraphs) p.Remove();
+                }
             }
 
             return articleNode;
         }
+        private string RemoveResidualGarbage(string html)
+        {
+            // Limpieza final de copyright
+            return Regex.Replace(html, @"(Copyright|Derechos reservados|©).{0,50}</p>", "", RegexOptions.IgnoreCase);
+        }
+
+        // Mantén tu GetBestContentNode y CalculateLinkDensity como estaban, 
+        // son buenos "fallback" si fallan los selectores principales.
         private HtmlNode? GetBestContentNode(HtmlNode root)
         {
-            // Buscamos el nodo que tenga la mejor relación entre párrafos y longitud
             return root.Descendants()
                 .Where(n => (n.Name == "div" || n.Name == "section") && n.HasChildNodes)
                 .OrderByDescending(n => {
                     var ps = n.SelectNodes("./p");
                     if (ps == null) return 0;
-
-                    // PUNTUACIÓN:
-                    // +100 por cada párrafo largo (>50 caracteres)
-                    // -50 si el nodo tiene demasiados enlaces (densidad de links)
                     int score = ps.Count(p => p.InnerText.Trim().Length > 50) * 100;
-
-                    if (CalculateLinkDensity(n) > 0.5) score -= 1000; // Penalizar menús
-
+                    if (CalculateLinkDensity(n) > 0.5) score -= 1000;
                     return score;
                 })
                 .FirstOrDefault();
@@ -306,7 +245,6 @@ namespace FeedHub_Core.Services
         {
             var text = node.InnerText.Trim();
             if (string.IsNullOrWhiteSpace(text)) return 0;
-
             var linkText = string.Join("", node.SelectNodes(".//a")?.Select(a => a.InnerText) ?? Enumerable.Empty<string>());
             return (double)linkText.Length / text.Length;
         }
