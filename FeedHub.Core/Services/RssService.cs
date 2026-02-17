@@ -20,89 +20,63 @@ public class RssService : IRssService
     public async Task<List<NewsItem>> GetNewsAsync(string feedUrl, string categoryFromDict, CancellationToken ct = default)
     {
         var news = new List<NewsItem>();
-        HttpResponseMessage? response = null;
+        if (string.IsNullOrEmpty(feedUrl)) return news;
 
         try
         {
-            // REEMPLAZA TU BLOQUE DE CABECERAS POR ESTE:
-            _httpClient.DefaultRequestHeaders.Clear();
+            // CREAMOS LA PETICIÓN LOCAL (Esto es Thread-Safe, cada hilo tiene la suya)
+            var request = new HttpRequestMessage(HttpMethod.Get, feedUrl);
 
-            if (string.IsNullOrEmpty(feedUrl)) return news;
+            // Añadimos las cabeceras directamente a la petición, no al cliente global
+            request.Headers.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+            request.Headers.TryAddWithoutValidation("Accept", "text/xml,application/xml,application/rss+xml,*/*");
+            request.Headers.Referrer = new Uri("https://www.google.com/");
 
-            var uri = new Uri(feedUrl);
-            // User-Agent de Windows (el que mejor nos ha ido)
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+            _logger.Info($"Downloading: {feedUrl}");
 
-            // Referer genérico de Google (nunca falla)
-            _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://www.google.com/");
-
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/xml,application/xml,application/rss+xml,*/*");
-
-            _logger.Info($"Downloading feed from {feedUrl}");
-
-            //Descarga
-            response = await _httpClient.GetAsync(feedUrl, ct);
+            using var response = await _httpClient.SendAsync(request, ct);
 
             if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                _logger.Warn($"Acceso denegado (403) en {feedUrl}. Saltando fuente.");
+                _logger.Warn($"403 Forbidden: {feedUrl}");
                 return news;
             }
 
             response.EnsureSuccessStatusCode();
 
             using var stream = await response.Content.ReadAsStreamAsync(ct);
+            var settings = new XmlReaderSettings { Async = true, DtdProcessing = DtdProcessing.Ignore };
 
-            // CONFIGURACIÓN PARA EVITAR EL ERROR DE DTD
-            var settings = new XmlReaderSettings
-            {
-                Async = true,
-                DtdProcessing = DtdProcessing.Parse, // Permite leer feeds con declaraciones DTD
-                IgnoreWhitespace = true
-            };
-
-            // 2. Cargamos el Feed desde el stream descargado
             using var reader = XmlReader.Create(stream, settings);
             var feed = SyndicationFeed.Load(reader);
 
             if (feed != null)
             {
-                _logger.Info($"Feed downloaded successfully. Items: {feed.Items.Count()}");
-
-
                 foreach (var item in feed.Items.Take(20))
                 {
-                    // Verificamos si se ha solicitado cancelar en cada iteración del bucle
                     ct.ThrowIfCancellationRequested();
-                    var categoryName = item.Categories.FirstOrDefault()?.Name ?? "General";
-                    string? imageUrl = ExtractImageUrl(item);
+
+                    var link = item.Links.FirstOrDefault()?.Uri.ToString() ?? item.Id;
+                    if (string.IsNullOrEmpty(link)) continue;
 
                     news.Add(new NewsItem
                     {
-                        Title = StripHtml(item.Title?.Text ?? ""),
-                        Link = item.Links.FirstOrDefault()?.Uri.ToString() ?? "",
-                        Description = StripHtml(item.Summary?.Text ?? item.Copyright?.Text ?? ""),
+                        Title = StripHtml(item.Title?.Text ?? "Sin título"),
+                        Link = link,
+                        Description = StripHtml(item.Summary?.Text ?? ""),
                         PublishDate = item.PublishDate.DateTime == DateTime.MinValue
-                                      ? item.LastUpdatedTime.DateTime
-                                      : item.PublishDate.DateTime,
-                        Category = categoryFromDict,
+                                        ? item.LastUpdatedTime.DateTime
+                                        : item.PublishDate.DateTime,
+                        Category = categoryFromDict ?? "General", // Evitamos null en la Key
                         Source = feed.Title?.Text ?? new Uri(feedUrl).Host,
-                        ImageUrl = imageUrl
+                        ImageUrl = ExtractImageUrl(item)
                     });
                 }
             }
         }
-        catch (OperationCanceledException)
-        {
-            _logger.Warn($"Download timed out for: {feedUrl}");
-        }
         catch (Exception ex)
         {
-            _logger.Error($"Error loading RSS feed {feedUrl}: {ex.Message}");
-        }
-        finally
-        {
-            response?.Dispose();
+            _logger.Error($"Error en {feedUrl}: {ex.Message}");
         }
 
         return news;
