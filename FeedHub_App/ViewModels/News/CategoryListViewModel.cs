@@ -24,7 +24,7 @@ namespace FeedHub_App.ViewModels.News
             "Society",
             "Culture",
             "Climatology",
-            "Videogames",
+            "Entertainment",
             
         };
 

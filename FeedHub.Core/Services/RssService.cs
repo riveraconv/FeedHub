@@ -74,6 +74,7 @@ public class RssService : IRssService
                 }
             }
         }
+
         catch (Exception ex)
         {
             _logger.Error($"Error en {feedUrl}: {ex.Message}");

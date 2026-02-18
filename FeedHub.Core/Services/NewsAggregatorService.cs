@@ -58,7 +58,7 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.20minutos.es/rss/economia", "economy" },
             {"https://www.20minutos.es/rss/tecnologia/", "technology" },
             {"https://www.20minutos.es/rss/salud/", "science" },
-            {"https://www.20minutos.es/rss/videojuegos/", "videogames" },
+            {"https://www.20minutos.es/rss/videojuegos/", "entertainment" },
             {"https://www.20minutos.es/rss/cultura/", "culture" },
         
             //El Confidencial
@@ -87,23 +87,24 @@ public class NewsAggregatorService : INewsAggregatorService
             
 
             // VidaExtra 
-            {"https://www.vidaextra.com/index.xml", "videogames"},
-
+            { "https://www.vidaextra.com/feedburner.xml", "entertainment" },
+            { "https://www.espinof.com/index.xml", "entertainment" },
+ 
             //Eurogamer
-            {"https://www.eurogamer.es/feed/news", "videogames" },
+            {"https://www.eurogamer.es/feed/news", "entertainment" },
 
             // 3DJuegos 
-            {"https://www.3djuegos.com/index.xml", "videogames"},
+            {"https://www.3djuegos.com/index.xml", "entertainment"},
 
             // HobbyConsolas 
-            {"https://www.hobbyconsolas.com/rss", "videogames"},
+            {"https://www.hobbyconsolas.com/rss", "entertainment"},
 
               //IGN España
 
-            {"https://es.ign.com/playstation-5.xml", "videogames" },
-            {"https://es.ign.com/nintendo.xml", "videogames" },
-            {"https://es.ign.com/xbox.xml", "videogames" },
-            {"https://es.ign.com/pc.xml", "videogames" },
+            {"https://es.ign.com/playstation-5.xml", "entertainment" },
+            {"https://es.ign.com/nintendo.xml", "entertainment" },
+            {"https://es.ign.com/xbox.xml", "entertainment" },
+            {"https://es.ign.com/pc.xml", "entertainment" },
     };
 
 
@@ -150,7 +151,7 @@ public class NewsAggregatorService : INewsAggregatorService
     public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
     {
         var allItems = new ConcurrentBag<NewsItem>();
-        DateTime cutOffDate = category == "science" || category == "culture" || category == "videogames"
+        DateTime cutOffDate = category == "science" || category == "culture" || category == "entertainment"
                             ? DateTime.Now.AddDays(-2)
                             : DateTime.Now.AddDays(-7); 
 
