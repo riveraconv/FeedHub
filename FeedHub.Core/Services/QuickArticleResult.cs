@@ -15,6 +15,16 @@ namespace FeedHub_Core.Services
 
     public class QuickArticleService
     {
+        private readonly string[] _stopPatterns = {
+                                "Ver comentarios",
+                                "Lo más leído",
+                                "Lo último",
+                                "Temas:",
+                                "Noticias relacionadas",
+                                "Sigue leyendo",
+                                "Más información",
+                                "Comentarios"
+                            };
         public async Task<QuickArticleResult> Extract(string rawHtml)
         {
             if (string.IsNullOrWhiteSpace(rawHtml)) return EmptyResult();
@@ -89,49 +99,75 @@ namespace FeedHub_Core.Services
 
             html = WebUtility.HtmlDecode(html);
 
-            //reemplaza cierre de bloques por nueva linea, no por espacio
-            html = Regex.Replace(html, @"(?i)</(div|p|h[1-6]|li|blockquote|section|article)>", "\n");
-
-            // 1️⃣ Quitar scripts, estilos y comentarios
-            html = Regex.Replace(html, @"<script.*?>.*?</script>|<style.*?>.*?</style>|", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-
-            // Reemplazar <br> por nueva línea
+            // 2️⃣ Normalización de bloques: Convertimos etiquetas estructurales en SALTOS DE LÍNEA (\n)
+            // Esto es vital para que "Alberto Martín" y "El mundo tiene ganas..." no acaben en la misma línea.
+            html = Regex.Replace(html, @"(?i)</?(address|blockquote|div|h[1-6]|li|p|section|article|aside|header|footer|figcaption|time|span)>", "\n");
             html = Regex.Replace(html, @"(?i)<br\s*/?>", "\n");
 
-            // 2️⃣ IMPORTANTE: Antes de borrar etiquetas, reemplazamos bloques que separan texto por un espacio
-            // Esto evita que "Barcelona" y "17" se peguen si estaban en celdas o divs distintos.
-            html = Regex.Replace(html, @"(?i)</?(address|blockquote|center|div|dt|dd|fieldset|form|h1|h2|h3|h4|h5|h6|li|p|pre|tr|td|section|article|aside|header|footer)>", " ");
+            // 3️⃣ Limpieza de etiquetas: Borramos todo EXCEPTO formato básico (opcional, según tu UI)
+            // He quitado los enlaces (<a>) porque en móviles suelen dar problemas de clics accidentales
+            html = Regex.Replace(html, @"<(?!/?(b|strong|i|em)\b)[^>]*>", "");
 
-            // 3️⃣ Limpieza selectiva: Borramos todo EXCEPTO negritas, cursivas y enlaces
-            html = Regex.Replace(html, @"<(?!/?(b|strong|i|em|a)\b)[^>]*>", "");
-
-            // 4️⃣ Decodificar entidades HTML (ej: &nbsp; o &aacute;)
-            html = WebUtility.HtmlDecode(html);
-
-            // 5️⃣ SOLUCIÓN A LAS FECHAS: Limpiar espacios múltiples, tabuladores y saltos de línea internos
-            // Reemplaza cualquier secuencia de espacios/tabs/saltos por UN solo espacio
-            html = Regex.Replace(html, @"\s+", " ");
+            // 4️⃣ Separamos por líneas reales
+            var rawLines = html.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
             // 6️⃣ Filtrar palabras de spam sobre cada línea
-            string[] spamPatterns = {
-        "síguenos", "suscríbete", "publicidad", "te puede interesar",
-        "leer más", "comparte", "newsletter", "tweet", "facebook", "compartir",
-        "suscripción", "regístrate", "pago", "premium",
-        "añadir usuario", "continuar leyendo", "leer más en", "solo para suscriptores",
-        "inicia sesión", "tu cuenta", "tu suscripción", "compartir en",
-        "comentarios", "cambiar tu contraseña", "modo premium", "accede aquí", "Por qué estás viendo esto?", "Por qué confiar en el Periódico",
-        "Cada uno accederá con su propia cuenta de email, lo que os permitirá personalizar vuestra experiencia en el PAÍS."
-    };
-            var lines = html.Split(new[] { ". " }, StringSplitOptions.RemoveEmptyEntries);
+            string[] noisePatterns = {
+            "síguenos", "suscríbete", "publicidad", "te puede interesar",
+            "leer más", "comparte", "newsletter", "tweet", "facebook", "compartir",
+            "suscripción", "regístrate", "pago", "premium",
+            "añadir usuario", "continuar leyendo", "leer más en", "solo para suscriptores",
+            "inicia sesión", "tu cuenta", "tu suscripción", "compartir en",
+            "comentarios", "cambiar tu contraseña", "modo premium", "accede aquí", "Por qué estás viendo esto?", "Por qué confiar en el Periódico",
+            "Cada uno accederá con su propia cuenta de email, lo que os permitirá personalizar vuestra experiencia en el PAÍS.",
+            "Amazon", "PcComponentes", "El Corte Inglés", "MediaMarkt", "eBay",
+            "Clic para ver", "Hoy en", "oferta", "El precio podría variar. Obtenemos comisión por estos enlaces",
+            "Basado en hechos observados y verificados directamente por nuestros periodistas o por fuentes informadas.",
+            "Si continúas leyendo en este dispositivo, no se podrá leer en el otro.", "Rellena tu nombre y apellido para comentar",
+            "Please enable JavaScript to view the comments powered by Disqus.", "RRSS WhatsApp", "RRSS Twitter", "RRSS email",
+            "¿Por qué confiar en nosotros?"
+            };
 
-            var paragraphs = lines
-                .Select(p => p.Trim())
-                .Where(p => !string.IsNullOrWhiteSpace(p)
-                         && p.Length > 5
-                         && !spamPatterns.Any(spam => p.Contains(spam, StringComparison.OrdinalIgnoreCase)))
-                .Select(p => p.EndsWith(".") ? $"<p>{p}</p>" : $"<p>{p}.</p>");
+            var cleanParagraphs = new List<string>();
+           
+            foreach (var line in rawLines)
+            {
+                var trimmedLine = line.Trim();
 
-            return string.Join("\n", paragraphs);
+                //0) Freno de mano, si la línea contiene stopPaterns, el artículo termina ahí
+                if (_stopPatterns.Any(p => trimmedLine.Contains(p, StringComparison.OrdinalIgnoreCase)))
+                {
+                    break;
+                }
+
+                // 🟢 FILTRO DE CALIDAD 🟢
+
+                // A) Demasiado corto (Metadatos como "Editor", "Fecha", "12")
+                if (trimmedLine.Length < 25) continue;
+
+                // B) Si es una línea de "Spam" conocida
+                if (noisePatterns.Any(p => trimmedLine.Contains(p, StringComparison.OrdinalIgnoreCase))) continue;
+
+                // C) Si la línea es puramente un enlace o texto de red social
+                if (trimmedLine.StartsWith("http") || trimmedLine.Contains("pic.twitter")) continue;
+
+                // D) Si la línea contiene anuncions con precios etc
+                if (Regex.IsMatch(trimmedLine, @"\d+[,.]\d+\s*(€|euros)", RegexOptions.IgnoreCase)) continue;
+
+                
+
+                // Línea corta y nombres de tiendas
+                if (trimmedLine.Length < 30 && noisePatterns.Any(p => trimmedLine.Contains(p, StringComparison.OrdinalIgnoreCase))) continue;
+
+                // Limpiamos espacios dobles internos
+                var finalLine = Regex.Replace(trimmedLine, @"\s+", " ");
+
+                // Añadimos como párrafo (sin forzar el punto al final, que el autor escriba bien)
+                cleanParagraphs.Add($"<p>{finalLine}</p>");
+            }
+
+            // 6️⃣ Reconstrucción
+            return string.Join("\n", cleanParagraphs);
         }
 
         private QuickArticleResult EmptyResult()
@@ -148,31 +184,6 @@ namespace FeedHub_Core.Services
         {
             if (doc.DocumentNode == null) return null;
 
-            var unwantedSelectors = new[]
-            {
-                "//aside", "//footer", "//nav", "//header", "//script", "//style",
-                "//*[contains(@class,'ed-sections')]",  // El menú azul de la imagen 1
-                "//*[contains(@class,'site-map')]",
-                "//*[contains(@class,'related')]",     // Bloques de "Te puede interesar"
-                "//*[contains(@class,'featured-related')]", // Noticias sugeridas (Imagen 2 y 3)
-                "//*[contains(@class,'ad-')]",
-                "//*[contains(@class,'video-player')]", // Vídeos que rompen el texto
-                "//*[contains(@class,'m-entry-slot')]", // "Te puede interesar" interno
-                "//*[contains(@class,'social-share')]",
-                "//div[contains(@id, 'js-article-video')]",
-                "//div[contains(@class, 'ad-wrapper')]",
-                "//*[contains(@class,'newsletter')]",
-                "//*[contains(@class,'magazine-promo')]",
-                "//div[contains(@class, 'shop-product')]",  // Cajas de compra (Amazon, etc)
-                "//div[contains(@class, 'toc')]"
-            };
-
-            foreach (var selector in unwantedSelectors)
-            {
-                var nodes = doc.DocumentNode.SelectNodes(selector)?.ToList();
-                if (nodes != null) foreach (var n in nodes) n.Remove();
-            }
-
             // 1️⃣ Intentar selectores semánticos muy específicos primero
             // elDiario.es usa "article-text" para el cuerpo real
             var articleNode =
@@ -184,6 +195,10 @@ namespace FeedHub_Core.Services
                 doc.DocumentNode.SelectSingleNode("//div[contains(@class,'article-content')]") ??
                 doc.DocumentNode.SelectSingleNode("//div[contains(@class,'post-content')]") ??
                 doc.DocumentNode.SelectSingleNode("//div[contains(@id,'main-content')]") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class,'main-content')]") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class,'content-inner')]") ??
+                doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'ep-article-body')]") ??
+
                 //general standars
                 doc.DocumentNode.SelectSingleNode("//div[@itemprop='articleBody']") ??
                 doc.DocumentNode.SelectSingleNode("//article") ??
@@ -193,6 +208,63 @@ namespace FeedHub_Core.Services
 
             if (articleNode == null) return null;
 
+            var unwantedSelectors = new[]
+            {
+                ".//aside", "//footer", "//nav", "//header", "//script", "//style",
+                ".//*[contains(@class,'ed-sections')]",  // El menú azul de la imagen 1
+                ".//*[contains(@class,'site-map')]",
+                ".//*[contains(@class,'related')]",     // Bloques de "Te puede interesar"
+                ".//*[contains(@class,'featured-related')]", // Noticias sugeridas (Imagen 2 y 3)
+                ".//*[contains(@class,'ad-')]",
+                ".//*[contains(@class,'video-player')]", // Vídeos que rompen el texto
+                ".//*[contains(@class,'m-entry-slot')]", // "Te puede interesar" interno
+                ".//*[contains(@class,'social-share')]",
+                ".//div[contains(@id, 'js-article-video')]",
+                ".//div[contains(@class, 'ad-wrapper')]",
+                ".//*[contains(@class,'newsletter')]",
+                ".//*[contains(@class,'magazine-promo')]",
+                ".//div[contains(@class, 'shop-product')]",  // Cajas de compra (Amazon, etc)
+                ".//div[contains(@class, 'toc')]",
+                ".//*[contains(@class, 'article-author')]",
+                ".//*[contains(@class, 'author-info')]",
+                ".//*[contains(@class, 'article-date')]",
+                ".//*[contains(@class, 'article-metadata')]",
+                ".//span[contains(@class, 'author')]",
+                ".//figcaption",
+                ".//*[contains(@class, 'caption')]",
+                ".//*[contains(@class, 'social-embed-caption')]",
+                ".//*[contains(@class, 'click-to-see')]",
+                ".//*[contains(@class, 'news-list')]",       // Listas de noticias al pie
+                ".//*[contains(@class, 'related-news')]",    // Relacionadas
+                ".//*[contains(@class, 'ep-related-items')]", // El estándar de Prensa Ibérica (su grupo)
+                ".//*[contains(@class, 'tags-container')]",  // Etiquetas/Tags que ensucian el final
+                ".//section[contains(@class, 'recomended')]", // Recomendados
+                ".//div[contains(@id, 'social-share-bottom')]", // Botones sociales finales
+                ".//div[contains(@class, 'author-bio')]",     // Biografía del autor al pie
+                ".//*[contains(@class, 'tp-comments')]",       // El botón de Ver comentarios
+                ".//*[contains(@class, 'ep-related-articles')]", // Artículos relacionados
+                ".//*[contains(@id, 'v-pinitos')]",            // El widget de "Lo más leído" (v-pinitos es común)
+                ".//*[contains(@class, 'ep-ranking')]",        // El ranking de noticias
+                ".//div[contains(@class, 'ep-more-news')]",    // Bloque de "Más noticias"
+                ".//aside",                                    // Los periódicos meten casi todo el ruido en <aside>
+                ".//div[@id='comments']",
+                ".//*[contains(@class, 'ep-content-footer')]",
+                ".//*[contains(@class, 'ep-section')]",
+                ".//*[contains(@class, 'ep-common-ranking')]",
+                ".//div[contains(@class, 'social-comments')]",
+                ".//div[contains(@class, 'newsletter-subscription')]",
+                ".//div[contains(@class, 'mod-more-news')]"
+            };
+            
+
+            foreach (var selector in unwantedSelectors)
+            {
+                var nodes = articleNode.SelectNodes(selector)?.ToList();
+                if (nodes != null) foreach (var n in nodes) n.Remove();
+            }
+
+            
+            //Limpieza de párrafos que son solo links cortos
             var shortLinks = articleNode.SelectNodes(".//p[count(a) = 1 and string-length(text()) < 50]");
             if (shortLinks != null) foreach (var sl in shortLinks) sl.Remove();
 
@@ -202,11 +274,19 @@ namespace FeedHub_Core.Services
             {
                 // Si falló y pilló un menú, intentamos buscar solo los párrafos <p> 
                 // que tengan una longitud decente dentro del nodo.
-                var paragraphs = articleNode.SelectNodes(".//p[string-length(text()) > 40]");
+                var paragraphs = articleNode.SelectNodes(".//p");
                 if (paragraphs != null)
                 {
                     var cleanNode = HtmlNode.CreateNode("<div></div>");
-                    foreach (var p in paragraphs) cleanNode.AppendChild(p.Clone());
+                    foreach (var p in paragraphs)
+                    {
+                        var text = p.InnerText.Trim();
+                        // Solo aceptamos párrafos con una longitud mínima y que no sean "StopPatterns"
+                        if (text.Length > 40 && !_stopPatterns.Any(sp => text.Contains(sp, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            cleanNode.AppendChild(p.Clone());
+                        }
+                    }
                     return cleanNode;
                 }
                 //limpia links

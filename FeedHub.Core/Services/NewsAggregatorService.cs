@@ -12,7 +12,6 @@ public class NewsAggregatorService : INewsAggregatorService
 
     private readonly Dictionary<string, string> _feeds = new()
     {
-        /*
         //El Pais 
 
             {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
@@ -78,33 +77,33 @@ public class NewsAggregatorService : INewsAggregatorService
             {"https://www.eldiario.es/rss/focos/crisis-climatica/", "climatology" },
             {"https://www.eldiario.es/rss/tecnologia/", "technology" },
 
+        
             //Xataka
-            {"https://feeds.feedburner.com/xataka2", "technology" },
+            {"https://www.xataka.com/index.xml", "technology" },
 
             //Applesfera
             {"https://www.applesfera.com/index.xml", "technology" },
-        */
-            //IGN España
-            {"https://es.ign.com/news.xml", "videogames" },
+        
+            
 
             // VidaExtra 
             {"https://www.vidaextra.com/index.xml", "videogames"},
 
-            //Eltiempo.es
-            {"https://www.eurogamer.es/feed/news", "climatology" },
+            //Eurogamer
+            {"https://www.eurogamer.es/feed/news", "videogames" },
 
             // 3DJuegos 
             {"https://www.3djuegos.com/index.xml", "videogames"},
 
-            // Eurogamer España 
-            {"https://www.eurogamer.es/feed", "videogames"},
-
-            // ComputerHoy 
-            {"https://feeds.feedburner.com/computerhoy", "technology"},   
-
             // HobbyConsolas 
-            {"https://feeds.feedburner.com/hobbyconsolas", "videogames"},
-        
+            {"https://www.hobbyconsolas.com/rss", "videogames"},
+
+              //IGN España
+
+            {"https://es.ign.com/playstation-5.xml", "videogames" },
+            {"https://es.ign.com/nintendo.xml", "videogames" },
+            {"https://es.ign.com/xbox.xml", "videogames" },
+            {"https://es.ign.com/pc.xml", "videogames" },
     };
 
 
@@ -118,37 +117,34 @@ public class NewsAggregatorService : INewsAggregatorService
     public async Task<List<NewsItem>> GetLatestMixedAsync(int limit)
     {
         var tempList = new ConcurrentBag<NewsItem>();
-        var options = new ParallelOptions
-        {
-            MaxDegreeOfParallelism = 5
-        };
+        var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
 
         await Parallel.ForEachAsync(_feeds, options, async (kvp, ct) =>
         {
             try
             {
-                // TIMEOUT: Si un feed tarda > 5 segundos, se ignora
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                // Timeout individual de 10 seg por feed
+                using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                cts.CancelAfter(TimeSpan.FromSeconds(10));
+
                 var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
+
+                // Cogemos la más reciente de este feed
                 var latest = items.OrderByDescending(i => i.PublishDate).FirstOrDefault();
 
                 if (latest != null)
                 {
-                    latest.Category = kvp.Value;
                     tempList.Add(latest);
                 }
             }
             catch (Exception ex)
             {
-                _logger.Warn($"Error en {kvp.Key}: {ex.Message}");
+                _logger.Warn($"Fallo en feed mixto {kvp.Key}: {ex.Message}");
             }
         });
 
         var random = new Random();
-        return tempList
-            .OrderBy(x => random.Next()) // Mezclamos para dar variedad
-            .Take(limit)
-            .ToList();
+        return tempList.OrderBy(x => random.Next()).Take(limit).ToList();
     }
 
     public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
@@ -175,7 +171,8 @@ public class NewsAggregatorService : INewsAggregatorService
                     allItems.Add(item);
                 }
             }
-            catch { /* Ignorar errores de red */ }
+            catch { /* Ignorar errores de red */
+    }
         });
 
         var finalResult = allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
