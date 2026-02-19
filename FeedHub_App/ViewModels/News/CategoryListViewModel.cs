@@ -19,11 +19,10 @@ namespace FeedHub_App.ViewModels.News
             "Politics",
             "Economy",
             "Technology",
-            "Science",
+            "Planet",
             "Sports",
             "Society",
             "Culture",
-            "Climatology",
             "Entertainment",
             
         };

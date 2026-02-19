@@ -59,6 +59,22 @@ public class RssService : IRssService
                     var link = item.Links.FirstOrDefault()?.Uri.ToString() ?? item.Id;
                     if (string.IsNullOrEmpty(link)) continue;
 
+                    if (categoryFromDict == "technology" && feedUrl.Contains("hipertextual.com"))
+                    {
+                        string titleLower = item.Title?.Text.ToLower() ?? "";
+
+                        string[] blacklist = { "crítica", "película", "serie", "estreno", "cine", "Disney", "Netflix", "HBO", "tráiler",
+                                                "Disney+", "Movistar", "Movistar+", "Prime Video", "Marvel", "Star Wars"};
+
+                        bool hasEntertainmentCategory = item.Categories.Any(c =>
+                        c.Name.ToLower().Contains("cine") || c.Name.ToLower().Contains("series"));
+
+                        if (blacklist.Any(k => titleLower.Contains(k)) || hasEntertainmentCategory)
+                        {
+                            continue;
+                        }
+                    }
+
                     news.Add(new NewsItem
                     {
                         Title = StripHtml(item.Title?.Text ?? "Sin título"),
@@ -89,33 +105,67 @@ public class RssService : IRssService
         // 1. media:content
         var media = item.ElementExtensions
             .Where(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/")
-            .Select(e =>
-            {
-                try { return e.GetObject<XElement>(); }
-                catch { return null; }
-            })
+            .Select(e => { try { return e.GetObject<XElement>(); } catch { return null; }})
             .Where(x => x != null && x.Attribute("url") != null)
             .OrderByDescending(x => int.TryParse(x.Attribute("width")?.Value, out var w) ? w : 0)
             .FirstOrDefault();
 
         if (media != null) return media.Attribute("url")?.Value;
 
-        // 2. Enclosures
+        // 2.media:thumbnail (for example, BBC)
+        var thumb = item.ElementExtensions
+            .Where(e => e.OuterName == "thumbnail" && e.OuterNamespace == "http://search.yahoo.com/mrss/")
+            .Select(e => {try { return e.GetObject<XElement>(); } catch { return null; }})
+            .FirstOrDefault(x => x?.Attribute("url") != null);
+
+        if (thumb != null) return thumb.Attribute("url")?.Value;
+
+        // 3. Enclosures
         var enclosure = item.Links.FirstOrDefault(l => 
                         l.RelationshipType == "enclosure" &&
                         (l.MediaType?.StartsWith("image/") ?? false));
 
         if (enclosure != null) return enclosure.Uri.ToString();
 
-        // 3. Regex Fallback
+        // 4. Regex Fallback
 
-        var summary = item.Summary?.Text ?? item.Content?.ToString() ?? "";
-        if (!string.IsNullOrEmpty(summary))
+        // 4. EFE SPECIFIC SCAN
+        string summary = item.Summary?.Text ?? "";
+        string content = (item.Content as TextSyndicationContent)?.Text ?? "";
+
+        // Buscamos específicamente en la extensión "description" si el Summary falló
+        // EFE a veces duplica la descripción aquí pero con el HTML completo
+        string extraDescription = item.ElementExtensions
+            .FirstOrDefault(e => e.OuterName == "description")
+            ?.GetObject<XElement>().Value ?? "";
+
+        string encodedContent = item.ElementExtensions
+            .FirstOrDefault(e => e.OuterName == "encoded" && e.OuterNamespace == "http://purl.org/rss/1.0/modules/content/")
+            ?.GetObject<XElement>().Value ?? "";
+
+        // Sumamos todo el contenido bruto para el Regex
+        string rawHtml = summary + content + encodedContent + extraDescription;
+
+        if (!string.IsNullOrEmpty(rawHtml))
         {
-            var match = Regex.Match(summary, @"<img.+?src=[""'](.+?)[""']", RegexOptions.IgnoreCase);
-            if (match.Success) return match.Groups[1].Value;
-        }
+            // Regex robusto para EFE: busca cualquier etiqueta img y extrae el src
+            var match = Regex.Match(rawHtml, @"<img[^>]+src=[""'](?<url>[^""']+)[""']", RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                string url = match.Groups["url"].Value;
 
+                // Limpieza de entidades HTML (EFE suele codificar las URLs)
+                url = System.Net.WebUtility.HtmlDecode(url);
+
+                if (url.StartsWith("//")) url = "https:" + url;
+
+                // EFE a veces mete imágenes de 1x1 o píxeles de rastreo. 
+                // Si la URL es muy corta o sospechosa, la ignoramos.
+                if (url.Contains("pixel") || url.Contains("/1x1")) return null;
+
+                return url;
+            }
+        }
         return null;
     }
 

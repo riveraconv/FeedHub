@@ -14,97 +14,109 @@ public class NewsAggregatorService : INewsAggregatorService
     {
         //El Pais 
 
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada", "international" },
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada" ,"economy"},
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada", "science" },
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada", "technology"},
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/cultura/portada", "culture" },
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada", "sports" },
-            {"https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente", "climatology"},
-            {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada", "politics" },
-           
-            
-            //El Mundo
-            {"https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml", "international"},
-            {"https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml", "economy"},
-            {"https://e00-elmundo.uecdn.es/elmundo/rss/cultura.xml", "culture" },
-            {"https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml", "sports" },
-            {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "politics" },
+        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
+        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada", "international" },
+        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada" ,"economy"},
+        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada", "planet" },
+        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada", "technology"},
+        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/cultura/portada", "culture" },
+        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada", "sports" },
+        {"https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente", "planet"},
+        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada", "politics" },
 
-           
-            //La Vanguardia
-            {"https://www.lavanguardia.com/rss/internacional.xml", "international"},
-            {"https://www.lavanguardia.com/rss/politica.xml", "politics" },
-            {"https://www.lavanguardia.com/rss/deportes.xml", "sports" },
-            {"https://www.lavanguardia.com/rss/economia.xml", "economy" },
-            {"https://www.lavanguardia.com/rss/cultura.xml", "culture" },
-            {"https://www.lavanguardia.com/rss/natural.xml", "science" },
-       
-            
-            //El Periodico
-            {"https://www.elperiodico.com/es/rss/internacional/rss.xml", "international" },
-            {"https://www.elperiodico.com/es/rss/politica/rss.xml", "politics" },
-            {"https://www.elperiodico.com/es/rss/economia/rss.xml", "economy" },
-            {"https://www.elperiodico.com/es/rss/tecnologia/rss.xml", "technology" },
-            {"https://www.elperiodico.com/es/rss/sociedad/rss.xml", "society" },
-            {"https://www.elperiodico.com/es/rss/ciencia/rss.xml", "science" },
-            {"https://www.elperiodico.com/es/rss/deportes/rss.xml", "sports" },
-            {"https://www.elperiodico.com/es/rss/ocio-y-cultura/rss.xml", "culture" },
-        
-            //20 Minutos
-            {"https://www.20minutos.es/rss/internacional/", "international" },
-            {"https://www.20minutos.es/rss/deportes/", "sports" },
-            {"https://www.20minutos.es/rss/economia", "economy" },
-            {"https://www.20minutos.es/rss/tecnologia/", "technology" },
-            {"https://www.20minutos.es/rss/salud/", "science" },
-            {"https://www.20minutos.es/rss/videojuegos/", "entertainment" },
-            {"https://www.20minutos.es/rss/cultura/", "culture" },
-        
-            //El Confidencial
-            {"https://rss.elconfidencial.com/espana/", "Spain" },
-            {"https://rss.elconfidencial.com/mundo/", "international" },
-            {"https://rss.elconfidencial.com/economia/", "economy" },
-            {"https://rss.elconfidencial.com/deportes/", "sports" },
-            {"https://rss.elconfidencial.com/cultura/", "culture" },
-            {"https://rss.elconfidencial.com/tecnologia/", "technology" },
 
-            //eldiario.es
-            {"https://www.eldiario.es/rss/politica/", "politics" },
-            {"https://www.eldiario.es/rss/economia/", "economy" },
-            {"https://www.eldiario.es/rss/cultura/", "culture" },
-            {"https://www.eldiario.es/rss/internacional/", "international"},
-            {"https://www.eldiario.es/rss/focos/crisis-climatica/", "climatology" },
-            {"https://www.eldiario.es/rss/tecnologia/", "technology" },
+        //El Mundo
+        {"https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml", "international"},
+        {"https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml", "economy"},
+        {"https://e00-elmundo.uecdn.es/elmundo/rss/cultura.xml", "culture" },
+        {"https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml", "sports" },
+        {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "politics" },
 
-        
-            //Xataka
-            {"https://www.xataka.com/index.xml", "technology" },
 
-            //Applesfera
-            {"https://www.applesfera.com/index.xml", "technology" },
-        
-            
+        //La Vanguardia
+        {"https://www.lavanguardia.com/rss/internacional.xml", "international"},
+        {"https://www.lavanguardia.com/rss/politica.xml", "politics" },
+        {"https://www.lavanguardia.com/rss/deportes.xml", "sports" },
+        {"https://www.lavanguardia.com/rss/economia.xml", "economy" },
+        {"https://www.lavanguardia.com/rss/cultura.xml", "culture" },
+        {"https://www.lavanguardia.com/rss/natural.xml", "planet" },
 
-            // VidaExtra 
-            { "https://www.vidaextra.com/feedburner.xml", "entertainment" },
-            { "https://www.espinof.com/index.xml", "entertainment" },
- 
-            //Eurogamer
-            {"https://www.eurogamer.es/feed/news", "entertainment" },
 
-            // 3DJuegos 
-            {"https://www.3djuegos.com/index.xml", "entertainment"},
+        //El Periodico
+        {"https://www.elperiodico.com/es/rss/internacional/rss.xml", "international" },
+        {"https://www.elperiodico.com/es/rss/politica/rss.xml", "politics" },
+        {"https://www.elperiodico.com/es/rss/economia/rss.xml", "economy" },
+        {"https://www.elperiodico.com/es/rss/tecnologia/rss.xml", "technology" },
+        {"https://www.elperiodico.com/es/rss/sociedad/rss.xml", "society" },
+        {"https://www.elperiodico.com/es/rss/ciencia/rss.xml", "planet" },
+        {"https://www.elperiodico.com/es/rss/deportes/rss.xml", "sports" },
+        {"https://www.elperiodico.com/es/rss/ocio-y-cultura/rss.xml", "culture" },
 
-            // HobbyConsolas 
-            {"https://www.hobbyconsolas.com/rss", "entertainment"},
+        //20 Minutos
+        {"https://www.20minutos.es/rss/internacional/", "international" },
+        {"https://www.20minutos.es/rss/deportes/", "sports" },
+        {"https://www.20minutos.es/rss/economia", "economy" },
+        {"https://www.20minutos.es/rss/tecnologia/", "technology" },
+        {"https://www.20minutos.es/rss/salud/", "planet" },
+        {"https://www.20minutos.es/rss/videojuegos/", "entertainment" },
+        {"https://www.20minutos.es/rss/cultura/", "culture" },
 
-              //IGN España
+        //El Confidencial
+        {"https://rss.elconfidencial.com/espana/", "Spain" },
+        {"https://rss.elconfidencial.com/mundo/", "international" },
+        {"https://rss.elconfidencial.com/economia/", "economy" },
+        {"https://rss.elconfidencial.com/deportes/", "sports" },
+        {"https://rss.elconfidencial.com/cultura/", "culture" },
+        {"https://rss.elconfidencial.com/tecnologia/", "technology" },
 
-            {"https://es.ign.com/playstation-5.xml", "entertainment" },
-            {"https://es.ign.com/nintendo.xml", "entertainment" },
-            {"https://es.ign.com/xbox.xml", "entertainment" },
-            {"https://es.ign.com/pc.xml", "entertainment" },
+        //eldiario.es
+        {"https://www.eldiario.es/rss/politica/", "politics" },
+        {"https://www.eldiario.es/rss/economia/", "economy" },
+        {"https://www.eldiario.es/rss/cultura/", "culture" },
+        {"https://www.eldiario.es/rss/internacional/", "international"},
+        {"https://www.eldiario.es/rss/focos/crisis-climatica/", "planet" },
+        {"https://www.eldiario.es/rss/tecnologia/", "technology" },
+
+        //BBC Mundo
+        {"https://feeds.bbci.co.uk/mundo/temas/ciencia/rss.xml", "international" },
+
+        //Xataka
+        {"https://www.xataka.com/index.xml", "technology" },
+
+        //Applesfera
+        {"https://www.applesfera.com/index.xml", "technology" },
+
+        //Microsiervos
+        {"https://www.microsiervos.com/index.xml", "technology" },
+
+        //HyperTextual
+        {"https://hipertextual.com/feed","technology" },
+
+
+        // VidaExtra 
+        {"https://www.vidaextra.com/feedburner.xml", "entertainment" },
+        {"https://www.espinof.com/index.xml", "entertainment" },
+
+        //Eurogamer
+        {"https://www.eurogamer.es/feed/news", "entertainment" },
+
+        // 3DJuegos 
+        {"https://www.3djuegos.com/index.xml", "entertainment"},
+
+        // HobbyConsolas 
+        {"https://www.hobbyconsolas.com/rss", "entertainment"},
+
+        //IGN España
+        {"https://es.ign.com/playstation-5.xml", "entertainment" },
+        {"https://es.ign.com/nintendo.xml", "entertainment" },
+        {"https://es.ign.com/xbox.xml", "entertainment" },
+        {"https://es.ign.com/pc.xml", "entertainment" },
+
+        //ElTiempo.es
+        {"https://www.eltiempo.es/noticias/feed", "planet" },
+
+        //EFE Verde
+        {"https://efeverde.com/feed/", "planet" },
     };
 
 

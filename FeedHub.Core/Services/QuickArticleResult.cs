@@ -125,7 +125,9 @@ namespace FeedHub_Core.Services
             "Basado en hechos observados y verificados directamente por nuestros periodistas o por fuentes informadas.",
             "Si continúas leyendo en este dispositivo, no se podrá leer en el otro.", "Rellena tu nombre y apellido para comentar",
             "Please enable JavaScript to view the comments powered by Disqus.", "RRSS WhatsApp", "RRSS Twitter", "RRSS email",
-            "¿Por qué confiar en nosotros?"
+            "¿Por qué confiar en nosotros?", "¿Quieres ayudarnos?", "con amig@s, colegas... que puedan estar interesad@s.",
+            "Y si aún no lo recibes, te puedes sumar a nuestra lista de correo aquí", "Hacemos EFEVerde", "Y recuerda que puedes recibir" +
+            "notificaciones en nuestra app. Descarga la última versión y actívalas."
             };
 
             var cleanParagraphs = new List<string>();
