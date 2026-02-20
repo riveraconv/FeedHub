@@ -12,6 +12,7 @@ public class NewsAggregatorService : INewsAggregatorService
 
     private readonly Dictionary<string, string> _feeds = new()
     {
+
         //El Pais 
 
         {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
@@ -115,8 +116,6 @@ public class NewsAggregatorService : INewsAggregatorService
         //ElTiempo.es
         {"https://www.eltiempo.es/noticias/feed", "planet" },
 
-        //EFE Verde
-        {"https://efeverde.com/feed/", "planet" },
     };
 
 
