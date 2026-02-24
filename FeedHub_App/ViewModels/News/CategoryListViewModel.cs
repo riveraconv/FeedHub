@@ -46,33 +46,50 @@ namespace FeedHub_App.ViewModels.News
         {
             if (query.ContainsKey("category"))
             {
-                Category = Uri.UnescapeDataString(query["category"]?.ToString() ?? "");
-                // Ejecutamos el comando sin pasarle nada, él leerá la propiedad 'Category'
-                LoadNewsCommand.Execute(null);
+                var newCategory = Uri.UnescapeDataString(query["category"]?.ToString() ?? "");
+
+                // SOLO cargamos si la categoría ha cambiado o si la lista está vacía
+                if (Category != newCategory || Articles.Count == 0)
+                {
+                    Category = newCategory;
+                    // Ejecutamos la carga inicial
+                    LoadNewsCommand.Execute(null);
+                }
             }
         }
 
         [RelayCommand]
         public async Task LoadNewsAsync()
         {
+            // Lógica espejo de LatestNewsViewModel: 
+            // Si ya hay artículos y NO es un "Pull to Refresh", no hacemos nada.
+            if (Articles.Count > 0 && !IsRefreshing) return;
+
             if (string.IsNullOrWhiteSpace(Category) || IsLoading) return;
 
             try
             {
                 if (!IsRefreshing) IsLoading = true;
-            
-            var items = await _aggregator.GetByCategoryAsync(Category, 30);
+
+                var items = await _aggregator.GetByCategoryAsync(Category, 60);
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     Articles.Clear();
+
+                    var filtered = items
+                        .GroupBy(i => i.Source)
+                        .SelectMany(g => g.Take(4)) // No más de 4 seguidas del mismo
+                        .OrderByDescending(i => i.PublishDate)
+                        .Take(30);
+
                     foreach (var item in items)
                         Articles.Add(item);
                 });
             }
             catch (Exception ex)
             {
-                _logger?.Error($"Categoies Loading Error {Category}: {ex.Message}");
+                _logger?.Error($"Categories Loading Error {Category}: {ex.Message}");
             }
             finally
             {

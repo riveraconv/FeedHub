@@ -12,7 +12,6 @@ public class NewsAggregatorService : INewsAggregatorService
 
     private readonly Dictionary<string, string> _feeds = new()
     {
-
         //El Pais 
 
         {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "society"},
@@ -113,9 +112,20 @@ public class NewsAggregatorService : INewsAggregatorService
         {"https://es.ign.com/xbox.xml", "entertainment" },
         {"https://es.ign.com/pc.xml", "entertainment" },
 
+        
         //ElTiempo.es
         {"https://www.eltiempo.es/noticias/feed", "planet" },
 
+        //EFE Verde
+        {"https://efeverde.com/feed/", "planet" },
+
+        //Econoticias
+        {"https://www.ecoticias.com/feed/", "planet" },
+
+        //Astronomia
+        {"https://www.esa.int/rssfeed/Spain", "planet"},
+        {"https://astroaficion.com/feed/", "planet" },
+        {"https://fronteraespacial.com/feed/", "planet" },
     };
 
 
