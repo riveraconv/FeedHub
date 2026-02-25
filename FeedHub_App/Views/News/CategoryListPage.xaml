@@ -1,38 +1,64 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
+             android:Application.WindowSoftInputModeAdjust="Resize"
              x:Class="FeedHub_App.Views.News.CategoryListPage"
              Title="Categories">
 
-    <CollectionView ItemsSource="{Binding Categories}">
-        <CollectionView.ItemsLayout>
-            <GridItemsLayout Orientation="Vertical" Span="2" 
-                             HorizontalItemSpacing="15" VerticalItemSpacing="15" />
-        </CollectionView.ItemsLayout>
+    <Grid RowDefinitions="*" ColumnDefinitions="*">
 
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Border StrokeShape="RoundRectangle 20"
-                        HeightRequest="120"
-                        BackgroundColor="#F8F9FA"
-                        Stroke="LightGray">
+        <CollectionView ItemsSource="{Binding Categories}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2" 
+                                 HorizontalItemSpacing="15" VerticalItemSpacing="15" />
+            </CollectionView.ItemsLayout>
 
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer 
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCategoryCommand}"
-                            CommandParameter="{Binding .}" />
-                    </Border.GestureRecognizers>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border StrokeShape="RoundRectangle 20"
+                            HeightRequest="120"
+                            BackgroundColor="#F8F9FA"
+                            Stroke="LightGray">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCategoryCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                            <Label Text="{Binding .}" 
+                                   FontSize="18" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#333333" />
+                            <BoxView HeightRequest="2" WidthRequest="30" 
+                                     Color="#4a9eff" Margin="0,5" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                        <Label Text="{Binding .}" 
-                               FontSize="18" 
-                               FontAttributes="Bold" 
-                               TextColor="#333333" />
+        <Border VerticalOptions="End" 
+                HorizontalOptions="Fill"
+                Margin="20,0,20,30" 
+                HeightRequest="60"
+                StrokeShape="RoundRectangle 30"
+                Stroke="#4a9eff"
+                StrokeThickness="2"
+                BackgroundColor="Transparent">
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,10" Radius="15" Opacity="0.2" />
+            </Border.Shadow>
 
-                        <BoxView HeightRequest="2" WidthRequest="30" 
-                                 Color="#4a9eff" Margin="0,5" />
-                    </VerticalStackLayout>
-                </Border>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+            <SearchBar x:Name="NewsSearchBar"
+                       Placeholder="Search news by word..."
+                       Text="{Binding SearchText}"
+                       TextColor="DarkGray"
+                       PlaceholderColor="Gray"
+                       BackgroundColor="Transparent"
+                       SearchCommand="{Binding SearchCommand}"
+                       FontSize="17"
+                       VerticalOptions="Center"/>
+        </Border>
+
+    </Grid>
 </ContentPage>

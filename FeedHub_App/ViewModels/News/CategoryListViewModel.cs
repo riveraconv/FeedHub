@@ -36,6 +36,9 @@ namespace FeedHub_App.ViewModels.News
         [ObservableProperty]
         public bool isRefreshing;
 
+        [ObservableProperty]
+        private string searchText;
+
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
         {
             _aggregator = aggregator;
@@ -56,6 +59,27 @@ namespace FeedHub_App.ViewModels.News
                     LoadNewsCommand.Execute(null);
                 }
             }
+            else if (query.ContainsKey("search"))
+            {
+                var queryText = Uri.UnescapeDataString(query["search"]?.ToString() ?? "");
+                Category = $"Search: {queryText}";
+
+                PerformSearch(queryText);
+            }
+        }
+        private async void PerformSearch(string queryText)
+        {
+            IsLoading = true;
+            try
+            {
+                var results = await _aggregator.SearchByKeywordAsync(queryText, 50);
+
+                Articles.Clear();
+                foreach (var item in results)
+                    Articles.Add(item);
+            }
+            catch (Exception ex) { _logger.Error(ex.Message); }
+            finally { IsLoading = false; }
         }
 
         [RelayCommand]
@@ -71,7 +95,7 @@ namespace FeedHub_App.ViewModels.News
             {
                 if (!IsRefreshing) IsLoading = true;
 
-                var items = await _aggregator.GetByCategoryAsync(Category, 60);
+                var items = await _aggregator.GetByCategoryAsync(Category, 100);
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -81,9 +105,9 @@ namespace FeedHub_App.ViewModels.News
                         .GroupBy(i => i.Source)
                         .SelectMany(g => g.Take(4)) // No más de 4 seguidas del mismo
                         .OrderByDescending(i => i.PublishDate)
-                        .Take(30);
+                        .Take(100);
 
-                    foreach (var item in items)
+                    foreach (var item in filtered)
                         Articles.Add(item);
                 });
             }
@@ -116,6 +140,20 @@ namespace FeedHub_App.ViewModels.News
             // Navegamos a la página de noticias filtradas que ya creamos
             // Pasamos el nombre de la categoría por la URL (QueryParameters)
             await Shell.Current.GoToAsync($"CategoryNewsPage?category={Uri.EscapeDataString(categoryName)}");
+        }
+        [RelayCommand]
+        public async Task SearchAsync()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText)) return;
+
+            var query = SearchText;
+
+            // Navegamos primero
+            await Shell.Current.GoToAsync($"CategoryNewsPage?search={Uri.EscapeDataString(query)}");
+
+            // Limpiamos después de una pequeña pausa para que no interfiera con la animación
+            await Task.Delay(500);
+            SearchText = string.Empty;
         }
     }
 }

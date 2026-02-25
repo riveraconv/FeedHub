@@ -139,7 +139,7 @@ public class NewsAggregatorService : INewsAggregatorService
     public async Task<List<NewsItem>> GetLatestMixedAsync(int limit)
     {
         var tempList = new ConcurrentBag<NewsItem>();
-        var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
+        var options = new ParallelOptions { MaxDegreeOfParallelism = 10 };
 
         await Parallel.ForEachAsync(_feeds, options, async (kvp, ct) =>
         {
@@ -152,21 +152,18 @@ public class NewsAggregatorService : INewsAggregatorService
                 var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
 
                 // Cogemos la más reciente de este feed
-                var latest = items.OrderByDescending(i => i.PublishDate).FirstOrDefault();
+                var latestTwo = items.OrderByDescending(i => i.PublishDate).Take(2);
 
-                if (latest != null)
-                {
-                    tempList.Add(latest);
-                }
+                foreach (var item in latestTwo) tempList.Add(item);
             }
             catch (Exception ex)
             {
                 _logger.Warn($"Fallo en feed mixto {kvp.Key}: {ex.Message}");
             }
         });
-
-        var random = new Random();
-        return tempList.OrderBy(x => random.Next()).Take(limit).ToList();
+        return tempList.OrderByDescending(x => x.PublishDate)
+                   .Take(limit)
+                   .ToList();
     }
 
     public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
@@ -174,11 +171,11 @@ public class NewsAggregatorService : INewsAggregatorService
         var allItems = new ConcurrentBag<NewsItem>();
         DateTime cutOffDate = category == "science" || category == "culture" || category == "entertainment"
                             ? DateTime.Now.AddDays(-2)
-                            : DateTime.Now.AddDays(-7); 
+                            : DateTime.Now.AddDays(-7);
 
         var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
 
-        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (kvp, ct) => //number of HTTP conections
+        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 40 }, async (kvp, ct) => //number of HTTP conections
         {
             try
             {
@@ -193,8 +190,7 @@ public class NewsAggregatorService : INewsAggregatorService
                     allItems.Add(item);
                 }
             }
-            catch { /* Ignorar errores de red */
-    }
+            catch { /* Ignorar errores de red */}
         });
 
         var finalResult = allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
@@ -206,5 +202,28 @@ public class NewsAggregatorService : INewsAggregatorService
         }
 
         return finalResult;
+    }
+    public async Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit = 40)
+    {
+        if (string.IsNullOrWhiteSpace(query)) return Enumerable.Empty<NewsItem>();
+
+        var allResults = new ConcurrentBag<NewsItem>();
+
+        // Buscamos en todos los feeds en paralelo para encontrar la palabra clave
+        await Parallel.ForEachAsync(_feeds, new ParallelOptions { MaxDegreeOfParallelism = 20 }, async (kvp, ct) =>
+        {
+            try
+            {
+                var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
+                var filtered = items.Where(n =>
+                    (n.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (n.Description?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
+
+                foreach (var item in filtered) allResults.Add(item);
+            }
+            catch { /* fail silently */ }
+        });
+
+        return allResults.OrderByDescending(n => n.PublishDate).Take(limit);
     }
 }

@@ -13,13 +13,4 @@ public partial class CategoryListPage : ContentPage
         _viewModel = viewModel;
         BindingContext = _viewModel;
     }
-
-    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (e.CurrentSelection.FirstOrDefault() is NewsItem selected)
-        {
-            _viewModel.OpenNewsCommand.Execute(selected);
-            ((CollectionView)sender).SelectedItem = null;
-        }
-    }
 }

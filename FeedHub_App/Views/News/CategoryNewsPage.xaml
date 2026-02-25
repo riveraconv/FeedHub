@@ -4,6 +4,7 @@
              xmlns:viewmodels="clr-namespace:FeedHub_App.ViewModels.News"
              x:Class="FeedHub_App.Views.News.CategoryNewsPage"
              Title="{Binding Category}">
+
     <Grid Padding="20" RowDefinitions="Auto,*" ColumnDefinitions="*">
 
         <RefreshView Command="{Binding LoadNewsCommand}" 
@@ -89,6 +90,7 @@
 
                                 <Grid ColumnDefinitions="Auto,Auto,*" 
                                       ColumnSpacing="8"
+
                                       VerticalOptions="Start"
                                       HorizontalOptions="Fill">
                                     <Label Grid.Column="0" 
