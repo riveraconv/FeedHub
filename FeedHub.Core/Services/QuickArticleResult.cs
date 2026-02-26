@@ -11,6 +11,7 @@ namespace FeedHub_Core.Services
         public string Html { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
     }
 
     public class QuickArticleService
@@ -48,14 +49,17 @@ namespace FeedHub_Core.Services
             string textContent = CleanText(articleNode.InnerHtml);
             textContent = RemoveResidualGarbage(textContent);
 
-            // 🔹 Imagen principal (robusta)
-            
+            // Text
+
+            string plainText = Regex.Replace(textContent, "<.*?>", string.Empty);
+
 
             return new QuickArticleResult
             {
                 Html = textContent,
                 Title = titleText,
-                ImageUrl = imageUrl
+                ImageUrl = imageUrl,
+                Text = plainText
             };
         }
 
