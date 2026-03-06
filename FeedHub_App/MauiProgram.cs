@@ -45,6 +45,7 @@ namespace FeedHub_App
             builder.Services.AddSingleton<LatestNewsViewModel>();
             builder.Services.AddTransient<CategoryListViewModel>();
             builder.Services.AddTransient<QuickViewViewModel>();
+            builder.Services.AddTransient<CategoryNewsViewModel>();
 
             //Pages
             builder.Services.AddSingleton<LatestNewsPage>();

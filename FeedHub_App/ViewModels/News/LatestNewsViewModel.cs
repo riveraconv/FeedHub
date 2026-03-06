@@ -65,6 +65,11 @@ namespace FeedHub_App.ViewModels.News
                 $"&title={Uri.EscapeDataString(item.Title)}" +
                 $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}");
         }
+        [RelayCommand]
+        public async Task GoBack()
+        {
+            await Shell.Current.GoToAsync("//MainPage");
+        }
     }
 }
 

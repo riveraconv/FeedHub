@@ -155,6 +155,11 @@ namespace FeedHub_App.ViewModels.News
             await Task.Delay(500);
             SearchText = string.Empty;
         }
+        [RelayCommand]
+        public async Task GoBack()
+        {
+            await Shell.Current.GoToAsync("//MainPage");
+        }
     }
 }
 

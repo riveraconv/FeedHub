@@ -1,34 +1,33 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using System.Windows.Input;
-using FeedHub_App.Views.News;
-using FeedHub_App.Views.Settings;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace FeedHub_App.ViewModels
 {
-    public partial class MainViewModel
+    public partial class MainViewModel : ObservableObject
     {
-        public ICommand GoToLatestNewsCommand { get; }
-        public ICommand GoToCategoryCommand { get; }
-        public ICommand GoToSettingsCommand { get; }
-        public string AppVersion { get; }
+        [ObservableProperty]
+        string appVersion;
 
         public MainViewModel()
         {
-            AppVersion = $"V.{AppInfo.Current.VersionString} (Build {AppInfo.Current.BuildString})";
-
-            GoToLatestNewsCommand = new AsyncRelayCommand(LatestOnClicked);
-            GoToCategoryCommand = new AsyncRelayCommand(CategoryOnClicked);
-            GoToSettingsCommand = new AsyncRelayCommand(SettingsOnClicked);
+            appVersion = $"V.{AppInfo.Current.VersionString} (Build {AppInfo.Current.BuildString})";
         }
-        private async Task LatestOnClicked()
+        [RelayCommand]
+        private async Task GoToLatestNews()
         {
+            // Quitamos los "///". Si la página es hija de la actual o está registrada:
             await Shell.Current.GoToAsync("///LatestNewsPage");
         }
-        private async Task CategoryOnClicked()
+
+        [RelayCommand]
+        private async Task GoToCategory()
         {
-            await Shell.Current.GoToAsync("///CategoryNewsPage");
+            // OJO: Asegúrate de que el nombre coincida con el RegisterRoute
+            await Shell.Current.GoToAsync("CategoryListPage");
         }
-        private async Task SettingsOnClicked()
+
+        [RelayCommand]
+        private async Task GoToSettings()
         {
             await Shell.Current.GoToAsync("///SettingsPage");
         }

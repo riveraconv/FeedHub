@@ -4,10 +4,11 @@
              xmlns:viewmodels="clr-namespace:FeedHub_App.ViewModels.News"
              x:Class="FeedHub_App.Views.News.LatestNewsPage"
              x:Name="Page"
-             Title="Latest News">
+             Shell.NavBarIsVisible="False"
+             Shell.FlyoutBehavior="Disabled">
 
     <Grid Padding="20" RowDefinitions="Auto,*" ColumnDefinitions="*">
-
+        <Grid Grid.Row="1">
         <RefreshView Command="{Binding LoadNewsCommand}" 
                      Grid.Row="1" 
                      IsRefreshing="{Binding IsRefreshing}"
@@ -138,5 +139,40 @@
 
             </CollectionView>
         </RefreshView>
+
+        <Border Grid.Row="1"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="0,0,22,22"
+                HeightRequest="45"
+                WidthRequest="45"
+                StrokeShape="RoundRectangle 10"
+                BackgroundColor="Transparent"
+                Stroke="#383838"
+                StrokeThickness="2">
+
+
+                <Grid>
+                    <Button Command="{Binding BindingContext.GoBackCommand, Source={x:Reference Page}}"
+                            BackgroundColor="Black"
+                            CornerRadius="10"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Opacity="0.5"/>
+
+                    <Label Text="↩" 
+                       TextColor="White"
+                       FontSize="30"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       InputTransparent="True"
+                       Margin="0,-5,0,0"
+                       BackgroundColor="Transparent"/>
+
+
+                </Grid>
+            </Border>
+            
+        </Grid>
     </Grid>
 </ContentPage>

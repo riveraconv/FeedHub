@@ -84,9 +84,6 @@
 	  <Compile Update="Views\News\CategoryListPage.xaml.cs">
 	    <DependentUpon>CategoryListPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\News\CategoryNewsPage.xaml.cs">
-	    <DependentUpon>CategoryNewsPage.xaml</DependentUpon>
-	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>

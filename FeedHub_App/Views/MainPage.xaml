@@ -3,37 +3,85 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:FeedHub_App.ViewModels"
+    BackgroundColor="{AppThemeBinding Light=#F5F5F7, Dark=#121212}"
+    Shell.NavBarIsVisible="False"
+    Shell.FlyoutBehavior="Disabled"
+    x:DataType="vm:MainViewModel"
     x:Class="FeedHub_App.Views.MainPage">
 
-    <ContentPage.BindingContext>
-        <vm:MainViewModel />
-    </ContentPage.BindingContext>
+    <Grid RowDefinitions="*, Auto" Padding="0">
+        <ScrollView>
+            <VerticalStackLayout Padding="25" Spacing="20">
 
-    <Grid>
-        <VerticalStackLayout Padding="30" Spacing="25" VerticalOptions="Center" HorizontalOptions="Center">
-            
-        <Label Text="Welcome to FeedHub"
-               Style="{StaticResource Headline}"
-               HorizontalOptions="Center" />
+                <VerticalStackLayout Margin="0,40,0,20">
+                    <Label Text="FeedHub" FontSize="32" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#2C3E50, Dark=White}" />
+                    <Label Text="Your daily window to the world" FontSize="16" TextColor="Gray" />
+                </VerticalStackLayout>
 
-        <Button Text="Latest News"
-                Command="{Binding GoToLatestNewsCommand}" 
-                WidthRequest="200"
-                Margin="0,125,0,0"/>
+                <Border StrokeShape="RoundRectangle 15"
+                        BackgroundColor="{AppThemeBinding Light=#334155, Dark=#1E293B}"
+                        StrokeThickness="0"
+                        HeightRequest="120">
+                    <Grid>
+                        <Grid Padding="20">
+                            <Label Text="📰 Latest News" TextColor="White" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Text="Check what's happening right now" TextColor="#D1C4E9" FontSize="14" VerticalOptions="End" />
+                        </Grid>
+                        <Button BackgroundColor="Transparent"
+                                BorderColor="Transparent"
+                                Command="{Binding GoToLatestNewsCommand}" />
+                    </Grid>
+                </Border>
 
-        <Button Text="Explore by category"
-                Command="{Binding GoToCategoryCommand}" 
-                WidthRequest="200"/>
+                <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="SpaceBetween" AlignItems="Center" Margin="0,10">
 
-        <Button Text="Settings"
-                Command="{Binding GoToSettingsCommand}" 
-                WidthRequest="200"/>
+                    <Border StrokeShape="RoundRectangle 20" 
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" 
+                            FlexLayout.Basis="48%"
+                            HeightRequest="150"
+                            StrokeThickness="0">
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="{AppThemeBinding Light=0.1, Dark=0.4}" />
+                        </Border.Shadow>
+                        <Grid>
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="10" Padding="15">
+                                <Label Text="📂" FontSize="40" HorizontalOptions="Center"/>
+                                <Label Text="Explore by categories" FontAttributes="Bold" 
+                                       TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                                       HorizontalTextAlignment="Center" LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                            <Button BackgroundColor="Transparent" 
+                                    Command="{Binding GoToCategoryCommand}" />
+                        </Grid>
+                    </Border>
 
-        <Label Text="{Binding AppVersion}"
-               FontSize="12"
-               HorizontalOptions="Center"
-               Margin="0,100,0,0"
-               TextColor="Gray" />
-    </VerticalStackLayout>
-        </Grid>
+                    <Border StrokeShape="RoundRectangle 20" 
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" 
+                            FlexLayout.Basis="48%"
+                            HeightRequest="150"
+                            StrokeThickness="0">
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="{AppThemeBinding Light=0.1, Dark=0.4}" />
+                        </Border.Shadow>
+                        <Grid>
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="10" Padding="15">
+                                <Label Text="⚙️" FontSize="40" HorizontalOptions="Center"/>
+                                <Label Text="Options" FontAttributes="Bold" 
+                                       TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                                       HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                            <Button BackgroundColor="Transparent" 
+                                    Command="{Binding GoToSettingsCommand}" />
+                        </Grid>
+                    </Border>
+
+                </FlexLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Label Grid.Row="1" Text="{Binding AppVersion, StringFormat='Version {0}'}"
+               FontSize="12" HorizontalOptions="Center" VerticalOptions="End"
+               Margin="0,0,0,20" TextColor="Gray"/>
+    </Grid>
 </ContentPage>
