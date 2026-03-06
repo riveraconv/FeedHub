@@ -21,10 +21,18 @@
                     <Label Text="Dark Mode" FontSize="18" FontAttributes="Bold" />
                     <Label Text="Force dark theme for the app" FontSize="12" Opacity="0.6" />
                 </VerticalStackLayout>
+                <Border Grid.Column="1"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        WidthRequest="32"
+                        HeightRequest="20"
+                        BackgroundColor="Gray"/>
                 <Switch Grid.Column="1" 
-                        IsToggled="{Binding IsDarkMode}" 
-                        OnColor="Black" 
-                        ThumbColor="White" />
+                            IsToggled="{Binding IsDarkMode}"
+                            OnColor="{AppThemeBinding Light=#Black, Dark=Gray}"
+                            ThumbColor="{AppThemeBinding Light=#Black, Dark=White}" />
+
+
             </Grid>
 
             <BoxView HeightRequest="1" Color="Gray" Opacity="0.2" />
@@ -54,16 +62,16 @@
                 StrokeShape="RoundRectangle 15"
                 BackgroundColor="Transparent"
                 Stroke="#383838"
-                StrokeThickness="2">
+                StrokeThickness="0.5">
 
             <Grid>
                 <Button Command="{Binding GoBackToMainMenuCommand}"
                         BackgroundColor="Black"
                         CornerRadius="12"
-                        Opacity="0.6"/>
+                        Opacity="0.3"/>
 
                 <Label Text="↩" 
-                       TextColor="White"
+                       TextColor="{AppThemeBinding Light=#Black, Dark=White}"
                        FontSize="32"
                        HorizontalOptions="Center"
                        VerticalOptions="Center"

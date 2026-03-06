@@ -149,7 +149,7 @@
                 StrokeShape="RoundRectangle 10"
                 BackgroundColor="Transparent"
                 Stroke="#383838"
-                StrokeThickness="2">
+                StrokeThickness="0.5">
 
 
                 <Grid>
@@ -158,10 +158,10 @@
                             CornerRadius="10"
                             WidthRequest="40"
                             HeightRequest="40"
-                            Opacity="0.5"/>
+                            Opacity="0.3"/>
 
                     <Label Text="↩" 
-                       TextColor="White"
+                       TextColor="{AppThemeBinding Light=#Black, Dark=White}"
                        FontSize="30"
                        HorizontalOptions="Center"
                        VerticalOptions="Center"
