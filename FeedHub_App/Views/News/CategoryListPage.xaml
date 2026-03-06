@@ -17,7 +17,7 @@
                CharacterSpacing="4" />
             <Label Text="News Categories" 
                FontSize="30" 
-               TextColor="White" 
+               TextColor="{AppThemeBinding Light=#Black, Dark=White}" 
                FontAttributes="Bold" />
         </VerticalStackLayout>
 

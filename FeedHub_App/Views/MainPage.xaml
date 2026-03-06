@@ -15,7 +15,7 @@
 
                 <VerticalStackLayout Margin="0,40,0,20">
                     <Label Text="FeedHub" FontSize="32" FontAttributes="Bold"
-                           TextColor="{AppThemeBinding Light=#2C3E50, Dark=White}" />
+                           TextColor="{AppThemeBinding Light=#Black, Dark=White}" />
                     <Label Text="Your daily window to the world" FontSize="16" TextColor="Gray" />
                 </VerticalStackLayout>
 
