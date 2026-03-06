@@ -1,4 +1,5 @@
 ﻿using FeedHub_App.Views.News;
+using FeedHub_App.Views.Settings;
 
 namespace FeedHub_App
 {
@@ -7,10 +8,16 @@ namespace FeedHub_App
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute(nameof(NewsDetailPage), typeof(NewsDetailPage));
-            Routing.RegisterRoute(nameof(QuickViewPage), typeof(QuickViewPage));
+
+            //Lateral Navigation
+            Routing.RegisterRoute(nameof(LatestNewsPage), typeof(LatestNewsPage));
             Routing.RegisterRoute(nameof(CategoryListPage), typeof(CategoryListPage));
             Routing.RegisterRoute(nameof(CategoryNewsPage), typeof(CategoryNewsPage));
+            Routing.RegisterRoute(nameof(NewsDetailPage), typeof(NewsDetailPage));
+            Routing.RegisterRoute(nameof(QuickViewPage), typeof(QuickViewPage));
+  
+            //Modal Navigation
+            Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace FeedHub_App.ViewModels
         private async Task GoToLatestNews()
         {
             // Quitamos los "///". Si la página es hija de la actual o está registrada:
-            await Shell.Current.GoToAsync("///LatestNewsPage");
+            await Shell.Current.GoToAsync("LatestNewsPage");
         }
 
         [RelayCommand]
@@ -29,7 +29,7 @@ namespace FeedHub_App.ViewModels
         [RelayCommand]
         private async Task GoToSettings()
         {
-            await Shell.Current.GoToAsync("///SettingsPage");
+            await Shell.Current.GoToAsync("SettingsPage");
         }
     }
 }

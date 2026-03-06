@@ -1,15 +1,51 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FeedHub_App.ViewModels.Settings"
              x:Class="FeedHub_App.Views.Settings.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Shell.PresentationMode="ModalAnimated"
              Title="Settings">
-    
-    <VerticalStackLayout Padding="25" Spacing="10">
-        <Label 
-            Text="Configuration"
-            FontSize="24"
-            HorizontalOptions="Center" />
 
-        <!--Switchers, pickers, etc-->
-    </VerticalStackLayout>
+    <Grid RowDefinitions="*, Auto" Padding="25">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="20">
+            <Label 
+                Text="Configuration"
+                FontSize="28"
+                FontAttributes="Bold"
+                TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                HorizontalOptions="Start"
+                Margin="0,20,0,0"/>
+
+            <Label Text="Opción de ejemplo 1" VerticalOptions="Center" />
+            <Label Text="Opción de ejemplo 2" VerticalOptions="Center" />
+        </VerticalStackLayout>
+
+        <Border Grid.Row="1"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="0,0,10,10"
+                HeightRequest="55"
+                WidthRequest="55"
+                StrokeShape="RoundRectangle 15"
+                BackgroundColor="Transparent"
+                Stroke="#383838"
+                StrokeThickness="2">
+
+            <Grid>
+                <Button Command="{Binding GoBackToMainMenuCommand}"
+                        BackgroundColor="Black"
+                        CornerRadius="12"
+                        Opacity="0.6"/>
+
+                <Label Text="↩" 
+                       TextColor="White"
+                       FontSize="32"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       InputTransparent="True"
+                       Margin="0,-4,0,0"/>
+            </Grid>
+        </Border>
+    </Grid>
 </ContentPage>

@@ -3,6 +3,8 @@ using FeedHub_Core.Interfaces;
 using FeedHub_Core.Services;
 using FeedHub_App.ViewModels.News;
 using FeedHub_App.Views.News;
+using FeedHub_App.ViewModels.Settings;
+using FeedHub_App.Views.Settings;
 using FeedHub_App.Utilities;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,12 +48,14 @@ namespace FeedHub_App
             builder.Services.AddTransient<CategoryListViewModel>();
             builder.Services.AddTransient<QuickViewViewModel>();
             builder.Services.AddTransient<CategoryNewsViewModel>();
+            builder.Services.AddTransient<SettingsViewModel>();
 
             //Pages
             builder.Services.AddSingleton<LatestNewsPage>();
             builder.Services.AddTransient<QuickViewPage>();
             builder.Services.AddTransient<CategoryListPage>();
             builder.Services.AddTransient<CategoryNewsPage>();
+            builder.Services.AddTransient<SettingsPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();
