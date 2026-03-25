@@ -106,7 +106,7 @@ namespace FeedHub_App.Views.News
 
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    string template = await GetHtmlTemplateAsync();
+                    
 
                     if (htmlIsWeak)
                     {
@@ -126,7 +126,7 @@ namespace FeedHub_App.Views.News
                             var cleanText = System.Text.RegularExpressions.Regex.Replace(result.Html, "<.*?>", string.Empty);
                             vm.NewsContent = result.Text;
                         }
-                        string finalHtml = template.Replace("@ArticleContent@", result.Html);
+                        string finalHtml = ArticleHtmlContent(result.Html);
 
                         TitleLabel.Text = result.Title ?? "Sin título";
 
@@ -183,42 +183,66 @@ namespace FeedHub_App.Views.News
         }
 
         private void ShowQuickView()
-        {
-            QuickViewContainer.IsVisible = true;
-            FullWebView.IsVisible = false;
-            SourceButton.IsVisible = true;
-            ShareButton.IsVisible = true;
-            SpeakButton.IsVisible = true;
-            _logger.Info("Worked");
-        }
+{
+    MainThread.BeginInvokeOnMainThread(() =>
+    {
+        // 1. Verificamos que los componentes críticos existan
+        if (QuickViewContainer == null || CloseButton == null) return;
 
-        private void ShowFullWeb()
-        {
-            QuickViewContainer.IsVisible = false;
-            FullWebView.IsVisible = true;
-            SourceButton.IsVisible = false;
-            ShareButton.IsVisible = true;
-            SpeakButton.IsVisible = false;
-            _logger.Info("Worked");
-        }
+        // 2. Visibilidad de contenedores
+        QuickViewContainer.IsVisible = true;
+        FullWebView.IsVisible = false;
 
-        private async Task<string> GetHtmlTemplateAsync()
-        {
-            try
-            {
-                using var stream = await FileSystem.OpenAppPackageFileAsync("ArticleTemplate.html");
-                using var reader = new StreamReader(stream);
-                return await reader.ReadToEndAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"Error loading HTML template:{ex.Message}");
-                return "<html>>body>@ArticleContent@</body></html>";
-            }
-        }
+        // 3. Estado de los botones
+        SourceButton.IsVisible = true;
+        ShareButton.IsVisible = true;
+        SpeakButton.IsVisible = true;
+        
+        // 4. Reset del botón de cerrar
+        CloseButton.IsVisible = true;
+        CloseButton.Text = "✕";
+
+        _logger.Info("Modo QuickView establecido correctamente");
+    });
+}
+
+private void ShowFullWeb()
+{
+    MainThread.BeginInvokeOnMainThread(() =>
+    {
+        // 1. Verificamos nulos
+        if (FullWebView == null || CloseButton == null) return;
+
+        // 2. Visibilidad de contenedores
+        QuickViewContainer.IsVisible = false;
+        FullWebView.IsVisible = true;
+
+        // 3. Ajuste de botones (Solo dejamos compartir y cerrar)
+        SourceButton.IsVisible = false;
+        ShareButton.IsVisible = true;
+        SpeakButton.IsVisible = false;
+
+        // 4. Lógica inteligente del botón de cerrar
+        // Si hay un título cargado, significa que podemos "volver" a la Vista Rápida
+        bool canGoBackToQuickView = !string.IsNullOrEmpty(TitleLabel?.Text) && 
+                                    TitleLabel.Text != "Cargando título...";
+
+        CloseButton.Text = canGoBackToQuickView ? "❮" : "✕";
+
+        _logger.Info("Modo FullWeb establecido correctamente");
+    });
+}
 
         private async void OnCloseClicked(object sender, EventArgs e)
         {
+            if (FullWebView.IsVisible)
+            {
+                if (!string.IsNullOrEmpty(TitleLabel.Text) && TitleLabel.Text != "Cargando título...")
+                {
+                    ShowQuickView();
+                    return;
+                }
+            }
             await Shell.Current.GoToAsync("..");
         }
         private void OnSourceClicked(object sender, EventArgs e)
@@ -255,6 +279,81 @@ namespace FeedHub_App.Views.News
                 vm.StopSpeaking();
             }
         }
+
+            public string ArticleHtmlContent(string ArticleContent) => $@"
+            <!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+                <meta name='color-scheme' content='light dark'>
+                <style>
+                    /* 1. Configuramos el soporte para temas del sistema */
+                    :root {{
+                        color-scheme: light dark;
+                        supports-color-scheme: light dark;
+                    }}
+
+                    /* 2. Estilos base para que el WebView sea transparente y use buena fuente */
+                    html, body {{
+                        background-color: transparent !important;
+                        margin: 0;
+                        padding: 0;
+                        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                        -webkit-text-size-adjust: 100%;
+                    }}
+
+                    body {{
+                        padding: 5px;
+                        line-height: 1.5;
+                        font-size: 14px;
+                    }}
+
+                    /* 3. LA SOLUCIÓN NUCLEAR: Forzamos colores por tema */
+                    
+                    /* MODO OSCURO (Letras blancas sobre fondo oscuro de la app) */
+                    @media (prefers-color-scheme: dark) {{
+                        * {{
+                            color: #F1F5F9 !important; /* Blanco suave */
+                            background-color: transparent !important;
+                        }}
+                        a {{ color: #60A5FA !important; text-decoration: none; font-weight: bold; }}
+                        strong, b {{ color: #FFFFFF !important; }}
+                    }}
+
+                    /* MODO CLARO (Letras oscuras sobre fondo claro de la app) */
+                    @media (prefers-color-scheme: light) {{
+                        * {{
+                            color: #1E293B !important; /* Gris casi negro */
+                            background-color: transparent !important;
+                        }}
+                        a {{ color: #2563EB !important; text-decoration: none; font-weight: bold; }}
+                        strong, b {{ color: #000000 !important; }}
+                    }}
+
+                    /* 4. Ajustes de imágenes y otros elementos */
+                    img {{
+                        max-width: 100%;
+                        height: auto;
+                        border-radius: 12px;
+                        margin: 15px 0;
+                        display: block;
+                    }}
+
+                    p {{ margin-bottom: 1.2em; }}
+                    
+                    ul, ol {{ padding-left: 20px; }}
+                    li {{ margin-bottom: 8px; }}
+
+                </style>
+            </head>
+            <body>
+                <div class='main-content'>
+                    {ArticleContent}
+                </div>
+            </body>
+            </html>";
     }
 }
+
 

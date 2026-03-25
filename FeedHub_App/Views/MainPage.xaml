@@ -25,7 +25,7 @@
                         HeightRequest="120">
                     <Grid>
                         <Grid Padding="20">
-                            <Label Text="📰 Latest News" TextColor="White" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Text="📰 Latest News" TextColor="{AppThemeBinding Light=LightGray, Dark=White}" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
                             <Label Text="Check what's happening right now" TextColor="#D1C4E9" FontSize="14" VerticalOptions="End" />
                         </Grid>
                         <Button BackgroundColor="Transparent"
@@ -81,7 +81,7 @@
         </ScrollView>
 
         <Label Grid.Row="1" Text="{Binding AppVersion, StringFormat='Version {0}'}"
-               FontSize="12" HorizontalOptions="Center" VerticalOptions="End"
-               Margin="0,0,0,20" TextColor="Gray"/>
+               FontSize="14" HorizontalOptions="Center" VerticalOptions="End"
+               Margin="0,0,0,20" TextColor="{AppThemeBinding Light=#Black, Dark=White}"/>
     </Grid>
 </ContentPage>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FeedHub_App.Views.News.QuickViewPage"
@@ -5,124 +6,115 @@
              Shell.NavBarIsVisible="False"
              Shell.FlyoutBehavior="Disabled">
 
+<ContentPage.Resources>
+    <Style x:Key="ActionBtnStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light=#475569, Dark=#CBD5E1}"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="WidthRequest" Value="50"/>
+        <Setter Property="HeightRequest" Value="50"/>
+        <Setter Property="CornerRadius" Value="25"/>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup Name="CommonStates">
+                    <VisualState Name="Normal" />
+                    
+                    <VisualState Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="0.85" />
+                            <Setter Property="BackgroundColor" Value="#15000000" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+</ContentPage.Resources>
 
     <Grid RowDefinitions="Auto, *">
 
-        <!-- Info banner (siempre arriba) -->
         <Label x:Name="InfoBanner"
                Grid.Row="0"
-               Text=""
-               BackgroundColor="#334155"
+               BackgroundColor="#1E293B"
                TextColor="White"
-               FontSize="14"
-               Padding="10"
-               IsVisible="False"
-               HorizontalOptions="Fill"/>
-        <!-- Contenedor principal -->
+               FontSize="12"
+               Padding="8"
+               HorizontalTextAlignment="Center"
+               IsVisible="False"/>
+
         <Grid Grid.Row="1">
-
-            <!-- QuickView Container -->
-            <Grid x:Name="QuickViewContainer" IsVisible="False" RowDefinitions="Auto, *, Auto">
-
-                <!-- Scrollable content -->
-                <ScrollView Grid.Row="1">
-                    <StackLayout>
-                        <!-- Imagen principal -->
+            <Grid x:Name="QuickViewContainer" 
+                  IsVisible="False" 
+                  BackgroundColor="{AppThemeBinding Light=White, Dark=#1E293B}" >
+                
+                <ScrollView>
+                    <VerticalStackLayout Spacing="0">
+                        
                         <Image x:Name="ArticleImage"
                                Aspect="AspectFill"
-                               HeightRequest="200"
-                               Margin="10"/>
+                               HeightRequest="280"
+                               HorizontalOptions="Fill"/>
 
-                        <!-- Contenido HTML -->
-                        <WebView x:Name="ArticleWebView"
-                                 VerticalOptions="Fill"/>
-                    </StackLayout>
+                        <VerticalStackLayout Padding="24,24,24,100" Spacing="16">
+                            
+                            <Label Text="FEEDHUB // QUICK VIEW"
+                                   FontSize="11" 
+                                   CharacterSpacing="1.5"
+                                   TextColor="#3B82F6" 
+                                   FontAttributes="Bold" />
+
+                            <Label x:Name="TitleLabel"
+                                   Text="Cargando título..."
+                                   FontSize="20"
+                                   LineHeight="1.2"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+
+                            <BoxView HeightRequest="1.5" 
+                                     Color="#3B82F6" 
+                                     Margin="0,8,0,-10" 
+                                     HorizontalOptions="Fill" 
+                                     Opacity="0.8"/>
+
+                            <WebView x:Name="ArticleWebView"
+                                     VerticalOptions="Fill"
+                                     HorizontalOptions="Fill"
+                                     BackgroundColor="Transparent">
+                            <WebView.Source>
+                                    <HtmlWebViewSource Html="{Binding ArticleContent}" />
+                            </WebView.Source>
+                                     </WebView>
+                                     <BoxView HeightRequest="1.5" 
+                                     Color="#3B82F6"  
+                                     HorizontalOptions="Fill"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
                 </ScrollView>
+                </Grid>
 
-                <!-- Título flotante -->
-                <Label x:Name="TitleLabel"
-                       Text="Cargando..."
-                       FontSize="20"
-                       TextColor="White"
-                       FontAttributes="Bold"
-                       BackgroundColor="#1e2430"
-                       Padding="10"
-                       VerticalOptions="Start"
-                       HorizontalOptions="Fill"
-                       LineBreakMode="WordWrap"/>
-
-                
-            </Grid>
-
-            <!-- Full Web fallback -->
-            <WebView x:Name="FullWebView"
+                <WebView x:Name="FullWebView"
                      IsVisible="False"
+                     BackgroundColor="Transparent"
                      VerticalOptions="Fill"
                      HorizontalOptions="Fill"/>
+                <Border VerticalOptions="End" 
+                        HorizontalOptions="Center" 
+                        Margin="0,0,0,30" 
+                        Padding="10,2"
+                        StrokeShape="RoundRectangle 30" 
+                        BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#1E293B}"
+                        Stroke="#E2E8F0" 
+                        StrokeThickness="1"> 
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.15"/>
+                    </Border.Shadow>
+                    <HorizontalStackLayout Spacing="5">
+                        <Button x:Name = "CloseButton" Text = "✕" Clicked="OnCloseClicked" Style="{StaticResource ActionBtnStyle}"/>
+                        <Button x:Name = "ShareButton" Text="🔗" Clicked="OnShareClicked" Style="{StaticResource ActionBtnStyle}"/>
+                        <Button x:Name = "SourceButton" Text="🌐" Clicked="OnSourceClicked" Style="{StaticResource ActionBtnStyle}"/>
+                        <Button x:Name = "SpeakButton" Text="{Binding SpeakIcon}" Command="{Binding SpeakNewsCommand}" Style="{StaticResource ActionBtnStyle}"/>
+                    </HorizontalStackLayout>
+                </Border>
+            </Grid>
         </Grid>
-
-        <!-- Botón cerrar -->
-        <Button Text="✕"
-                Clicked="OnCloseClicked"
-                BackgroundColor="White"
-                HorizontalOptions="End"
-                VerticalOptions="End"
-                Margin="20"
-                WidthRequest="44"
-                HeightRequest="44"
-                Opacity="0.8"
-                Grid.Row="1"/>
-
-        <Button x:Name="SourceButton"
-                Text="🌐"
-                Clicked="OnSourceClicked"
-                BackgroundColor="White"
-                VerticalOptions="End"
-                HorizontalOptions="Start"
-                Margin="70,20,20,20"
-                WidthRequest="44"
-                HeightRequest="44"
-                Opacity="0.8"
-                Grid.Row="1"/>
-        
-        <Button x:Name="ShareButton"
-                Text="🔗"
-                Clicked="OnShareClicked"
-                BackgroundColor="White"
-                VerticalOptions="End"
-                HorizontalOptions="Start"
-                Margin="20,20,20,20"
-                WidthRequest="44"
-                HeightRequest="44"
-                Opacity="0.8"
-                Grid.Row="1"/>
-        
-        <Button x:Name="SpeakButton"
-                Text="{Binding SpeakIcon}"
-                Command="{Binding SpeakNewsCommand}"
-                BackgroundColor="White"
-                VerticalOptions="End"
-                HorizontalOptions="Start"
-                Margin="120,20,20,20" 
-                WidthRequest="44"
-                HeightRequest="44"
-                Opacity="0.8"
-                Grid.Row="1">
-            
-            <Button.Triggers>
-                <DataTrigger TargetType="Button" 
-                             Binding="{Binding Source={x:Reference QuickViewContainer}, Path=IsVisible}" 
-                             Value="False">
-                    <Setter Property="IsVisible" Value="False" />
-                </DataTrigger>
-            </Button.Triggers>
-        </Button>
-        
-    </Grid>
-    
 </ContentPage>
-
-
-
-
-
