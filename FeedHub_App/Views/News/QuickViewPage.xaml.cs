@@ -41,20 +41,24 @@ namespace FeedHub_App.Views.News
             _httpClient.DefaultRequestHeaders.UserAgent.Clear();
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(ua);
 
-            Loaded += async (s, e) => await LoadArticleAsync();
+
         }
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             if (query.TryGetValue("link", out var linkObj))
             {
-                Link = Uri.UnescapeDataString(linkObj.ToString());
+                var newLink = Uri.UnescapeDataString(linkObj.ToString() ?? string.Empty);
+                
+                if (Link == newLink && _articleLoaded) return;
+
+                Link = newLink;
             }
 
             // Evitar doble carga si Shell reinyecta parámetros
             if (!_articleLoaded)
             {
                 _articleLoaded = true;
-                _ = LoadArticleAsync();
+                Task.Run(async () => await LoadArticleAsync());
             }
         }
 
@@ -304,7 +308,11 @@ private void ShowFullWeb()
                     }}
 
                     body {{
-                        padding: 5px;
+                        text-align: justify !important;
+                        text-justify: inter-word;
+                        padding: 15px 20px;
+                        hypens: auto;
+                        word-break: break-word;
                         line-height: 1.5;
                         font-size: 14px;
                     }}
