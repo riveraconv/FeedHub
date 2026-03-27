@@ -3,44 +3,57 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:FeedHub_App.ViewModels"
-    BackgroundColor="{AppThemeBinding Light=#F5F5F7, Dark=#121212}"
     Shell.NavBarIsVisible="False"
     Shell.FlyoutBehavior="Disabled"
     x:DataType="vm:MainViewModel"
     x:Class="FeedHub_App.Views.MainPage">
 
     <Grid RowDefinitions="*, Auto" Padding="0">
-        <ScrollView>
-            <VerticalStackLayout Padding="25" Spacing="20">
+        <Image Source="fondo_de_mundo.png" 
+               Aspect="AspectFill"
+               Opacity="1" 
+               Grid.RowSpan="2"/>
+        
+        <BoxView Color="Black" Opacity="0" Grid.RowSpan="2"/>
 
-                <VerticalStackLayout Margin="0,40,0,20">
-                    <Label Text="FeedHub" FontSize="32" FontAttributes="Bold"
-                           TextColor="{AppThemeBinding Light=#Black, Dark=White}" />
-                    <Label Text="Your daily window to the world" FontSize="16" TextColor="Gray" />
+        <ScrollView Grid.Row="0">   
+            <VerticalStackLayout Padding="25" Spacing="20">
+                
+                <VerticalStackLayout Margin="0,40,0,20" Spacing="5">
+                    <Label Text="FeedHub" 
+                           FontSize="32" 
+                           FontAttributes="Bold" 
+                           TextColor="#FFC3D4E2" />
+                    
+                    <Label Text="Your daily window to the world" 
+                           FontSize="16" 
+                           TextColor="#FFC3D4E2" />
                 </VerticalStackLayout>
 
                 <Border StrokeShape="RoundRectangle 15"
-                        BackgroundColor="{AppThemeBinding Light=#334155, Dark=#1E293B}"
-                        StrokeThickness="0"
+                        BackgroundColor="{AppThemeBinding Light=#CCFFFFFF, Dark=#1E293B}"
+                        Opacity="0.9"
+                        StrokeThickness="1"
                         HeightRequest="120">
                     <Grid>
                         <Grid Padding="20">
-                            <Label Text="📰 Latest News" TextColor="{AppThemeBinding Light=LightGray, Dark=White}" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
-                            <Label Text="Check what's happening right now" TextColor="#D1C4E9" FontSize="14" VerticalOptions="End" />
+                            <Label Text="📰 Latest News" TextColor="{AppThemeBinding Light=#334155, Dark=White}" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Text="Check what's happening right now" TextColor="{AppThemeBinding Light=#334155, Dark=White}" FontSize="14" VerticalOptions="End" />
                         </Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
+                        <Button BackgroundColor="Gray" Opacity="0.15"
+                                BorderColor="Cyan" BorderWidth="0.5" 
                                 Command="{Binding GoToLatestNewsCommand}" />
                     </Grid>
                 </Border>
 
                 <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="SpaceBetween" AlignItems="Center" Margin="0,10">
-
+                    
                     <Border StrokeShape="RoundRectangle 20" 
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" 
+                            BackgroundColor="{AppThemeBinding Light=#CCFFFFFF, Dark=#1E293B}"
                             FlexLayout.Basis="48%"
                             HeightRequest="150"
-                            StrokeThickness="0">
+                            StrokeThickness="0"
+                            Opacity="0.9">
                         <Border.Shadow>
                             <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="{AppThemeBinding Light=0.1, Dark=0.4}" />
                         </Border.Shadow>
@@ -57,10 +70,11 @@
                     </Border>
 
                     <Border StrokeShape="RoundRectangle 20" 
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" 
+                            BackgroundColor="{AppThemeBinding Light=#CCFFFFFF, Dark=#1E293B}"
                             FlexLayout.Basis="48%"
                             HeightRequest="150"
-                            StrokeThickness="0">
+                            StrokeThickness="0"
+                            Opacity="0.9">
                         <Border.Shadow>
                             <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="{AppThemeBinding Light=0.1, Dark=0.4}" />
                         </Border.Shadow>
@@ -75,13 +89,13 @@
                                     Command="{Binding GoToSettingsCommand}" />
                         </Grid>
                     </Border>
-
                 </FlexLayout>
-            </VerticalStackLayout>
-        </ScrollView>
+
+            </VerticalStackLayout> </ScrollView>
 
         <Label Grid.Row="1" Text="{Binding AppVersion, StringFormat='Version {0}'}"
                FontSize="14" HorizontalOptions="Center" VerticalOptions="End"
-               Margin="0,0,0,20" TextColor="{AppThemeBinding Light=#Black, Dark=White}"/>
+               Margin="0,0,0,20" TextColor="White"/>
+               
     </Grid>
 </ContentPage>
