@@ -7,140 +7,128 @@
              Shell.NavBarIsVisible="False"
              Shell.FlyoutBehavior="Disabled"
              Shell.PresentationMode="ModalAnimated">
-             
 
-    <Grid Padding="20" RowDefinitions="Auto,*" ColumnDefinitions="*">
-        <Grid Grid.Row="1">
-        <RefreshView Command="{Binding LoadNewsCommand}" 
-                     Grid.Row="1" 
-                     IsRefreshing="{Binding IsRefreshing}"
-                     RefreshColor="#4a9eff">
+    <Grid>
+        <BoxView>
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#0D253F" Offset="0.1" />
+                    <GradientStop Color="#813B83F6" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <Grid RowDefinitions="Auto,*" Padding="20">
             
+            <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,10,0,20">
+                <Label Text="ÚLTIMAS NOTICIAS" 
+                       TextColor="#4FC3F7" 
+                       FontSize="12" 
+                       FontAttributes="Bold" 
+                       CharacterSpacing="2"/>
+                <Label Text="FeedHub" 
+                       TextColor="White" 
+                       FontSize="32" 
+                       FontAttributes="Bold"/>
+                <BoxView HeightRequest="1" 
+                         BackgroundColor="#1A3A5A" 
+                         WidthRequest="100" 
+                         HorizontalOptions="Start"/>
+            </VerticalStackLayout>
 
-            <CollectionView
-                    ItemsSource="{Binding News}"
-                    SelectionMode="Single"
-                    x:Name="NewsCollection"
-                    SelectionChanged="OnSelectionChanged">
+            <RefreshView Grid.Row="1" 
+                         Command="{Binding LoadNewsCommand}" 
+                         IsRefreshing="{Binding IsRefreshing}"
+                         RefreshColor="#4FC3F7">
+                
+                <CollectionView ItemsSource="{Binding News}"
+                                SelectionMode="Single"
+                                x:Name="NewsCollection"
+                                SelectionChanged="OnSelectionChanged">
 
-                <CollectionView.EmptyView>
-                    <VerticalStackLayout Padding="30" 
-                                         Spacing="10" 
-                                         HorizontalOptions="Center">
-                        <ActivityIndicator IsRunning="{Binding IsLoading}" 
-                           Color="#4a9eff"
-                           HeightRequest="50" WidthRequest="50">
-                            <ActivityIndicator.Triggers>
-                                <DataTrigger TargetType="ActivityIndicator" Binding="{Binding IsRefreshing}" Value="True">
-                                    <Setter Property="IsVisible" Value="False" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="ActivityIndicator" Binding="{Binding IsRefreshing}" Value="False">
-                                    <Setter Property="IsVisible" Value="{Binding IsLoading}" />
-                                </DataTrigger>
-                            </ActivityIndicator.Triggers>
-                        </ActivityIndicator>
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout Padding="30" Spacing="20" HorizontalOptions="Center" VerticalOptions="Center">
+                            <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                               Color="#4FC3F7"
+                                               HeightRequest="50" 
+                                               WidthRequest="50"/>
+                            <Label Text="Preparing news..." 
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="#8A99A8"
+                                   FontSize="16"/>
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
 
-                        <Label Text="Preparing news..." 
-                               HorizontalTextAlignment="Center"
-                               TextColor="Gray">
-                            <Label.Triggers>
-                                <DataTrigger TargetType="Label" Binding="{Binding IsRefreshing}" Value="True">
-                                    <Setter Property="IsVisible" Value="False" />
-                                </DataTrigger>
-                            </Label.Triggers>
-                        </Label>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Stroke="#1E3A5A"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 20"
+                                    Margin="0,0,0,20"
+                                    BackgroundColor="#0F253E"
+                                    Padding="0"
+                                    MaximumWidthRequest="800">
+                                
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Offset="0,4" Radius="2" Opacity="0.4"/>
+                                </Border.Shadow>
 
-                    </VerticalStackLayout>
-                </CollectionView.EmptyView>
+                                <VerticalStackLayout Spacing="0">
+                                    <Grid IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
+                                        <Image Source="{Binding ImageUrl}"
+                                               HeightRequest="200" 
+                                               Aspect="AspectFill"/>
+                                        <BoxView VerticalOptions="End" HeightRequest="60">
+                                            <BoxView.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Color="Transparent" Offset="0.8"/>
+                                                    <GradientStop Color="#0F253E" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </BoxView.Background>
+                                        </BoxView>
+                                    </Grid>
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                                Stroke="LightGray"
-                                StrokeThickness="1"
-                                StrokeShape="RoundRectangle 12"
-                                Margin="10,10,20,0"
-                                Padding="0"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Start"
-                                MaximumWidthRequest="800"
-                                MinimumWidthRequest="350">
+                                    <VerticalStackLayout Padding="15" Spacing="10">
+                                        <Label Text="{Binding Title}"
+                                               FontAttributes="Bold"
+                                               FontSize="18"
+                                               TextColor="White"
+                                               LineBreakMode="WordWrap"/>
 
+                                        <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding Source}"
+                                                   FontSize="12"
+                                                   TextColor="#4FC3F7"
+                                                   FontAttributes="Bold"/>
+                                            <Label Grid.Column="1"
+                                                   Text="•"
+                                                   TextColor="#8A99A8"/>
+                                            <Label Grid.Column="2"
+                                                   Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
+                                                   FontSize="12"
+                                                   TextColor="#8A99A8"/>
+                                        </Grid>
 
-                            <VerticalStackLayout Spacing="10" 
-                                                 Padding="20" 
-                                                 MaximumWidthRequest="800" 
-                                                 HorizontalOptions="Fill">
-
-                                <Label Text="{Binding Title}"
-                                       FontAttributes="Bold"
-                                       FontSize="15"
-                                       LineBreakMode="WordWrap"
-                                       VerticalOptions="Start" 
-                                       Margin="0,5,0,0"/>
-
-                                <Grid HorizontalOptions="Fill" 
-                                      VerticalOptions="Start"
-                                      Margin="0,5">
-
-                                    <Image Source="{Binding ImageUrl}"
-                                           HorizontalOptions="Fill"
-                                           VerticalOptions="Fill"
-                                           HeightRequest="200" 
-                                           IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
-                                        <Image.Aspect>
-                                            <OnPlatform x:TypeArguments="Aspect">
-                                                <On Platform="Android" Value="AspectFill"/>
-                                                <On Platform="WinUI" Value="AspectFit"/>
-                                            </OnPlatform>
-                                        </Image.Aspect>
-                                    </Image>
-                                </Grid>
-
-                                <Grid ColumnDefinitions="Auto,Auto,*"
-                                      ColumnSpacing="8"
-                                      VerticalOptions="Start"
-                                      HorizontalOptions="Fill">
-
-                                    <Label Grid.Column="0"
-                                           Text="{Binding Source}"
-                                           FontSize="13"
-                                           TextColor="Gray"
-                                           VerticalOptions="Center"
-                                           LineBreakMode="TailTruncation"
-                                           IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
-
-                                    <Label Grid.Column="1"
-                                           Text="•"
-                                           TextColor="Gray"
-                                           VerticalOptions="Center"
-                                           IsVisible="{Binding Source, Converter={StaticResource NullToBoolConverter}}"/>
-
-                                    <Label Grid.Column="2"
-                                           Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
-                                           FontSize="13"
-                                           TextColor="Gray"
-                                           LineBreakMode="TailTruncation"
-                                           HorizontalOptions="Fill"
-                                           VerticalOptions="Center"
-                                           IsVisible="{Binding PublishDate, Converter={StaticResource NullToBoolConverter}}"/>
-                                </Grid>
-
-                                <Label Text="{Binding Description}"
-                                       FontSize="14"
-                                       LineBreakMode="TailTruncation"
-                                       HorizontalOptions="Fill"
-                                       Margin="0,0,0,0"
-                                       MaxLines="4"
-                                       IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
-
-                            </VerticalStackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-
-            </CollectionView>
-        </RefreshView>                
+                                        <Label Text="{Binding Description}"
+                                               FontSize="14"
+                                               TextColor="#CBD5E1"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="3"
+                                               IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
+                                        
+                                        <Label Text="Read more →" 
+                                               TextColor="#4FC3F7" 
+                                               FontSize="12" 
+                                               HorizontalOptions="End"
+                                               Margin="0,5,0,0"/>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>                
         </Grid>
     </Grid>
 </ContentPage>

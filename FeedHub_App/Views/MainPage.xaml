@@ -21,14 +21,9 @@
     <ScrollView Grid.Row="0">
         <VerticalStackLayout Padding="25" Spacing="16">
             
-            <VerticalStackLayout Spacing="2">
-                <Border Background="#1A3A5A" StrokeShape="RoundRectangle 10" 
-                        Padding="10,2" HorizontalOptions="Start">
-                    <Label Text="● LIVE NOW" TextColor="#64B5F6" FontSize="10" FontAttributes="Bold"/>
-                </Border>
-                
+            <VerticalStackLayout>
                 <Label Text="FeedHub" FontSize="48" FontAttributes="Bold" TextColor="White" Margin="0,10,0,0"/>
-                <Label Text="Your daily window to the world" TextColor="#8A99A8" FontSize="16"/>
+                <Label Text="Tu ventana diaria al mundo" TextColor="#8A99A8" FontSize="16"/>
                 <BoxView HeightRequest="1" BackgroundColor="#1A3A5A" Margin="0,15,0,0" WidthRequest="150" HorizontalOptions="Start"/>
             </VerticalStackLayout>
 
@@ -38,15 +33,15 @@
                     
                     <VerticalStackLayout Spacing="7" Padding="15">
                         <Border Background="#1A3A5A" StrokeShape="RoundRectangle 10" Padding="8,2" HorizontalOptions="Start">
-                            <Label Text="● Latest News" TextColor="#64B5F6" FontSize="11"/>
+                            <Label Text="● Últimas Noticias" TextColor="#64B5F6" FontSize="11"/>
                         </Border>
-                        <Label Text="BREAKING • WORLD • TECH" TextColor="#4FC3F7" FontSize="10" CharacterSpacing="2"/>
-                        <Label Text="What's happening&#10;right now" FontSize="24" FontAttributes="Bold" TextColor="White"/>
-                        <Label Text="Verified, real-time news from the world's most relevant sources." 
+                        <Label Text="URGENTE • MUNDO • TECNOLOGÍA • ACTUALIDAD" TextColor="#4FC3F7" FontSize="10" CharacterSpacing="2"/>
+                        <Label Text="Lo que está pasando&#10;ahora mismo" FontSize="24" FontAttributes="Bold" TextColor="White"/>
+                        <Label Text="Información verificada en tiempo real de las fuentes más relevantes nacionales y del mundo." 
                                TextColor="#8A99A8" FontSize="13" LineBreakMode="WordWrap"/>
                         
-                        <HorizontalStackLayout Spacing="5" Margin="0,10">
-                            <Label Text="Explore Now" TextColor="#4FC3F7" VerticalOptions="Center"/>
+                        <HorizontalStackLayout Spacing="5" Margin="0,5,0,0">
+                            <Label Text="Explora tus noticias de actualidad" TextColor="#4FC3F7" VerticalOptions="Center"/>
                             <Label Text="→" TextColor="#4FC3F7" VerticalOptions="Center"/>
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
@@ -62,9 +57,9 @@
                         
                         <VerticalStackLayout Spacing="7" Padding="15">
                             <Label Text="📂" FontSize="24" Margin="0,5"/>
-                            <Label Text="SECTIONS" TextColor="#4FC3F7" FontSize="9" CharacterSpacing="1"/>
-                            <Label Text="Categories" TextColor="White" FontSize="18" FontAttributes="Bold"/>
-                            <Label Text="View →" TextColor="#4FC3F7" Margin="0,5"/>
+                            <Label Text="SECCIONES" TextColor="#4FC3F7" FontSize="9" CharacterSpacing="1"/>
+                            <Label Text="Categorías" TextColor="White" FontSize="18" FontAttributes="Bold"/>
+                            <Label Text="Ver →" TextColor="#4FC3F7" Margin="0,5"/>
                         </VerticalStackLayout>
                         <Button BackgroundColor="Transparent" Command="{Binding GoToCategoryCommand}"/>
                     </Grid>
@@ -75,9 +70,9 @@
                     <Grid>
                         <VerticalStackLayout Spacing="7" Padding="15">
                             <Label Text="⚙️" FontSize="24" Margin="0,5"/>
-                            <Label Text="CONFIG" TextColor="#4FC3F7" FontSize="9" CharacterSpacing="1"/>
-                            <Label Text="Options" TextColor="White" FontSize="18" FontAttributes="Bold"/>
-                            <Label Text="Adjust →" TextColor="#4FC3F7" Margin="0,5"/>
+                            <Label Text="CONFIGURACIÓN" TextColor="#4FC3F7" FontSize="9" CharacterSpacing="1"/>
+                            <Label Text="Opciones" TextColor="White" FontSize="18" FontAttributes="Bold"/>
+                            <Label Text="Ajustar →" TextColor="#4FC3F7" Margin="0,5"/>
                         </VerticalStackLayout>
                         <Button BackgroundColor="Transparent" Command="{Binding GoToSettingsCommand}"/>
                     </Grid>
@@ -89,11 +84,6 @@
 
     <Grid Grid.Row="1" Padding="25,10,25,20" ColumnDefinitions="*, Auto">
         <Label Text="V.1.0 • Build 1" TextColor="Black" FontSize="14" VerticalOptions="Center"/>
-        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-            <BoxView WidthRequest="20" HeightRequest="6" Color="#4FC3F7" CornerRadius="3"/>
-            <BoxView WidthRequest="6" HeightRequest="6" Color="#1E3A5A" CornerRadius="3"/>
-            <BoxView WidthRequest="6" HeightRequest="6" Color="#1E3A5A" CornerRadius="3"/>
-        </HorizontalStackLayout>
     </Grid>
 </Grid>
 </ContentPage>
