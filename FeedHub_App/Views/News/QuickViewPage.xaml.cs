@@ -191,7 +191,7 @@ namespace FeedHub_App.Views.News
     MainThread.BeginInvokeOnMainThread(() =>
     {
         // 1. Verificamos que los componentes críticos existan
-        if (QuickViewContainer == null || CloseButton == null) return;
+        if (QuickViewContainer == null) return;
 
         // 2. Visibilidad de contenedores
         QuickViewContainer.IsVisible = true;
@@ -201,10 +201,6 @@ namespace FeedHub_App.Views.News
         SourceButton.IsVisible = true;
         ShareButton.IsVisible = true;
         SpeakButton.IsVisible = true;
-        
-        // 4. Reset del botón de cerrar
-        CloseButton.IsVisible = true;
-        CloseButton.Text = "✕";
 
         _logger.Info("Modo QuickView establecido correctamente");
     });
@@ -215,7 +211,7 @@ private void ShowFullWeb()
     MainThread.BeginInvokeOnMainThread(() =>
     {
         // 1. Verificamos nulos
-        if (FullWebView == null || CloseButton == null) return;
+        if (FullWebView == null) return;
 
         // 2. Visibilidad de contenedores
         QuickViewContainer.IsVisible = false;
@@ -231,23 +227,20 @@ private void ShowFullWeb()
         bool canGoBackToQuickView = !string.IsNullOrEmpty(TitleLabel?.Text) && 
                                     TitleLabel.Text != "Cargando título...";
 
-        CloseButton.Text = canGoBackToQuickView ? "❮" : "✕";
-
         _logger.Info("Modo FullWeb establecido correctamente");
     });
 }
 
-        private async void OnCloseClicked(object sender, EventArgs e)
+        protected override bool OnBackButtonPressed()
         {
-            if (FullWebView.IsVisible)
+            // Como ahora todas son "Modales" para el sistema, 
+            // usamos Navigation.PopModalAsync() para cerrar.
+            Dispatcher.Dispatch(async () => 
             {
-                if (!string.IsNullOrEmpty(TitleLabel.Text) && TitleLabel.Text != "Cargando título...")
-                {
-                    ShowQuickView();
-                    return;
-                }
-            }
-            await Shell.Current.GoToAsync("..");
+                await Shell.Current.Navigation.PopModalAsync();
+            });
+
+            return true; // Bloquea el cierre de la App
         }
         private void OnSourceClicked(object sender, EventArgs e)
         {
@@ -305,6 +298,7 @@ private void ShowFullWeb()
                         padding: 0;
                         font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
                         -webkit-text-size-adjust: 100%;
+
                     }}
 
                     body {{

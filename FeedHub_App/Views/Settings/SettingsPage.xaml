@@ -53,31 +53,5 @@
             </Grid>
         </VerticalStackLayout>
 
-        <Border Grid.Row="1"
-                HorizontalOptions="End"
-                VerticalOptions="End"
-                Margin="0,0,10,10"
-                HeightRequest="55"
-                WidthRequest="55"
-                StrokeShape="RoundRectangle 15"
-                BackgroundColor="Transparent"
-                Stroke="#383838"
-                StrokeThickness="0.5">
-
-            <Grid>
-                <Button Command="{Binding GoBackToMainMenuCommand}"
-                        BackgroundColor="Black"
-                        CornerRadius="12"
-                        Opacity="0.3"/>
-
-                <Label Text="↩" 
-                       TextColor="{AppThemeBinding Light=#Black, Dark=White}"
-                       FontSize="32"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       InputTransparent="True"
-                       Margin="0,-4,0,0"/>
-            </Grid>
-        </Border>
     </Grid>
 </ContentPage>

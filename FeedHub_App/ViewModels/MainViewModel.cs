@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using FeedHub_App.Views.News;
+using FeedHub_App.Views.Settings;
 
 namespace FeedHub_App.ViewModels
 {
@@ -15,21 +17,20 @@ namespace FeedHub_App.ViewModels
         [RelayCommand]
         private async Task GoToLatestNews()
         {
-            // Quitamos los "///". Si la página es hija de la actual o está registrada:
-            await Shell.Current.GoToAsync("LatestNewsPage");
+            // Navegamos de forma sencilla
+            await Shell.Current.GoToAsync(nameof(LatestNewsPage));
         }
 
         [RelayCommand]
         private async Task GoToCategory()
         {
-            // OJO: Asegúrate de que el nombre coincida con el RegisterRoute
-            await Shell.Current.GoToAsync("CategoryListPage");
+            await Shell.Current.GoToAsync(nameof(CategoryListPage));
         }
 
         [RelayCommand]
         private async Task GoToSettings()
         {
-            await Shell.Current.GoToAsync("SettingsPage");
+            await Shell.Current.GoToAsync(nameof(SettingsPage));
         }
     }
 }

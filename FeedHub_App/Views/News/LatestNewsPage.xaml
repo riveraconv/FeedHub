@@ -5,7 +5,9 @@
              x:Class="FeedHub_App.Views.News.LatestNewsPage"
              x:Name="Page"
              Shell.NavBarIsVisible="False"
-             Shell.FlyoutBehavior="Disabled">
+             Shell.FlyoutBehavior="Disabled"
+             Shell.PresentationMode="ModalAnimated">
+             
 
     <Grid Padding="20" RowDefinitions="Auto,*" ColumnDefinitions="*">
         <Grid Grid.Row="1">
@@ -138,41 +140,7 @@
                 </CollectionView.ItemTemplate>
 
             </CollectionView>
-        </RefreshView>
-
-        <Border Grid.Row="1"
-                HorizontalOptions="End"
-                VerticalOptions="End"
-                Margin="0,0,22,22"
-                HeightRequest="45"
-                WidthRequest="45"
-                StrokeShape="RoundRectangle 10"
-                BackgroundColor="Transparent"
-                Stroke="#383838"
-                StrokeThickness="0.5">
-
-
-                <Grid>
-                    <Button Command="{Binding BindingContext.GoBackCommand, Source={x:Reference Page}}"
-                            BackgroundColor="Black"
-                            CornerRadius="10"
-                            WidthRequest="40"
-                            HeightRequest="40"
-                            Opacity="0.3"/>
-
-                    <Label Text="↩" 
-                       TextColor="{AppThemeBinding Light=#Black, Dark=White}"
-                       FontSize="30"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       InputTransparent="True"
-                       Margin="0,-5,0,0"
-                       BackgroundColor="Transparent"/>
-
-
-                </Grid>
-            </Border>
-            
+        </RefreshView>                
         </Grid>
     </Grid>
 </ContentPage>

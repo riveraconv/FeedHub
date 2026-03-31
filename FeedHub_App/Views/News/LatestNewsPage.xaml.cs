@@ -32,5 +32,16 @@ public partial class LatestNewsPage : ContentPage
             _viewModel.LoadNewsCommand.Execute(null);
         }
     }
+protected override bool OnBackButtonPressed()
+{
+    // Como ahora todas son "Modales" para el sistema, 
+    // usamos Navigation.PopModalAsync() para cerrar.
+    Dispatcher.Dispatch(async () => 
+    {
+        await Shell.Current.Navigation.PopModalAsync();
+    });
+
+    return true; // Bloquea el cierre de la App
+}
 }
 

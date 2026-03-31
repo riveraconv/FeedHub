@@ -4,7 +4,8 @@
              x:Class="FeedHub_App.Views.News.QuickViewPage"
              Title=""
              Shell.NavBarIsVisible="False"
-             Shell.FlyoutBehavior="Disabled">
+             Shell.FlyoutBehavior="Disabled"
+             Shell.PresentationMode="ModalAnimated">
 
 <ContentPage.Resources>
     <Style x:Key="ActionBtnStyle" TargetType="Button">
@@ -45,13 +46,14 @@
         <Grid Grid.Row="1">
             <Grid x:Name="QuickViewContainer" 
                   IsVisible="False" 
-                  BackgroundColor="{AppThemeBinding Light=White, Dark=#1E293B}" >
+                  BackgroundColor="Transparent"
+                  Margin="5,0,5,0">
                 
-                <ScrollView>
+                <ScrollView >
                     <VerticalStackLayout Spacing="0">
                         
                         <Image x:Name="ArticleImage"
-                               Aspect="AspectFill"
+                               Aspect="AspectFit"
                                HeightRequest="280"
                                HorizontalOptions="Fill"/>
 
@@ -109,7 +111,6 @@
                         <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.15"/>
                     </Border.Shadow>
                     <HorizontalStackLayout Spacing="5">
-                        <Button x:Name = "CloseButton" Text = "✕" Clicked="OnCloseClicked" Style="{StaticResource ActionBtnStyle}"/>
                         <Button x:Name = "ShareButton" Text="🔗" Clicked="OnShareClicked" Style="{StaticResource ActionBtnStyle}"/>
                         <Button x:Name = "SourceButton" Text="🌐" Clicked="OnSourceClicked" Style="{StaticResource ActionBtnStyle}"/>
                         <Button x:Name = "SpeakButton" Text="{Binding SpeakIcon}" Command="{Binding SpeakNewsCommand}" Style="{StaticResource ActionBtnStyle}"/>

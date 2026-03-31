@@ -4,7 +4,8 @@
              x:Class="FeedHub_App.Views.News.NewsDetailPage"
              Shell.NavBarIsVisible="False"
              Shell.FlyoutBehavior="Disabled"
-             Title="">
+             Title=""
+             Shell.PresentationMode="ModalAnimated">
 
     <Grid RowDefinitions="*">
         <WebView Source="{Binding Link}"

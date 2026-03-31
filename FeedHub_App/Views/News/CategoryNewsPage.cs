@@ -25,15 +25,17 @@ namespace FeedHub_App.Views.News
                 ((CollectionView)sender).SelectedItem = null;
             }
         }
+        protected override bool OnBackButtonPressed()
+{
+    // Como ahora todas son "Modales" para el sistema, 
+    // usamos Navigation.PopModalAsync() para cerrar.
+    Dispatcher.Dispatch(async () => 
+    {
+        await Shell.Current.Navigation.PopModalAsync();
+    });
 
-        // El comando de volver lo ponemos aquí en la vista para no ensuciar el VM
-        // y que siempre funcione sin importar qué VM uses.
-        [RelayCommand]
-        public async Task GoBackToCategoryList()
-        {
-            // Como quieres ir a la lista de categorías:
-            await Shell.Current.GoToAsync("CategoryListPage");
-        }
+    return true; // Bloquea el cierre de la App
+}
     }
 }
 

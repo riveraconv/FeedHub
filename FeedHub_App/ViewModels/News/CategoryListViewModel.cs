@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Utilities;
+using System.ComponentModel;
 
 namespace FeedHub_App.ViewModels.News
 {
@@ -155,11 +156,7 @@ namespace FeedHub_App.ViewModels.News
             await Task.Delay(500);
             SearchText = string.Empty;
         }
-        [RelayCommand]
-        public async Task GoBack()
-        {
-            await Shell.Current.GoToAsync("//MainPage");
-        }
+
     }
 }
 
