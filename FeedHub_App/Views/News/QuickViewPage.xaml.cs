@@ -1,7 +1,4 @@
 ﻿using FeedHub_Core.Services;
-using Microsoft.Maui.Dispatching;
-using System.Net.Http;
-using System.Text;
 using FeedHub_Core.Utilities;
 using FeedHub_App.ViewModels.News;
 
@@ -16,6 +13,7 @@ namespace FeedHub_App.Views.News
         private readonly ILogger _logger;
 
         public string? Link { get; set; }
+        public string Source { get; set; }
         private bool _articleLoaded = false;
 
         public QuickViewPage(ILogger logger, QuickViewViewModel viewModel)
@@ -48,10 +46,20 @@ namespace FeedHub_App.Views.News
             if (query.TryGetValue("link", out var linkObj))
             {
                 var newLink = Uri.UnescapeDataString(linkObj.ToString() ?? string.Empty);
-                
                 if (Link == newLink && _articleLoaded) return;
 
                 Link = newLink;
+                _articleLoaded = false; // Permitir recarga si la URL cambia
+            }
+
+            if (query.TryGetValue("source", out var sourceObj))
+            {
+                Source = Uri.UnescapeDataString(sourceObj.ToString() ?? "DESCONOCIDA");
+                
+                // IMPORTANTE: Aseguramos que se actualice en el hilo principal
+                MainThread.BeginInvokeOnMainThread(() => {
+                    SourceLabel.Text = Source.ToUpper();
+                });
             }
 
             // Evitar doble carga si Shell reinyecta parámetros
@@ -117,7 +125,7 @@ namespace FeedHub_App.Views.News
                         // SOLO FULL WEB MODE
                         ShowFullWeb();
                         InfoBanner.IsVisible = true;
-                        InfoBanner.Text = "You were redirected to the original website.";
+                        InfoBanner.Text = "Fuiste redireccionado al sitio web original.";
                         FullWebView.Source = new UrlWebViewSource { Url = Link };
                     }
                     else
@@ -187,24 +195,24 @@ namespace FeedHub_App.Views.News
         }
 
         private void ShowQuickView()
-{
-    MainThread.BeginInvokeOnMainThread(() =>
-    {
-        // 1. Verificamos que los componentes críticos existan
-        if (QuickViewContainer == null) return;
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                // 1. Verificamos que los componentes críticos existan
+                if (QuickViewContainer == null) return;
 
-        // 2. Visibilidad de contenedores
-        QuickViewContainer.IsVisible = true;
-        FullWebView.IsVisible = false;
+                // 2. Visibilidad de contenedores
+                QuickViewContainer.IsVisible = true;
+                FullWebView.IsVisible = false;
 
-        // 3. Estado de los botones
-        SourceButton.IsVisible = true;
-        ShareButton.IsVisible = true;
-        SpeakButton.IsVisible = true;
+                // 3. Estado de los botones
 
-        _logger.Info("Modo QuickView establecido correctamente");
-    });
-}
+                ShareButton.IsVisible = true;
+                SpeakButton.IsVisible = true;
+
+                _logger.Info("Modo QuickView establecido correctamente");
+            });
+        }
 
 private void ShowFullWeb()
 {
@@ -218,7 +226,6 @@ private void ShowFullWeb()
         FullWebView.IsVisible = true;
 
         // 3. Ajuste de botones (Solo dejamos compartir y cerrar)
-        SourceButton.IsVisible = false;
         ShareButton.IsVisible = true;
         SpeakButton.IsVisible = false;
 
@@ -230,18 +237,6 @@ private void ShowFullWeb()
         _logger.Info("Modo FullWeb establecido correctamente");
     });
 }
-
-        protected override bool OnBackButtonPressed()
-        {
-            // Como ahora todas son "Modales" para el sistema, 
-            // usamos Navigation.PopModalAsync() para cerrar.
-            Dispatcher.Dispatch(async () => 
-            {
-                await Shell.Current.Navigation.PopModalAsync();
-            });
-
-            return true; // Bloquea el cierre de la App
-        }
         private void OnSourceClicked(object sender, EventArgs e)
         {
             if (BindingContext is QuickViewViewModel vm)

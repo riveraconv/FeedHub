@@ -9,15 +9,4 @@ public partial class SettingsPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
-protected override bool OnBackButtonPressed()
-{
-    // Como ahora todas son "Modales" para el sistema, 
-    // usamos Navigation.PopModalAsync() para cerrar.
-    Dispatcher.Dispatch(async () => 
-    {
-        await Shell.Current.Navigation.PopModalAsync();
-    });
-
-    return true; // Bloquea el cierre de la App
-}
 }

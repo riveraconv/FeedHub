@@ -1,5 +1,4 @@
 using FeedHub_Core.Models;
-using Microsoft.Maui.Controls;
 
 namespace FeedHub_App.Views.News;
 

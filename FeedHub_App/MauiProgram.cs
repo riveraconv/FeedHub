@@ -6,8 +6,10 @@ using FeedHub_App.Views.News;
 using FeedHub_App.ViewModels.Settings;
 using FeedHub_App.Views.Settings;
 using FeedHub_App.Utilities;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.DependencyInjection;
+using FeedHub_App.Views;
+using FeedHub_App.ViewModels;
+using CommunityToolkit.Maui;
+
 
 
 namespace FeedHub_App
@@ -20,21 +22,20 @@ namespace FeedHub_App
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-
-            //Services
+            // --- SERVICIOS ---
             builder.Services.AddHttpClient<IRssService, RssService>()
                     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                     {
-                        AutomaticDecompression = System.Net.DecompressionMethods.All, // Aceptamos TODO (Gzip, Deflate, Brotli)
+                        AutomaticDecompression = System.Net.DecompressionMethods.All,
                         AllowAutoRedirect = true,
                         MaxAutomaticRedirections = 10,
-                        // Esto ignora errores de certificado que a veces dan los emuladores
                         ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                     });
 
@@ -43,19 +44,24 @@ namespace FeedHub_App
             builder.Services.AddSingleton<FeedHub_Core.Utilities.ILogger, PlatformLogger>();
             builder.Services.AddSingleton<INewsAggregatorService, NewsAggregatorService>();
 
-            //ViewModels
+            // --- VIEWMODELS ---
+
+            builder.Services.AddSingleton<MainViewModel>();
             builder.Services.AddSingleton<LatestNewsViewModel>();
             builder.Services.AddTransient<CategoryListViewModel>();
             builder.Services.AddTransient<QuickViewViewModel>();
             builder.Services.AddTransient<CategoryNewsViewModel>();
             builder.Services.AddTransient<SettingsViewModel>();
 
-            //Pages
+            // --- PAGES ---
+
+            builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<LatestNewsPage>();
             builder.Services.AddTransient<QuickViewPage>();
             builder.Services.AddTransient<CategoryListPage>();
             builder.Services.AddTransient<CategoryNewsPage>();
             builder.Services.AddTransient<SettingsPage>();
+
 
 #if DEBUG
             builder.Logging.AddDebug();
@@ -65,3 +71,4 @@ namespace FeedHub_App
         }
     }
 }
+

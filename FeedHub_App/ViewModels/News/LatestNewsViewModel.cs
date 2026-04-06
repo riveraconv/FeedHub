@@ -63,7 +63,8 @@ namespace FeedHub_App.ViewModels.News
             await Shell.Current.GoToAsync(
                 $"QuickViewPage?link={Uri.EscapeDataString(item.Link)}" +
                 $"&title={Uri.EscapeDataString(item.Title)}" +
-                $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}");
+                $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}"+
+                $"&source={Uri.EscapeDataString(item.Source ?? "Fuente")}");
         }
         [RelayCommand]
         public async Task GoBack()

@@ -5,10 +5,10 @@
              x:Class="FeedHub_App.Views.News.LatestNewsPage"
              x:Name="Page"
              Shell.NavBarIsVisible="False"
-             Shell.FlyoutBehavior="Disabled"
-             Shell.PresentationMode="ModalAnimated">
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
-    <Grid>
+
+    <Grid IgnoreSafeArea="True">
         <BoxView>
             <BoxView.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -18,9 +18,9 @@
             </BoxView.Background>
         </BoxView>
 
-        <Grid RowDefinitions="Auto,*" Padding="20">
+        <Grid RowDefinitions="Auto,*" Padding="20,20,20,0">
             
-            <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,10,0,20">
+            <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,10,0,20" >
                 <Label Text="ÚLTIMAS NOTICIAS" 
                        TextColor="#4FC3F7" 
                        FontSize="12" 
@@ -52,7 +52,7 @@
                                                Color="#4FC3F7"
                                                HeightRequest="50" 
                                                WidthRequest="50"/>
-                            <Label Text="Preparing news..." 
+                            <Label Text="Preparando noticias..." 
                                    HorizontalTextAlignment="Center"
                                    TextColor="#8A99A8"
                                    FontSize="16"/>
@@ -64,7 +64,7 @@
                             <Border Stroke="#1E3A5A"
                                     StrokeThickness="1"
                                     StrokeShape="RoundRectangle 20"
-                                    Margin="0,0,0,20"
+                                    Margin="0,10,0,10"
                                     BackgroundColor="#0F253E"
                                     Padding="0"
                                     MaximumWidthRequest="800">
@@ -117,7 +117,7 @@
                                                MaxLines="3"
                                                IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
                                         
-                                        <Label Text="Read more →" 
+                                        <Label Text="Leer más →" 
                                                TextColor="#4FC3F7" 
                                                FontSize="12" 
                                                HorizontalOptions="End"
@@ -130,5 +130,29 @@
                 </CollectionView>
             </RefreshView>                
         </Grid>
+
+ <BoxView VerticalOptions="Start" 
+                 HeightRequest="20" 
+                 InputTransparent="True"
+                 Margin="0,120,0,0">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#12304D" Offset="0" />
+                    <GradientStop Color="Transparent" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <BoxView VerticalOptions="End" 
+                 HeightRequest="20" 
+                 InputTransparent="True">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="Transparent" Offset="0" />
+                    <GradientStop Color="#12304D" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
     </Grid>
 </ContentPage>

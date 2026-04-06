@@ -15,14 +15,14 @@ public partial class SettingsViewModel : ObservableObject
         IsDarkMode = Preferences.Default.Get("DarkMode", Application.Current.RequestedTheme == AppTheme.Dark);
     }
 
-    // Este método se ejecuta AUTOMÁTICAMENTE cuando cambias el Switch
+    // Este mï¿½todo se ejecuta AUTOMï¿½TICAMENTE cuando cambias el Switch
     // porque el Toolkit detecta que la propiedad "IsDarkMode" ha cambiado.
     partial void OnIsDarkModeChanged(bool value)
     {
         // Guardamos el valor permanentemente
         Preferences.Default.Set("DarkMode", value);
 
-        // Aplicamos el tema visual a toda la aplicación
+        // Aplicamos el tema visual a toda la aplicaciï¿½n
         Application.Current.UserAppTheme = value ? AppTheme.Dark : AppTheme.Light;
     }
 
@@ -32,7 +32,7 @@ public partial class SettingsViewModel : ObservableObject
         bool confirm = await Shell.Current.DisplayAlert("Clear Cache", "Are you sure you want to delete temporary data?", "Yes", "No");
         if (confirm)
         {
-            await Task.Delay(1000); // Simulación
+            await Task.Delay(1000); // Simulaciï¿½n
             await Shell.Current.DisplayAlert("Done", "News Cache was cleared", "OK");
         }
     }
@@ -42,4 +42,6 @@ public partial class SettingsViewModel : ObservableObject
     {
         await Shell.Current.GoToAsync("..");
     }
+
+    
 }

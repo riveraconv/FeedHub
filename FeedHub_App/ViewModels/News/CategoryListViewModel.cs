@@ -16,16 +16,15 @@ namespace FeedHub_App.ViewModels.News
         public ObservableCollection<NewsItem> Articles { get; } = new();
         public ObservableCollection<string> Categories { get; } = new()
         {
-            "International",
-            "Politics",
-            "Economy",
-            "Technology",
-            "Planet",
-            "Sports",
-            "Society",
-            "Culture",
-            "Entertainment",
-            
+            "Internacional",
+            "Política",
+            "Economía",
+            "Tecnología",
+            "Ciencia",
+            "Deportes",
+            "Sociedad",
+            "Cultura",
+            "Entretenimiento",
         };
 
         [ObservableProperty]
@@ -131,7 +130,8 @@ namespace FeedHub_App.ViewModels.News
             await Shell.Current.GoToAsync(
                 $"QuickViewPage?link={Uri.EscapeDataString(item.Link)}" +
                 $"&title={Uri.EscapeDataString(item.Title)}" +
-                $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}");
+                $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}" +
+                $"&source={Uri.EscapeDataString(item.Source ?? "Fuente")}");
         }
         [RelayCommand]
         public async Task SelectCategoryAsync(string categoryName)

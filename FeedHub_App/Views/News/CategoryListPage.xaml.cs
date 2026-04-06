@@ -3,25 +3,30 @@ using FeedHub_Core.Models;
 
 namespace FeedHub_App.Views.News;
 
-public partial class CategoryListPage : ContentPage
-{
-    private readonly CategoryListViewModel _viewModel;
-
-    public CategoryListPage(CategoryListViewModel viewModel)
+    public partial class CategoryListPage : ContentPage
     {
-        InitializeComponent();
-        _viewModel = viewModel;
-        BindingContext = _viewModel;
+        private readonly CategoryListViewModel _viewModel;
+
+        public CategoryListPage(CategoryListViewModel viewModel)
+        {
+            InitializeComponent();
+            _viewModel = viewModel;
+            BindingContext = _viewModel;
+        }
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+    
+            // Resetea estado inicial cada vez
+            this.Opacity = 0;
+            this.TranslationX = 100;
+            
+            // Pequeña pausa para que Shell termine su propia transición
+            await Task.Delay(100);
+            
+            await Task.WhenAll(
+                this.FadeTo(1, 300, Easing.CubicOut),
+                this.TranslateTo(0, 0, 300, Easing.CubicOut)
+            );
+        }
     }
-protected override bool OnBackButtonPressed()
-{
-    // Como ahora todas son "Modales" para el sistema, 
-    // usamos Navigation.PopModalAsync() para cerrar.
-    Dispatcher.Dispatch(async () => 
-    {
-        await Shell.Current.Navigation.PopModalAsync();
-    });
-
-    return true; // Bloquea el cierre de la App
-}
-}

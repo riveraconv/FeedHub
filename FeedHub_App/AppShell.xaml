@@ -6,12 +6,9 @@
     xmlns:views="clr-namespace:FeedHub_App.Views"
     xmlns:news="clr-namespace:FeedHub_App.Views.News"
     xmlns:settings="clr-namespace:FeedHub_App.Views.Settings"
-    Title="FeedHub">
+    Title="FeedHub"
+    FlyoutBehavior="Disabled">
 
-    <FlyoutItem Title="Home" Route="MainPage">
         <ShellContent ContentTemplate="{DataTemplate views:MainPage}" />
-    </FlyoutItem>
+
 </Shell>
-
-
-    

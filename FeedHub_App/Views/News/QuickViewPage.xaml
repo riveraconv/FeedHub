@@ -4,8 +4,8 @@
              x:Class="FeedHub_App.Views.News.QuickViewPage"
              Title=""
              Shell.NavBarIsVisible="False"
-             Shell.FlyoutBehavior="Disabled"
-             Shell.PresentationMode="ModalAnimated">
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
 
 <ContentPage.Resources>
     <Style x:Key="ActionBtnStyle" TargetType="Button">
@@ -32,14 +32,14 @@
     </Style>
 </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *" IgnoreSafeArea="True">
 
         <Label x:Name="InfoBanner"
                Grid.Row="0"
                BackgroundColor="#1E293B"
                TextColor="White"
-               FontSize="12"
-               Padding="8"
+               FontSize="18"
+               Padding="18"
                HorizontalTextAlignment="Center"
                IsVisible="False"/>
 
@@ -59,7 +59,7 @@
 
                         <VerticalStackLayout Padding="24,24,24,100" Spacing="16">
                             
-                            <Label Text="FEEDHUB // QUICK VIEW"
+                            <Label Text="FEEDHUB // VISTA RÁPIDA"
                                    FontSize="11" 
                                    CharacterSpacing="1.5"
                                    TextColor="#3B82F6" 
@@ -96,9 +96,9 @@
 
                 <WebView x:Name="FullWebView"
                      IsVisible="False"
-                     BackgroundColor="Transparent"
                      VerticalOptions="Fill"
                      HorizontalOptions="Fill"/>
+                     
                 <Border VerticalOptions="End" 
                         HorizontalOptions="Center" 
                         Margin="0,0,0,30" 
@@ -110,12 +110,37 @@
                     <Border.Shadow>
                         <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.15"/>
                     </Border.Shadow>
-                    <HorizontalStackLayout Spacing="5">
+
+                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+
+                        <HorizontalStackLayout Spacing="5" Margin="5,0,10,0" VerticalOptions="Center">
+                            <Label Text="Fuente:" 
+                                TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                FontSize="11"
+                                VerticalTextAlignment="Center"
+                                FontAttributes="Bold"/>
+                            <Label x:Name="SourceLabel"
+                                Text="Cargando..." 
+                                TextColor="#3B82F6" 
+                                FontSize="13" 
+                                VerticalTextAlignment="Center"
+                                FontAttributes="Bold">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSourceClicked" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </HorizontalStackLayout>
+
+                        <BoxView WidthRequest="1" 
+                                        HeightRequest="20" 
+                                        Color="#E2E8F0" 
+                                        VerticalOptions="Center"
+                                        Margin="0,0,5,0"/>
+
                         <Button x:Name = "ShareButton" Text="🔗" Clicked="OnShareClicked" Style="{StaticResource ActionBtnStyle}"/>
-                        <Button x:Name = "SourceButton" Text="🌐" Clicked="OnSourceClicked" Style="{StaticResource ActionBtnStyle}"/>
                         <Button x:Name = "SpeakButton" Text="{Binding SpeakIcon}" Command="{Binding SpeakNewsCommand}" Style="{StaticResource ActionBtnStyle}"/>
                     </HorizontalStackLayout>
                 </Border>
             </Grid>
-        </Grid>
+            </Grid>
 </ContentPage>

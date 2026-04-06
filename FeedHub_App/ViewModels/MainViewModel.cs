@@ -24,7 +24,7 @@ namespace FeedHub_App.ViewModels
         [RelayCommand]
         private async Task GoToCategory()
         {
-            await Shell.Current.GoToAsync(nameof(CategoryListPage));
+            await Shell.Current.GoToAsync(nameof(CategoryListPage), animate: true);
         }
 
         [RelayCommand]

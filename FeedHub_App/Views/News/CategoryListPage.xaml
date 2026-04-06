@@ -1,395 +1,229 @@
-﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:FeedHub_App.ViewModels.News"
              x:Class="FeedHub_App.Views.News.CategoryListPage"
              x:DataType="viewmodels:CategoryListViewModel"
              x:Name="Page"
-             Shell.NavBarIsVisible="False"
-             Shell.FlyoutBehavior="Disabled"
-             Shell.PresentationMode="ModalAnimated"
-             >
+             Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto, *, Auto">
+    <Grid RowDefinitions="Auto, *, Auto" IgnoreSafeArea="True">
         
-        <VerticalStackLayout Grid.Row="0" Padding="90,30,0,0">
+        <BoxView Grid.RowSpan="3">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#0D253F" Offset="0.1" />
+                    <GradientStop Color="#813B83F6" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <VerticalStackLayout Grid.Row="0" Padding="0,35,0,0" Spacing="5" HorizontalOptions="Center">
             <Label Text="FEEDHUB" 
-               FontSize="12" 
-               TextColor="#4a9eff" 
-               FontAttributes="Bold" 
-               CharacterSpacing="4" />
-            <Label Text="News Categories" 
-               FontSize="30" 
-               TextColor="{AppThemeBinding Light=#Black, Dark=White}" 
-               FontAttributes="Bold" />
+                   FontSize="12" 
+                   TextColor="#4a9eff" 
+                   FontAttributes="Bold" 
+                   CharacterSpacing="4" />
+            <Label Text="Noticias por categoría" 
+                   FontSize="30" 
+                   TextColor="White" 
+                   FontAttributes="Bold" />
         </VerticalStackLayout>
 
         <ScrollView Grid.Row="1">
-        <VerticalStackLayout Grid.Row="1" Spacing="10" Margin="0,30,0,0">
+            <VerticalStackLayout Spacing="10" Margin="0,15,0,0">
 
-            <!-->
-                International
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                        StrokeThickness="1"
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
                         HorizontalOptions="Fill" Margin="-30,0,30,0">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                                Offset="5,5"
-                                Radius="10"
-                                Opacity="0.4" />
-                </Border.Shadow>
+
                     <Border.Background>
-                        <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                             <GradientStop Color="#4a5a6a" Offset="0.4" />
                             <GradientStop Color="#334145" Offset="1.0" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="International"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-                    <Label Grid.Column="1" 
-                           Text="International" 
-                           VerticalOptions="Center" 
-                           HorizontalOptions="End" 
-                           Margin="0,0,20,0"
-                           FontSize="28" 
-                           FontAttributes="Bold" 
-                           TextColor="White" 
-                           InputTransparent="True"/>
-                </Grid>
-            </Border>
-
-            <!-->
-                Politics
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                        StrokeThickness="1"
-                        HorizontalOptions="Fill" Margin="30,0,-30,0">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                                Offset="5,5"
-                                Radius="10"
-                                Opacity="0.4" />
-                </Border.Shadow>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
-                        <GradientStop Color="#324255" Offset="0.4" />
-                        <GradientStop Color="#3489F6" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Politics"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-
-                        <Label Grid.Column="1" 
-                               Text="Politics" 
-                               VerticalOptions="Center" 
-                               HorizontalOptions="Start" 
-                               Margin="20,0,0,0"
-                               FontSize="28" 
-                               FontAttributes="Bold" 
-                               TextColor="White" 
-                               InputTransparent="True"/>
-                </Grid>
-            </Border>
-
-            <!-->
-                Econonmy
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                        StrokeThickness="1"
-                        HorizontalOptions="Fill" Margin="-30,0,30,0">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                Offset="5,5"
-                Radius="10"
-                Opacity="0.4" />
-
-                </Border.Shadow>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
-                        <GradientStop Color="#4a5a6a" Offset="0.4" />
-                        <GradientStop Color="#334145" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Economy"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-
-                        <Label Grid.Column="1" 
-                               Text="Economy" 
-                               VerticalOptions="Center" 
-                               HorizontalOptions="End" 
-                               Margin="0,0,20,0"
-                               FontSize="28"
-                               FontAttributes="Bold" 
-                               TextColor="White" 
-                               InputTransparent="True"/>
-                </Grid>
-            </Border>
-
-            <!-->
-                Technology
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                        StrokeThickness="1"
-                        HorizontalOptions="Fill" Margin="30,0,-30,0">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                                Offset="5,5"
-                                Radius="10"
-                                Opacity="0.4" />
-                </Border.Shadow>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
-                        <GradientStop Color="#324255" Offset="0.4" />
-                        <GradientStop Color="#3489F6" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Technology"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-                        <Label Grid.Column="1" 
-                               Text="Technology" 
-                               VerticalOptions="Center" 
-                               HorizontalOptions="Start" 
-                               Margin="20,0,0,0"
-                               FontSize="28" 
-                               FontAttributes="Bold" 
-                               TextColor="White" 
-                               InputTransparent="True"/>
-                </Grid>
-            </Border>
-
-            <!-->
-                Planet
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                        StrokeThickness="1"
-                        HorizontalOptions="Fill" Margin="-30,0,30,0">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                                Offset="5,5"
-                                Radius="10"
-                                Opacity="0.4" />
-                </Border.Shadow>
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
-                            <GradientStop Color="#4a5a6a" Offset="0.4" />
-                            <GradientStop Color="#334145" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Planet"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-                    <Label Grid.Column="1" 
-                           Text="Planet" 
-                           VerticalOptions="Center" 
-                           HorizontalOptions="End" 
-                           Margin="0,0,20,0"
-                           FontSize="28" 
-                           FontAttributes="Bold" 
-                           TextColor="White" 
-                           InputTransparent="True"/>
-                </Grid>
-            </Border>
-
-            <!-->
-                Sports
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                        StrokeThickness="1"
-                        HorizontalOptions="Fill" Margin="30,0,-30,0">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                                Offset="5,5"
-                                Radius="10"
-                                Opacity="0.4" />
-                </Border.Shadow>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
-                        <GradientStop Color="#324255" Offset="0.4" />
-                        <GradientStop Color="#3489F6" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Sports"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-                        <Label Grid.Column="1" 
-                           Text="Sports" 
-                           VerticalOptions="Center" 
-                           HorizontalOptions="Start" 
-                           Margin="20,0,0,0"
-                           FontSize="28" 
-                           FontAttributes="Bold" 
-                           TextColor="White" 
-                           InputTransparent="True"/>
-                </Grid>
-            </Border>
-
-            <!-->
-                Society
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                    StrokeThickness="1"
-                    HorizontalOptions="Fill" Margin="-30,0,30,0">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                                Offset="5,5"
-                                Radius="10"
-                                Opacity="0.4" />
-                </Border.Shadow>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
-                        <GradientStop Color="#4a5a6a" Offset="0.4" />
-                        <GradientStop Color="#334145" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Society"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-                    
-                        <Label Grid.Column="1" 
-                           Text="Society" 
-                           VerticalOptions="Center" 
-                           HorizontalOptions="End" 
-                           Margin="0,0,20,0"
-                           FontSize="28" 
-                           FontAttributes="Bold" 
-                           TextColor="White" 
-                           InputTransparent="True"/>
-                </Grid>
-            </Border>
-
-            <!-->
-                Culture
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                        StrokeThickness="1"
-                        HorizontalOptions="Fill" Margin="30,0,-30,0">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                                Offset="5,5"
-                                Radius="10"
-                                Opacity="0.4" />
-                </Border.Shadow>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
-                        <GradientStop Color="#324255" Offset="0.4" />
-                        <GradientStop Color="#3489F6" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Culture"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-                    
-                        <Label Text="Culture" 
-                               VerticalOptions="Center" 
-                               HorizontalOptions="Start" 
-                               Margin="20,0,0,0"
-                               FontSize="28" 
-                               FontAttributes="Bold" 
-                               TextColor="White"
-                               InputTransparent="True"/>
-                </Grid>
-            </Border>
-
-            <!-->
-                Entertainment
-                <-->
-            <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
-                    StrokeThickness="1"
-                    HorizontalOptions="Fill" Margin="-30,0,30,0">
-                
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                                Offset="5,5"
-                                Radius="10"
-                                Opacity="0.4" />
-                </Border.Shadow>
-                
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,5" EndPoint="1,1">
-                            <GradientStop Color="#4a5a6a" Offset="0.4" />
-                            <GradientStop Color="#334145" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </Border.Background>
-
-                    <Grid>
-                        <Button BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                CornerRadius="50"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Entertainment"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"/>
-                        <Label Text="Entertainment" 
-                               VerticalOptions="Center" 
-                               HorizontalOptions="End" 
-                               Margin="0,0,20,0"
-                               FontSize="28" 
-                               FontAttributes="Bold" 
-                               TextColor="White"
-                               InputTransparent="True"/>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Internacional"/>
+                        <Label Text="Internacional" VerticalOptions="Center" HorizontalOptions="End" 
+                               Margin="0,0,20,0" FontSize="24" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
                     </Grid>
-            </Border>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
+                        HorizontalOptions="Fill" Margin="30,0,-30,0">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.4" />
+                    </Border.Shadow>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#324255" Offset="0.4" />
+                            <GradientStop Color="#3489F6" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Politica"/>
+                        <Label Text="Política" VerticalOptions="Center" HorizontalOptions="Start" 
+                               Margin="20,0,0,0" FontSize="24" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
+                        HorizontalOptions="Fill" Margin="-30,0,30,0">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.4" />
+                    </Border.Shadow>
+
+
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#4a5a6a" Offset="0.4" />
+                            <GradientStop Color="#334145" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Economia"/>
+                        <Label Text="Economía" VerticalOptions="Center" HorizontalOptions="End" 
+                               Margin="0,0,20,0" FontSize="24" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
+                        HorizontalOptions="Fill" Margin="30,0,-30,0">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.4" />
+                    </Border.Shadow>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#324255" Offset="0.4" />
+                            <GradientStop Color="#3489F6" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Tecnologia"/>
+                        <Label Text="Tecnología" VerticalOptions="Center" HorizontalOptions="Start" 
+                               Margin="20,0,0,0" FontSize="24" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
+                        HorizontalOptions="Fill" Margin="-30,0,30,0">
+
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.4" />
+                    </Border.Shadow>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#4a5a6a" Offset="0.4" />
+                            <GradientStop Color="#334145" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Ciencia"/>
+                        <Label Text="Ciencia" VerticalOptions="Center" HorizontalOptions="End" 
+                               Margin="0,0,20,0" FontSize="24" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
+                        HorizontalOptions="Fill" Margin="30,0,-30,0">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.4" />
+                    </Border.Shadow>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#324255" Offset="0.4" />
+                            <GradientStop Color="#3489F6" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Deportes"/>
+                        <Label Text="Deportes" VerticalOptions="Center" HorizontalOptions="Start" 
+                               Margin="20,0,0,0" FontSize="24" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
+                        HorizontalOptions="Fill" Margin="-30,0,30,0">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.4" />
+                    </Border.Shadow>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#4a5a6a" Offset="0.4" />
+                            <GradientStop Color="#334145" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Sociedad"/>
+                        <Label Text="Sociedad" VerticalOptions="Center" HorizontalOptions="End" 
+                               Margin="0,0,20,0" FontSize="24" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
+                        HorizontalOptions="Fill" Margin="30,0,-30,0">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.4" />
+                    </Border.Shadow>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#324255" Offset="0.4" />
+                            <GradientStop Color="#3489F6" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Cultura"/>
+                        <Label Text="Cultura" VerticalOptions="Center" HorizontalOptions="Start" 
+                               Margin="20,0,0,0" FontSize="24" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 50" HeightRequest="60"
+                        StrokeThickness="1" Stroke="#4a9eff"
+                        HorizontalOptions="Fill" Margin="-30,0,30,0">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.4" />
+                    </Border.Shadow>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#4a5a6a" Offset="0.4" />
+                            <GradientStop Color="#334145" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Button BackgroundColor="Transparent" CornerRadius="50"
+                                Command="{Binding SelectCategoryCommand}" CommandParameter="Entretenimiento"/>
+                        <Label Text="Entretenimiento" VerticalOptions="Center" HorizontalOptions="End" 
+                               Margin="0,0,30,0" FontSize="22" FontAttributes="Bold" TextColor="White" InputTransparent="True"/>
+                    </Grid>
+                </Border>
+
             </VerticalStackLayout>
         </ScrollView>
 
         <Border Grid.Row="2" HorizontalOptions="Start" VerticalOptions="Center" Margin="70,0,0,20" WidthRequest="250" HeightRequest="40"
-                    StrokeShape="RoundRectangle 30" Stroke="#4a9eff" StrokeThickness="2" BackgroundColor="Transparent">
+                StrokeShape="RoundRectangle 30" Stroke="#4a9eff" StrokeThickness="2" BackgroundColor="Transparent">
             <SearchBar Placeholder="Or search by word..." 
-                           Text="{Binding SearchText}"
-                           FontSize="17"
-                           SearchCommand="{Binding SearchCommand}" 
-                           VerticalOptions="Center"/>
+                       Text="{Binding SearchText}"
+                       FontSize="17"
+                       SearchCommand="{Binding SearchCommand}" 
+                       VerticalOptions="Center"/>
         </Border>
     </Grid>
-
 </ContentPage>
