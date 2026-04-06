@@ -97,7 +97,8 @@
                 <WebView x:Name="FullWebView"
                      IsVisible="False"
                      VerticalOptions="Fill"
-                     HorizontalOptions="Fill"/>
+                     HorizontalOptions="Fill"
+                     BackgroundColor="Transparent"/>
                      
                 <Border VerticalOptions="End" 
                         HorizontalOptions="Center" 
@@ -114,7 +115,7 @@
                     <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
 
                         <HorizontalStackLayout Spacing="5" Margin="5,0,10,0" VerticalOptions="Center">
-                            <Label Text="Fuente:" 
+                            <Label Text="Fuente original: " 
                                 TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                 FontSize="11"
                                 VerticalTextAlignment="Center"

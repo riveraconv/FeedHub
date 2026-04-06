@@ -19,14 +19,14 @@ namespace FeedHub_App.Views.News;
     
             // Resetea estado inicial cada vez
             this.Opacity = 0;
-            this.TranslationX = 100;
+            this.TranslationX = 60;
             
             // Pequeña pausa para que Shell termine su propia transición
-            await Task.Delay(100);
+            await Task.Delay(150);
             
             await Task.WhenAll(
-                this.FadeTo(1, 300, Easing.CubicOut),
-                this.TranslateTo(0, 0, 300, Easing.CubicOut)
+                this.FadeTo(1, 350, Easing.SinOut),
+                this.TranslateTo(0, 0, 350, Easing.SinOut)
             );
         }
     }

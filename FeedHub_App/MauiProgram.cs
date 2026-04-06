@@ -23,6 +23,12 @@ namespace FeedHub_App
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
+                .ConfigureMauiHandlers(handlers =>
+                {
+#if ANDROID
+                    handlers.AddHandler<Microsoft.Maui.Controls.WebView, Platforms.Android.Handlers.CustomWebViewHandler>();
+#endif
+                })
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -36,7 +42,6 @@ namespace FeedHub_App
                         AutomaticDecompression = System.Net.DecompressionMethods.All,
                         AllowAutoRedirect = true,
                         MaxAutomaticRedirections = 10,
-                        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                     });
 
             builder.Services.AddSingleton<IArticleReaderService, ArticleReaderService>();

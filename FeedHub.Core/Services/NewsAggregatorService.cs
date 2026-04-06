@@ -4,6 +4,7 @@ using FeedHub_Core.Models;
 using FeedHub_Core.Services;
 using FeedHub_Core.Utilities;
 using System.Collections.Concurrent;
+using FeedHub_Core.Helpers;
 
 public class NewsAggregatorService : INewsAggregatorService
 {
@@ -150,11 +151,14 @@ public class NewsAggregatorService : INewsAggregatorService
                 cts.CancelAfter(TimeSpan.FromSeconds(10));
 
                 var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
-
-                // Cogemos la más reciente de este feed
                 var latestTwo = items.OrderByDescending(i => i.PublishDate).Take(2);
 
-                foreach (var item in latestTwo) tempList.Add(item);
+                foreach (var item in latestTwo) 
+                {
+                    item.Category = kvp.Value;
+                    item.Source = SourceNameSolver.Resolve(item.Link);
+                    tempList.Add(item);
+                }
             }
             catch (Exception ex)
             {
@@ -187,6 +191,7 @@ public class NewsAggregatorService : INewsAggregatorService
                 foreach (var item in recentItems)
                 {
                     item.Category = kvp.Value;
+                    item.Source = SourceNameSolver.Resolve(item.Link);
                     allItems.Add(item);
                 }
             }
@@ -219,7 +224,11 @@ public class NewsAggregatorService : INewsAggregatorService
                     (n.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (n.Description?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
 
-                foreach (var item in filtered) allResults.Add(item);
+                foreach (var item in filtered) 
+                {
+                    item.Source = SourceNameSolver.Resolve(item.Link);
+                    allResults.Add(item);
+                }
             }
             catch { /* fail silently */ }
         });
