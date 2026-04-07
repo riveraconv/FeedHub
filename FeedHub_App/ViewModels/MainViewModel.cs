@@ -32,6 +32,12 @@ namespace FeedHub_App.ViewModels
         {
             await Shell.Current.GoToAsync(nameof(SettingsPage));
         }
+
+        [RelayCommand]
+        private async Task GoToCategoriesBySource()
+        {
+            await Shell.Current.GoToAsync(nameof(CategoriesNewsBySourcePage));
+        }
     }
 }
 

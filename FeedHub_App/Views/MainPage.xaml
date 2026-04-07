@@ -48,9 +48,12 @@
                 </Grid>
             </Border>
 
-            <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+            <Grid ColumnDefinitions="*, *"
+                  RowDefinitions="Auto, Auto" 
+                  ColumnSpacing="15" 
+                  RowSpacing="15">
                 
-                <Border Grid.Column="0" StrokeShape="RoundRectangle 25" BackgroundColor="#0F253E" 
+                <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 25" BackgroundColor="#0F253E" 
                         HeightRequest="180" StrokeThickness="1" Stroke="#1E3A5A">
                     <Grid>
                         
@@ -64,7 +67,7 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Column="1" StrokeShape="RoundRectangle 25" BackgroundColor="#0F253E" 
+                <Border Grid.Row="0" Grid.Column="1" StrokeShape="RoundRectangle 25" BackgroundColor="#0F253E" 
                         HeightRequest="180" StrokeThickness="1" Stroke="#1E3A5A">
                     <Grid>
                         <VerticalStackLayout Spacing="7" Padding="15">
@@ -76,6 +79,25 @@
                         <Button BackgroundColor="Transparent" Command="{Binding GoToSettingsCommand}"/>
                     </Grid>
                 </Border>
+
+                <Border Grid.Row="1" Grid.ColumnSpan="2" StrokeShape="RoundRectangle 25" StrokeThickness="1" Stroke="#1E3A5A"
+                        BackgroundColor="#0F253E" Padding="0" HeightRequest="120" Margin="0,0,0,0">
+
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Label Grid.Column="0" Text="📰" FontSize="40" VerticalOptions="Center" Margin="20,0,0,0"/>
+                        
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Padding="20,0" VerticalOptions="Center">
+                            <Label Text="FUENTES" TextColor="#4FC3F7" FontSize="9" CharacterSpacing="1"/>
+                            <Label Text="Noticias por Periódico" TextColor="White" FontSize="18" FontAttributes="Bold"/>
+                            <Label Text="El País, El Mundo, ABC y más →" TextColor="#4FC3F7" FontSize="12"/>
+                        </VerticalStackLayout>
+                        
+                        <Button Grid.ColumnSpan="2" BackgroundColor="Transparent" 
+                                Command="{Binding GoToCategoriesBySourceCommand}"/>
+                    </Grid>
+                </Border>
+
+
             </Grid>
 
         </VerticalStackLayout>

@@ -1,11 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
 using FeedHub_Core.Services;
-using FeedHub_App.Utilities;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using FeedHub_Core.Utilities;
 
 namespace FeedHub_App.ViewModels.News

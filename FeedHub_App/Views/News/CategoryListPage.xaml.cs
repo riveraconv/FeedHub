@@ -1,5 +1,4 @@
 using FeedHub_App.ViewModels.News;
-using FeedHub_Core.Models;
 
 namespace FeedHub_App.Views.News;
 

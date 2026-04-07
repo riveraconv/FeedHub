@@ -1,10 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FeedHub_Core.Utilities;
 
 namespace FeedHub_App.ViewModels.News
@@ -16,8 +11,9 @@ namespace FeedHub_App.ViewModels.News
 
         [ObservableProperty]
         private string _speakIcon = "🔊";
+        [ObservableProperty]
 
-        private readonly ILogger _logger;
+        private ILogger _logger;
         private CancellationTokenSource _speechCts;
 
         [RelayCommand]

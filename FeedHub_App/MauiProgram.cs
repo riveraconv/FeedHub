@@ -54,9 +54,11 @@ namespace FeedHub_App
             builder.Services.AddSingleton<MainViewModel>();
             builder.Services.AddSingleton<LatestNewsViewModel>();
             builder.Services.AddTransient<CategoryListViewModel>();
+            builder.Services.AddTransient<CategoriesBySourceViewModel>();
             builder.Services.AddTransient<QuickViewViewModel>();
-            builder.Services.AddTransient<CategoryNewsViewModel>();
             builder.Services.AddTransient<SettingsViewModel>();
+            builder.Services.AddTransient<CategoryNewsViewModel>();
+            builder.Services.AddTransient<NewsBySourceViewModel>();
 
             // --- PAGES ---
 
@@ -64,8 +66,10 @@ namespace FeedHub_App
             builder.Services.AddSingleton<LatestNewsPage>();
             builder.Services.AddTransient<QuickViewPage>();
             builder.Services.AddTransient<CategoryListPage>();
+            builder.Services.AddTransient<CategoriesNewsBySourcePage>();
             builder.Services.AddTransient<CategoryNewsPage>();
             builder.Services.AddTransient<SettingsPage>();
+            builder.Services.AddTransient<NewsBySourcePage>();
 
 
 #if DEBUG

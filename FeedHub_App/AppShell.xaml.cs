@@ -13,6 +13,8 @@ namespace FeedHub_App
             Routing.RegisterRoute(nameof(NewsDetailPage), typeof(NewsDetailPage));
             Routing.RegisterRoute(nameof(QuickViewPage), typeof(QuickViewPage));
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
+            Routing.RegisterRoute(nameof(CategoriesNewsBySourcePage), typeof(CategoriesNewsBySourcePage));
+            Routing.RegisterRoute(nameof(NewsBySourcePage), typeof(NewsBySourcePage));
         }
     }
 }

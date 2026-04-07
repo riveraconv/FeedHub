@@ -235,4 +235,28 @@ public class NewsAggregatorService : INewsAggregatorService
 
         return allResults.OrderByDescending(n => n.PublishDate).Take(limit);
     }
+    public async Task<List<NewsItem>> GetBySourceAsync(string sourceId, int limit = 20)
+    {
+    var allItems = new ConcurrentBag<NewsItem>();
+    
+    var cleanSourceId = sourceId.ToLower().Replace(".", "");
+    var sourceFeeds = _feeds.Where(kvp => 
+    kvp.Key.ToLower().Replace(".","").Contains(cleanSourceId));
+
+    await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (kvp, ct) =>
+    {
+        try
+        {
+            var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
+            foreach (var item in items)
+            {
+                item.Source = SourceNameSolver.Resolve(item.Link);
+                allItems.Add(item);
+            }
+        }
+        catch { /* Silencio */ }
+    });
+
+    return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+    }
 }

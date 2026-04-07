@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FeedHub_App.ViewModels.News"
+             x:Class="FeedHub_App.Views.News.CategoriesNewsBySourcePage"
+             x:DataType="viewmodels:CategoriesBySourceViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto, *" IgnoreSafeArea="True">
+
+        <BoxView Grid.RowSpan="2">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#0D253F" Offset="0.1" />
+                    <GradientStop Color="#813B83F6" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <VerticalStackLayout Grid.Row="0" Padding="25,35,25,0" Spacing="5">
+            <Label Text="FEEDHUB"
+                   FontSize="12"
+                   TextColor="#4a9eff"
+                   FontAttributes="Bold"
+                   CharacterSpacing="4" />
+            <Label Text="Noticias por fuente"
+                   FontSize="30"
+                   TextColor="White"
+                   FontAttributes="Bold" />
+            <BoxView HeightRequest="1" BackgroundColor="#1A3A5A"
+                     WidthRequest="100" HorizontalOptions="Start" Margin="0,8,0,0"/>
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="8" Padding="20,16,20,20">
+
+                <!-- PRENSA GENERAL -->
+                <Label Text="PRENSA GENERAL"
+                       TextColor="#4a9eff" FontSize="10"
+                       FontAttributes="Bold" CharacterSpacing="2"
+                       Margin="4,8,0,4"/>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=elpais.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="El País" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="elpais"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=elmundo.es&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="El Mundo" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="elmundo"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=lavanguardia.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="La Vanguardia" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="lavanguardia"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=elperiodico.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="El Periódico" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="elperiodico"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=20minutos.es&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="20 Minutos" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Periódico gratuito" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="20minutos"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=elconfidencial.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="El Confidencial" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Medio digital" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="elconfidencial"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=eldiario.es&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="elDiario.es" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Medio digital" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="eldiarioes"/>
+                    </Grid>
+                </Border>
+
+                <!-- INTERNACIONAL -->
+                <Label Text="INTERNACIONAL"
+                       TextColor="#4a9eff" FontSize="10"
+                       FontAttributes="Bold" CharacterSpacing="2"
+                       Margin="4,8,0,4"/>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=bbc.co.uk&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="BBC Mundo" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Internacional" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="bbci"/>
+                    </Grid>
+                </Border>
+
+                <!-- TECNOLOGÍA -->
+                <Label Text="TECNOLOGÍA"
+                       TextColor="#4a9eff" FontSize="10"
+                       FontAttributes="Bold" CharacterSpacing="2"
+                       Margin="4,8,0,4"/>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=xataka.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Xataka" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Tecnología" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="xataka"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=applesfera.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Applesfera" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Apple / Tech" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="applesfera"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=microsiervos.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Microsiervos" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Tecnología" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="microsiervos"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=hipertextual.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Hipertextual" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Tecnología" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="hipertextual"/>
+                    </Grid>
+                </Border>
+
+                <!-- ENTRETENIMIENTO -->
+                <Label Text="ENTRETENIMIENTO"
+                       TextColor="#4a9eff" FontSize="10"
+                       FontAttributes="Bold" CharacterSpacing="2"
+                       Margin="4,8,0,4"/>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=vidaextra.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="VidaExtra" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="vidaExtra"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=espinof.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Espinof" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Cine y series" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="espinof"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=eurogamer.es&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Eurogamer" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="eurogamer"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=3djuegos.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="3DJuegos" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="3dJuegos"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=hobbyconsolas.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="HobbyConsolas" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="hobbyconsolas"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=ign.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="IGN España" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="ign"/>
+                    </Grid>
+                </Border>
+
+                <!-- CIENCIA -->
+                <Label Text="CIENCIA"
+                       TextColor="#4a9eff" FontSize="10"
+                       FontAttributes="Bold" CharacterSpacing="2"
+                       Margin="4,8,0,4"/>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=efeverde.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="EFE Verde" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Medio ambiente" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="efeverde"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=ecoticias.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Ecoticias" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Ecología" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="ecoticias"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=esa.int&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="ESA" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Agencia Espacial Europea" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="esa"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=astroaficion.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="AstroAfición" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Astronomía" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="astroaficion"/>
+                    </Grid>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                Stroke="#2a4a6a" StrokeThickness="1">
+                            <Image Source="https://www.google.com/s2/favicons?domain=fronteraespacial.com&amp;sz=64"
+                                   WidthRequest="28" HeightRequest="28"
+                                   VerticalOptions="Center" HorizontalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Frontera Espacial" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Espacio" FontSize="10" TextColor="#a2d2ff"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="fronteraespacial"/>
+                    </Grid>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

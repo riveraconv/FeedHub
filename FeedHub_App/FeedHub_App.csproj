@@ -45,10 +45,6 @@
 	  <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
 	</PropertyGroup>
 
-	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-		<AndroidResource Include="Platforms\Android\Resources\values\colors.xml" />
-		<AndroidResource Include="Platforms\Android\Resources\values\styles.xml" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
@@ -87,6 +83,9 @@
 	<ItemGroup>
 	  <Compile Update="Views\Controls\NewsItemView.xaml.cs">
 	    <DependentUpon>NewsItemView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\News\CategoriesNewsBySourcePage.xaml.cs">
+	    <DependentUpon>CategoriesNewsBySourcePage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\News\CategoryListPage.xaml.cs">
 	    <DependentUpon>CategoryListPage.xaml</DependentUpon>
