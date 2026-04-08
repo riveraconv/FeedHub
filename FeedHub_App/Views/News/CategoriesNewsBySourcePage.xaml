@@ -314,7 +314,7 @@
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
                         <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="vidaExtra"/>
+                                Command="{Binding SelectSourceCommand}" CommandParameter="vidaextra"/>
                     </Grid>
                 </Border>
 

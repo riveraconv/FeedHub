@@ -84,13 +84,13 @@ public partial class NewsBySourceViewModel : ObservableObject
             "elperiodico" => "El Periódico",
             "20minutos" => "20 Minutos",
             "elconfidencial" => "El Confidencial",
-            "eldiarioes" => "El Diario.es",
+            "eldiarioes" => "ElDiario.es",
             "bbci" or "bbc" => "BBC Mundo",
             "xataka" => "Xataka",
             "applesfera" => "Applesfera",
             "microsiervos" => "Microsiervos",
-            "hypertextual" => "Hypertextual",
-            "vidaextra" => "Vidaextra",
+            "hipertextual" => "Hipertextual",
+            "vidaextra" => "VidaExtra",
             "espinof" => "Espinof",
             "3djuegos" => "3DJuegos",
             "hobbyconsolas" => "Hobby Consolas",
@@ -102,7 +102,6 @@ public partial class NewsBySourceViewModel : ObservableObject
             "astroaficion" => "Astroafición",
             "fronteraespacial" => "Frontera Espacial",
             "eurogamer" => "Eurogamer",
-            _ => id.ToUpper() // Si no está en la lista, lo pone en Mayúsculas por defecto
         };
     }
     [RelayCommand]

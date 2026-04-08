@@ -179,35 +179,30 @@ public class NewsAggregatorService : INewsAggregatorService
 
         var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
 
-        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 40 }, async (kvp, ct) => //number of HTTP conections
+        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) => //number of HTTP conections
         {
             try
             {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
                 var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
 
-                var recentItems = items.Where(x => x.PublishDate >= cutOffDate);
-
-                foreach (var item in recentItems)
+                foreach (var item in items)
                 {
-                    item.Category = kvp.Value;
-                    item.Source = SourceNameSolver.Resolve(item.Link);
-                    allItems.Add(item);
+                    if(item.PublishDate >= cutOffDate)
+                    {
+                       item.Category = kvp.Value;
+                       item.Source = SourceNameSolver.Resolve(item.Link);
+                       allItems.Add(item); 
+                    }
+                    
                 }
             }
             catch { /* Ignorar errores de red */}
         });
 
-        var finalResult = allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
-
-        // If the filter cannot pull any result, will pull any date available to not made an empty list.
-        if (!finalResult.Any())
-        {
-            return allItems.OrderByDescending(x => x.PublishDate).Take(5).ToList();
-        }
-
-        return finalResult;
+        return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
     }
+
     public async Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit = 40)
     {
         if (string.IsNullOrWhiteSpace(query)) return Enumerable.Empty<NewsItem>();
