@@ -51,9 +51,6 @@
                                     BackgroundColor="#0F253E"
                                     Padding="0">
                                 
-                                <Border.Shadow>
-                                    <Shadow Brush="Black" Offset="0,4" Radius="2" Opacity="0.4"/>
-                                </Border.Shadow>
 
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer 
@@ -63,7 +60,10 @@
 
                                 <VerticalStackLayout Spacing="0">
                                     <Grid IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
-                                        <Image Source="{Binding ImageUrl}" HeightRequest="200" Aspect="AspectFill"/>
+                                        <Image Source="{Binding ImageUrl}" 
+                                            HeightRequest="200" 
+                                            Aspect="AspectFill"
+                                            HorizontalOptions="Fill"/>
                                         <BoxView VerticalOptions="End" HeightRequest="60">
                                             <BoxView.Background>
                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
