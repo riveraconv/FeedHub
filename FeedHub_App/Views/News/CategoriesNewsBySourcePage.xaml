@@ -40,28 +40,31 @@
                        FontAttributes="Bold" CharacterSpacing="2"
                        Margin="4,8,0,4"/>
 
-                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
-                        Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
-                        <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
-                                StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
-                                Stroke="#2a4a6a" StrokeThickness="1">
-                            <Image Source="https://www.google.com/s2/favicons?domain=elpais.com&amp;sz=64"
-                                   WidthRequest="28" HeightRequest="28"
-                                   VerticalOptions="Center" HorizontalOptions="Center"/>
-                        </Border>
-                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
-                            <Label Text="El País" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                            <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
-                        </VerticalStackLayout>
-                        <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="elpais"/>
-                    </Grid>
-                </Border>
+        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                Stroke="#2a4a6a" StrokeThickness="1">
+            <Grid>
+                <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12" InputTransparent="True">
+                    <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                            StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                            Stroke="#2a4a6a" StrokeThickness="1">
+                        <Image Source="https://www.google.com/s2/favicons?domain=elpais.com&amp;sz=64"
+                               WidthRequest="28" HeightRequest="28"
+                               VerticalOptions="Center" HorizontalOptions="Center"/>
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                        <Label Text="El País" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                        <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
+                    </VerticalStackLayout>
+                    <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                </Grid>
+                <Button BackgroundColor="Transparent" CornerRadius="18"
+                        Command="{Binding SelectSourceCommand}" CommandParameter="elpais"/>
+            </Grid>
+        </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -75,13 +78,17 @@
                             <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="elmundo"/>
+                        
                     </Grid>
+                    <Button BackgroundColor="Transparent"
+                            Command="{Binding SelectSourceCommand}" 
+                            CommandParameter="elmundo"/>
+                            </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -95,13 +102,17 @@
                             <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="lavanguardia"/>
+                        
                     </Grid>
+                    <Button BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" 
+                                CommandParameter="lavanguardia"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -115,13 +126,17 @@
                             <Label Text="Periódico nacional" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="elperiodico"/>
+                        
                     </Grid>
+                    <Button BackgroundColor="Transparent"
+                            Command="{Binding SelectSourceCommand}" 
+                            CommandParameter="elperiodico"/>
+                            </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -135,13 +150,17 @@
                             <Label Text="Periódico gratuito" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="20minutos"/>
+                        
+                    </Grid>
+                    <Button BackgroundColor="Transparent"
+                            Command="{Binding SelectSourceCommand}" 
+                            CommandParameter="20minutos"/>
                     </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -155,13 +174,16 @@
                             <Label Text="Medio digital" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="elconfidencial"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="elconfidencial"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -175,9 +197,11 @@
                             <Label Text="Medio digital" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="eldiarioes"/>
+                        
                     </Grid>
+                    <Button BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="eldiarioes"/>
+                                </Grid>
                 </Border>
 
                 <!-- INTERNACIONAL -->
@@ -188,6 +212,7 @@
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -201,9 +226,11 @@
                             <Label Text="Internacional" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="bbci"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="bbci"/>
+                                </Grid>
                 </Border>
 
                 <!-- TECNOLOGÍA -->
@@ -214,6 +241,7 @@
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -227,13 +255,16 @@
                             <Label Text="Tecnología" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="xataka"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="xataka"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -247,13 +278,16 @@
                             <Label Text="Apple / Tech" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
+                        
+                    </Grid>
+                    <Button  BackgroundColor="Transparent"
                                 Command="{Binding SelectSourceCommand}" CommandParameter="applesfera"/>
                     </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -267,13 +301,16 @@
                             <Label Text="Tecnología" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="microsiervos"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="microsiervos"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -287,9 +324,11 @@
                             <Label Text="Tecnología" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="hipertextual"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="hipertextual"/>
+                                </Grid>
                 </Border>
 
                 <!-- ENTRETENIMIENTO -->
@@ -300,6 +339,7 @@
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -313,13 +353,16 @@
                             <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="vidaextra"/>
+                        
                     </Grid>
-                </Border>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="vidaextra"/>
+                                </Grid>
+                </Border>   
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -333,13 +376,16 @@
                             <Label Text="Cine y series" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="espinof"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="espinof"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -353,13 +399,16 @@
                             <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="eurogamer"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="eurogamer"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -373,13 +422,16 @@
                             <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="3dJuegos"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="3dJuegos"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -393,13 +445,16 @@
                             <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="hobbyconsolas"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="hobbyconsolas"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -413,9 +468,11 @@
                             <Label Text="Videojuegos" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="ign"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="ign"/>
+                                </Grid>
                 </Border>
 
                 <!-- CIENCIA -->
@@ -426,6 +483,7 @@
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -439,13 +497,16 @@
                             <Label Text="Medio ambiente" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="efeverde"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="efeverde"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -459,13 +520,16 @@
                             <Label Text="Ecología" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="ecoticias"/>
+                        
                     </Grid>
+                    <Button  BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="ecoticias"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -479,13 +543,16 @@
                             <Label Text="Agencia Espacial Europea" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="esa"/>
+                        
                     </Grid>
+                    <Button BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" CommandParameter="esa"/>
+                                </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -499,13 +566,17 @@
                             <Label Text="Astronomía" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="astroaficion"/>
+                        
                     </Grid>
+                    <Button BackgroundColor="Transparent"
+                            Command="{Binding SelectSourceCommand}" 
+                            CommandParameter="astroaficion"/>
+                        </Grid>
                 </Border>
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                        <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
                                 StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
@@ -519,9 +590,12 @@
                             <Label Text="Espacio" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
-                        <Button Grid.ColumnSpan="3" BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="fronteraespacial"/>
+                        
                     </Grid>
+                    <Button BackgroundColor="Transparent"
+                            Command="{Binding SelectSourceCommand}" 
+                            CommandParameter="fronteraespacial"/>
+                                </Grid>
                 </Border>
 
             </VerticalStackLayout>

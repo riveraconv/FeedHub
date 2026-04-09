@@ -9,8 +9,8 @@ using FeedHub_App.Utilities;
 using FeedHub_App.Views;
 using FeedHub_App.ViewModels;
 using CommunityToolkit.Maui;
-
-
+using System.Diagnostics;
+using Microsoft.Maui.Platform;
 
 namespace FeedHub_App
 {
@@ -25,15 +25,34 @@ namespace FeedHub_App
                 .UseMauiCommunityToolkit()
                 .ConfigureMauiHandlers(handlers =>
                 {
+
 #if ANDROID
                     handlers.AddHandler<Microsoft.Maui.Controls.WebView, Platforms.Android.Handlers.CustomWebViewHandler>();
+
 #endif
                 })
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("fa-solid.otf", "FontAwesome");
                 });
+#if ANDROID
+                //handler para cambiar los colores de la SearchBar de Categories
+                Microsoft.Maui.Handlers.SearchBarHandler.Mapper.AppendToMapping("CustomSearchVisuals", (handler, view) =>
+            {
+                var searchView = handler.PlatformView;
+
+                // 1. Color del Cursor (Blanco)
+                int searchEditTextId = searchView.Context.Resources.GetIdentifier("android:id/search_src_text", null, null);
+                var editText = searchView.GetChildrenOfType<Android.Widget.EditText>().FirstOrDefault();
+                if (editText != null)
+                {
+                    System.Diagnostics.Debug.WriteLine(">>>> [DEBUG SEARCH] Cursor encontrado y cambiado a Blanco");
+                    editText.TextCursorDrawable?.SetTint(Android.Graphics.Color.White);
+                }
+            });
+#endif
 
             // --- SERVICIOS ---
             builder.Services.AddHttpClient<IRssService, RssService>()
