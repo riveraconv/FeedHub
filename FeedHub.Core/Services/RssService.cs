@@ -1,6 +1,7 @@
 ﻿using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
 using FeedHub_Core.Utilities;
+using System.Linq.Expressions;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -99,77 +100,98 @@ public class RssService : IRssService
         return news;
     }
 
-    private string? ExtractImageUrl(SyndicationItem item)
+private string? ExtractImageUrl(SyndicationItem item)
+{
+    try
     {
-        // 1. media:content
-        var media = item.ElementExtensions
-            .Where(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/")
+        // --- 1. INTERCEPTOR DE ETIQUETAS PERSONALIZADAS (El Confidencial, Ecoticias, EFE) ---
+        // Buscamos cualquier extensión que use etiquetas no estándar
+        var customExt = item.ElementExtensions
+            .FirstOrDefault(e => new[] { "list_image", "image", "fullimage", "featured-image", "content", "thumbnail" }
+            .Contains(e.OuterName.ToLower()));
+
+        if (customExt != null)
+        {
+            var xml = customExt.GetObject<XElement>();
+            
+            // Intento A: La URL está en el texto de la etiqueta <image>URL</image>
+            string val = xml.Value.Trim();
+            if (val.StartsWith("http") && Regex.IsMatch(val, @"\.(jpg|jpeg|png|webp|avif)", RegexOptions.IgnoreCase))
+                return val;
+
+            // Intento B: La URL está en un atributo <image url="..." /> o src/href
+            var attr = xml.Attributes().FirstOrDefault(a => 
+                new[] { "url", "src", "href" }.Contains(a.Name.LocalName.ToLower()));
+            
+            if (attr != null && attr.Value.StartsWith("http")) 
+                return attr.Value;
+        }
+
+        // --- 2. MEDIA RSS AGNOSTICO (Para Ecoticias y otros con Namespace mal declarado) ---
+        // En lugar de filtrar por la URL del Namespace (que puede fallar), buscamos por nombre local
+        var mediaElement = item.ElementExtensions
+            .Where(e => e.OuterName == "content" || e.OuterName == "thumbnail" || e.OuterName == "group")
             .Select(e => { try { return e.GetObject<XElement>(); } catch { return null; } })
-            .Where(x => x != null && x.Attribute("url") != null)
-            .OrderByDescending(x => int.TryParse(x.Attribute("width")?.Value, out var w) ? w : 0)
-            .FirstOrDefault();
+            .FirstOrDefault(x => x != null && (x.Attribute("url") != null || x.Descendants().Any(d => d.Attribute("url") != null)));
 
-        if (media != null) return media.Attribute("url")?.Value;
+        if (mediaElement != null)
+        {
+            // Buscamos el atributo 'url' en el elemento o en sus hijos (caso <media:group>)
+            var url = mediaElement.Attribute("url")?.Value ?? 
+                      mediaElement.Descendants().FirstOrDefault(d => d.Attribute("url") != null)?.Attribute("url")?.Value;
+            
+            if (!string.IsNullOrEmpty(url) && url.StartsWith("http")) return url;
+        }
 
-        // 2. media:thumbnail
-        var thumb = item.ElementExtensions
-            .Where(e => e.OuterName == "thumbnail" && e.OuterNamespace == "http://search.yahoo.com/mrss/")
-            .Select(e => { try { return e.GetObject<XElement>(); } catch { return null; } })
-            .FirstOrDefault(x => x?.Attribute("url") != null);
-
-        if (thumb != null) return thumb.Attribute("url")?.Value;
-
-        // 3. Enclosures
-        var enclosure = item.Links.FirstOrDefault(l =>
-                        l.RelationshipType == "enclosure" &&
-                        (l.MediaType?.StartsWith("image/") ?? false));
-
+        // --- 3. ENCLOSURES (Estándar de adjuntos) ---
+        var enclosure = item.Links.FirstOrDefault(l => 
+            l.RelationshipType == "enclosure" && (l.MediaType?.StartsWith("image/") ?? false));
+        
         if (enclosure != null) return enclosure.Uri.ToString();
 
-        // 4. METADATOS ESPECÍFICOS (WordPress/EFE)
-        var extraImage = item.ElementExtensions
-            .FirstOrDefault(e => e.OuterName == "featured-image" || e.OuterName == "image")
-            ?.GetObject<XElement>().Value;
-
-        if (!string.IsNullOrEmpty(extraImage) && extraImage.StartsWith("http")) return extraImage;
-
-        // 5. EXTRACCIÓN DE CONTENIDO CODIFICADO (Mejorada)
+        // --- 4. EXTRACCIÓN MANUAL DE HTML (El Tiempo.es y contenido en CDATA) ---
         string encodedContent = "";
-        var encodedExtension = item.ElementExtensions.FirstOrDefault(e =>
-            e.OuterName == "encoded" && e.OuterNamespace == "http://purl.org/rss/1.0/modules/content/");
+        var encodedExt = item.ElementExtensions.FirstOrDefault(e => e.OuterName == "encoded");
+        if (encodedExt != null) encodedContent = encodedExt.GetObject<XElement>().Value;
 
-        if (encodedExtension != null)
-        {
-            // Usamos GetObject para evitar problemas con XmlReader si el XML es irregular
-            encodedContent = encodedExtension.GetObject<XElement>().Value;
-        }
-
+        // Combinamos Summary, Content y Encoded para no dejarnos nada
         string rawHtml = System.Net.WebUtility.HtmlDecode(
-            (item.Summary?.Text ?? "") +
-            ((item.Content as TextSyndicationContent)?.Text ?? "") +
+            (item.Summary?.Text ?? "") + 
+            ((item.Content as TextSyndicationContent)?.Text ?? "") + 
             encodedContent);
 
-        if (string.IsNullOrWhiteSpace(rawHtml)) return null;
-
-        // 6. REGEX FLEXIBLE (Captura src y data-src con o sin protocolo)
-        // Eliminamos el https? obligatorio para que sea más permisivo
-        var match = Regex.Match(rawHtml, @"(?:src|data-src)=[""'](?<url>[^""']+\.(?:jpg|jpeg|png|webp|avif)[^""']*)[""']", RegexOptions.IgnoreCase);
-
-        if (match.Success)
+        if (!string.IsNullOrWhiteSpace(rawHtml))
         {
-            string url = match.Groups["url"].Value;
-
-            // Normalización de protocolo
-            if (url.StartsWith("//")) url = "https:" + url;
-
-            // Filtro de calidad (tamaño de URL y píxeles)
-            if (url.Contains("pixel") || url.Contains("1x1") || url.Length < 15) return null;
-
-            return url;
+            // Regex flexible para pillar src o data-src
+            var match = Regex.Match(rawHtml, @"(?:src|data-src|href)=[""'](?<url>https?://[^""']+\.(?:jpg|jpeg|png|webp|avif)[^""']*)[""']", RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                string url = match.Groups["url"].Value;
+                if (!url.Contains("pixel") && url.Length > 20) return url;
+            }
         }
 
-        return null;
+        // --- 5. ÚLTIMO RECURSO: ESCANEO BINARIO DE EXTENSIONES (Fuerza Bruta) ---
+        // Si Ecoticias tiene la URL en una etiqueta que no conocemos, la buscamos por patrón de texto
+        foreach (var ext in item.ElementExtensions)
+        {
+            try 
+            {
+                var rawXml = ext.GetObject<XElement>().ToString();
+                var fallbackMatch = Regex.Match(rawXml, @"(https?://[^""'\s]+\.(?:jpg|jpeg|png|webp))", RegexOptions.IgnoreCase);
+                if (fallbackMatch.Success && !fallbackMatch.Value.Contains("favicon"))
+                    return fallbackMatch.Value;
+            }
+            catch { continue; }
+        }
     }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine($"Error en ExtractImageUrl: {ex.Message}");
+    }
+
+    return null;
+}
 
     private string StripHtml(string input)
     {

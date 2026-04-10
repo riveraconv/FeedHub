@@ -60,10 +60,16 @@
 
                                 <VerticalStackLayout Spacing="0">
                                     <Grid IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
-                                        <Image Source="{Binding ImageUrl}" 
+                                        <Image
                                             HeightRequest="200" 
                                             Aspect="AspectFill"
-                                            HorizontalOptions="Fill"/>
+                                            HorizontalOptions="Fill">
+                                            <Image.Source>
+                                                <UriImageSource Uri="{Binding ImageUrl}"
+                                                    CacheValidity="1"
+                                                    CachingEnabled="True"/>
+                                            </Image.Source>
+                                            </Image>
                                         <BoxView VerticalOptions="End" HeightRequest="60">
                                             <BoxView.Background>
                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">

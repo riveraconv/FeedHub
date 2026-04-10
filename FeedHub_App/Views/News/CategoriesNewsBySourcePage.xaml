@@ -506,6 +506,30 @@
 
                 <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
                         Stroke="#2a4a6a" StrokeThickness="1">
+                    <Grid>
+                        <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
+                            <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                    StrokeShape="RoundRectangle 12" BackgroundColor="#1a3a5a"
+                                    Stroke="#2a4a6a" StrokeThickness="1">
+                                <Image Source="https://www.google.com/s2/favicons?domain=eltiempo.es&amp;sz=64"
+                                    WidthRequest="28" HeightRequest="28"
+                                    VerticalOptions="Center" HorizontalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="ElTiempo.es" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                                <Label Text="Meteorología y Clima" FontSize="10" TextColor="#a2d2ff"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
+                        </Grid>
+                        <Button BackgroundColor="Transparent"
+                                Command="{Binding SelectSourceCommand}" 
+                                CommandParameter="eltiempo"/>
+                    </Grid>
+                </Border>
+
+
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#0AFFFFFF"
+                        Stroke="#2a4a6a" StrokeThickness="1">
                         <Grid>
                     <Grid ColumnDefinitions="Auto, *, Auto" Padding="14,12">
                         <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
@@ -516,14 +540,15 @@
                                    VerticalOptions="Center" HorizontalOptions="Center"/>
                         </Border>
                         <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="12,0,0,0" VerticalOptions="Center">
-                            <Label Text="Ecoticias" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="Econoticias" FontSize="14" FontAttributes="Bold" TextColor="White"/>
                             <Label Text="Ecología" FontSize="10" TextColor="#a2d2ff"/>
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="›" TextColor="#4a9eff" FontSize="20" VerticalOptions="Center"/>
                         
                     </Grid>
                     <Button  BackgroundColor="Transparent"
-                                Command="{Binding SelectSourceCommand}" CommandParameter="ecoticias"/>
+                                Command="{Binding SelectSourceCommand}" 
+                                CommandParameter="ecoticias"/>
                                 </Grid>
                 </Border>
 

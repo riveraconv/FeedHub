@@ -53,7 +53,7 @@
                 <CollectionView ItemsSource="{Binding News}"
                                 SelectionMode="Single"
                                 x:Name="NewsCollection"
-                                SelectionChanged="OnSelectionChanged">           
+                                SelectionChanged="OnSelectionChanged">
 
                     <CollectionView.EmptyView>
                         <VerticalStackLayout x:DataType="viewmodels:LatestNewsViewModel"
@@ -155,8 +155,8 @@
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
-
-                </CollectionView>
+            </CollectionView>
+                
             </RefreshView>
         </Grid>
         <BoxView VerticalOptions="Start"

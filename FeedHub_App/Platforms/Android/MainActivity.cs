@@ -6,7 +6,7 @@ using Android.Views;
 
 namespace FeedHub_App.Platforms.Android
 {
-    [Activity(Theme = "@style/Maui.SplashTheme", 
+    [Activity(Theme = "@style/Maui.SplashTheme",
                MainLauncher = true, 
                ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
@@ -14,6 +14,7 @@ namespace FeedHub_App.Platforms.Android
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            Window.SetBackgroundDrawable(new global::Android.Graphics.Drawables.ColorDrawable(global::Android.Graphics.Color.ParseColor("#0D253F")));
             WindowCompat.SetDecorFitsSystemWindows(Window!, false);
             Window!.SetNavigationBarColor(global::Android.Graphics.Color.Transparent);
             Window!.SetStatusBarColor(global::Android.Graphics.Color.Transparent);

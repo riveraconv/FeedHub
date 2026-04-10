@@ -140,7 +140,7 @@ public class NewsAggregatorService : INewsAggregatorService
     public async Task<List<NewsItem>> GetLatestMixedAsync(int limit)
     {
         var tempList = new ConcurrentBag<NewsItem>();
-        var options = new ParallelOptions { MaxDegreeOfParallelism = 10 };
+        var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
 
         await Parallel.ForEachAsync(_feeds, options, async (kvp, ct) =>
         {
