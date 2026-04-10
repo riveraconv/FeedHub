@@ -4,9 +4,10 @@
              xmlns:viewmodels="clr-namespace:FeedHub_App.ViewModels.News"
              x:Class="FeedHub_App.Views.News.CategoryListPage"
              x:DataType="viewmodels:CategoryListViewModel"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             Title="{Binding PageTitle}">
 
-    <Grid RowDefinitions="Auto, *, Auto" IgnoreSafeArea="True">
+    <Grid RowDefinitions="Auto, *, Auto">
 
         <BoxView Grid.RowSpan="3">
             <BoxView.Background>
@@ -20,6 +21,8 @@
         <VerticalStackLayout Grid.Row="0" Padding="25,30,25,30">
             <Label Text="FEEDHUB" FontSize="11" TextColor="#4a9eff" FontAttributes="Bold" CharacterSpacing="4" />
             <Label Text="Explora por caterorías" FontSize="28" TextColor="White" FontAttributes="Bold" />
+            <BoxView HeightRequest="1" BackgroundColor="#1A3A5A"
+                     WidthRequest="100" HorizontalOptions="Start" Margin="0,20,0,0"/>
         </VerticalStackLayout>
 
         <ScrollView Grid.Row="1">
@@ -147,8 +150,7 @@
         <Border Grid.Row="2" Margin="20,5,20,25" HeightRequest="48" StrokeShape="RoundRectangle 24" Stroke="#2a4a6a" BackgroundColor="#1a3a5a">
             <Grid ColumnDefinitions="Auto, *">
                 <SearchBar Grid.Column="1" Placeholder="Prueba a buscar por palabra..." Text="{Binding SearchText}" SearchCommand="{Binding SearchCommand}"
-                           TextColor="White" PlaceholderColor="#80FFFFFF" FontSize="14" BackgroundColor="Transparent"
-                           />
+                           TextColor="White" PlaceholderColor="#80FFFFFF" FontSize="14" BackgroundColor="Transparent"/>
             </Grid>
         </Border>
     </Grid>

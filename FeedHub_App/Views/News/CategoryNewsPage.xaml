@@ -6,10 +6,11 @@
              x:Class="FeedHub_App.Views.News.CategoryNewsPage"
              x:DataType="viewmodels:CategoryListViewModel"
              x:Name="Page"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             Title="{Binding PageTitle}">
 
     <Grid IgnoreSafeArea="True">
-        <BoxView>
+        <BoxView ZIndex="-1" VerticalOptions="Fill" HorizontalOptions="Fill">
             <BoxView.Background>
                 <LinearGradientBrush StartPoint="0,0"
                         EndPoint="1,1">
@@ -22,12 +23,12 @@
         </BoxView>
 
         <Grid RowDefinitions="Auto,*"
-                Padding="20,20,20,0">
+                Padding="20,20,20,0" IgnoreSafeArea="False">
 
             <VerticalStackLayout Grid.Row="0"
                     Spacing="5"
                     Margin="0,10,0,20">
-                <Label Text="{Binding Category, StringFormat='Noticias de {0}'}"
+                <Label Text="{Binding PageTitle}"
                        TextColor="#4FC3F7"
                        FontSize="12"
                        FontAttributes="Bold"
@@ -52,21 +53,25 @@
                                 x:Name="NewsCollection"
                                 SelectionChanged="OnSelectionChanged">
 
-                    <CollectionView.EmptyView>
-                        <VerticalStackLayout Padding="30"
-                                Spacing="20"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center">
-                            <ActivityIndicator IsRunning="{Binding IsLoading}"
-                                               Color="#4FC3F7"
-                                               HeightRequest="50"
-                                               WidthRequest="50"/>
-                            <Label Text="Preparando noticias..."
-                                   HorizontalTextAlignment="Center"
-                                   TextColor="#8A99A8"
-                                   FontSize="16"/>
-                        </VerticalStackLayout>
-                    </CollectionView.EmptyView>
+                                            <CollectionView.EmptyView>
+                            <VerticalStackLayout Padding="30" Spacing="20" HorizontalOptions="Center" VerticalOptions="Center">
+                                
+                                <VerticalStackLayout IsVisible="{Binding IsLoading}">
+                                    <ActivityIndicator IsRunning="True" Color="#4FC3F7" HeightRequest="50" WidthRequest="50"/>
+                                    <Label Text="Buscando noticias que contengan el término..." 
+                                        HorizontalTextAlignment="Center" TextColor="#8A99A8" FontSize="16" Margin="0,10,0,0"/>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout IsVisible="{Binding NoResultsFound}">
+                                    <Label Text="🔎" FontSize="40" HorizontalTextAlignment="Center" Margin="0,0,0,10"/>
+                                    <Label Text="No se ha encontrado nada..." HorizontalTextAlignment="Center" 
+                                        TextColor="White" FontSize="18" FontAttributes="Bold"/>
+                                    <Label Text="Prueba con otra palabra..." HorizontalTextAlignment="Center" 
+                                        TextColor="#8A99A8" FontSize="14"/>
+                                </VerticalStackLayout>
+
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:NewsItem">

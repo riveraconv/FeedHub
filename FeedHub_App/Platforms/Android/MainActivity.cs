@@ -3,12 +3,14 @@ using Android.Content.PM;
 using Android.OS;
 using AndroidX.Core.View;
 using Android.Views;
+using Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;
 
 namespace FeedHub_App.Platforms.Android
 {
     [Activity(Theme = "@style/Maui.SplashTheme",
                MainLauncher = true, 
-               ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
+               ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout |
+               ConfigChanges.SmallestScreenSize | ConfigChanges.Density, WindowSoftInputMode = SoftInput.AdjustResize)]
     public class MainActivity : MauiAppCompatActivity
     {
         protected override void OnCreate(Bundle? savedInstanceState)

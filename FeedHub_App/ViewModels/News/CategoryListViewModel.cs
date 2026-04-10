@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Utilities;
 using System.ComponentModel;
+using AndroidX.ViewPager.Widget;
 
 namespace FeedHub_App.ViewModels.News
 {
@@ -38,6 +39,10 @@ namespace FeedHub_App.ViewModels.News
 
         [ObservableProperty]
         private string searchText;
+        [ObservableProperty]
+        string pageTitle;
+        [ObservableProperty]
+        bool noResultsFound;
 
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
         {
@@ -55,28 +60,32 @@ namespace FeedHub_App.ViewModels.News
                 if (Category != newCategory || Articles.Count == 0)
                 {
                     Category = newCategory;
-                    // Ejecutamos la carga inicial
+                    PageTitle = Category;
                     LoadNewsCommand.Execute(null);
                 }
             }
             else if (query.ContainsKey("search"))
             {
                 var queryText = Uri.UnescapeDataString(query["search"]?.ToString() ?? "");
-                Category = $"Search: {queryText}";
-
+                Category = queryText;
+                PageTitle = $"Resultados de '{queryText}'";
                 PerformSearch(queryText);
             }
         }
         private async void PerformSearch(string queryText)
         {
             IsLoading = true;
+            NoResultsFound = false;
+            Articles.Clear();
             try
             {
-                var results = await _aggregator.SearchByKeywordAsync(queryText, 50);
-
-                Articles.Clear();
-                foreach (var item in results)
+                var results = await Task.Run(() => _aggregator.SearchByKeywordAsync(queryText, 50));
+                if(results != null & results.Any())
+                {
+                    foreach (var item in results)
                     Articles.Add(item);
+                }
+                NoResultsFound = Articles.Count == 0;
             }
             catch (Exception ex) { _logger.Error(ex.Message); }
             finally { IsLoading = false; }
@@ -146,14 +155,10 @@ namespace FeedHub_App.ViewModels.News
         public async Task SearchAsync()
         {
             if (string.IsNullOrWhiteSpace(SearchText)) return;
-
             var query = SearchText;
 
-            // Navegamos primero
+            await Task.Delay(150);
             await Shell.Current.GoToAsync($"CategoryNewsPage?search={Uri.EscapeDataString(query)}");
-
-            // Limpiamos después de una pequeña pausa para que no interfiera con la animación
-            await Task.Delay(500);
             SearchText = string.Empty;
         }
 
