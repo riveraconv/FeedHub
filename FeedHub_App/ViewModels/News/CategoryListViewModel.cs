@@ -4,8 +4,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Utilities;
-using System.ComponentModel;
-using AndroidX.ViewPager.Widget;
+
 
 namespace FeedHub_App.ViewModels.News
 {
@@ -43,6 +42,9 @@ namespace FeedHub_App.ViewModels.News
         string pageTitle;
         [ObservableProperty]
         bool noResultsFound;
+        [ObservableProperty]
+        bool isSearchMode;
+        public event Action? SearchCompleted;
 
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
         {
@@ -54,6 +56,7 @@ namespace FeedHub_App.ViewModels.News
         {
             if (query.ContainsKey("category"))
             {
+                IsSearchMode = false;
                 var newCategory = Uri.UnescapeDataString(query["category"]?.ToString() ?? "");
 
                 // SOLO cargamos si la categoría ha cambiado o si la lista está vacía
@@ -74,6 +77,7 @@ namespace FeedHub_App.ViewModels.News
         }
         private async void PerformSearch(string queryText)
         {
+            isSearchMode = true;
             IsLoading = true;
             NoResultsFound = false;
             Articles.Clear();
@@ -88,7 +92,11 @@ namespace FeedHub_App.ViewModels.News
                 NoResultsFound = Articles.Count == 0;
             }
             catch (Exception ex) { _logger.Error(ex.Message); }
-            finally { IsLoading = false; }
+            finally 
+            { 
+                IsLoading = false; 
+                SearchCompleted?.Invoke();
+            }
         }
 
         [RelayCommand]
@@ -155,11 +163,25 @@ namespace FeedHub_App.ViewModels.News
         public async Task SearchAsync()
         {
             if (string.IsNullOrWhiteSpace(SearchText)) return;
+
             var query = SearchText;
 
-            await Task.Delay(150);
+            // Navegamos primero
             await Shell.Current.GoToAsync($"CategoryNewsPage?search={Uri.EscapeDataString(query)}");
+
+            // Limpiamos después de una pequeña pausa para que no interfiera con la animación
+            await Task.Delay(500);
             SearchText = string.Empty;
+        }
+        [RelayCommand]
+        public async Task SearchInPageAsync()
+        {
+            if(string.IsNullOrWhiteSpace(SearchText)) return;
+
+            var query = SearchText;
+            SearchText = string.Empty;
+            PageTitle = $"Resultados de '{query}'";
+            PerformSearch(query);
         }
 
     }

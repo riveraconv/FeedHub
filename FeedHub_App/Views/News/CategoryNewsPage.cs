@@ -15,6 +15,30 @@ namespace FeedHub_App.Views.News
             _viewModel = viewModel;
             BindingContext = _viewModel;
         }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if(BindingContext is CategoryListViewModel vm)
+            {
+                vm.SearchCompleted += OnSearchCompleted;
+            }
+        }
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            if(BindingContext is CategoryListViewModel vm)
+            {
+                vm.SearchCompleted -= OnSearchCompleted;
+            }
+        }
+        private void OnSearchCompleted()
+        {
+            SearchBarControl.Unfocus();
+        }
+        private void OnSearchButtonPressed(object sender, EventArgs e)
+        {
+            SearchBarControl.Unfocus();
+        }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {

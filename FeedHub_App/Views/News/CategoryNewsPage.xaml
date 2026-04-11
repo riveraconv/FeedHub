@@ -9,25 +9,21 @@
              Shell.NavBarIsVisible="False"
              Title="{Binding PageTitle}">
 
-    <Grid IgnoreSafeArea="True">
+    <Grid IgnoreSafeArea="True" BackgroundColor="Transparent">
         <BoxView ZIndex="-1" VerticalOptions="Fill" HorizontalOptions="Fill">
             <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0"
-                        EndPoint="1,1">
-                    <GradientStop Color="#0D253F"
-                            Offset="0.1"/>
-                    <GradientStop Color="#813B83F6"
-                            Offset="1.0"/>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#0D253F" Offset="0.1"/>
+                    <GradientStop Color="#813B83F6" Offset="1.0"/>
                 </LinearGradientBrush>
             </BoxView.Background>
         </BoxView>
 
-        <Grid RowDefinitions="Auto,*"
-                Padding="20,20,20,0" IgnoreSafeArea="False">
+        <Grid RowDefinitions="Auto, *, Auto" 
+              Padding="20,20,20,0" 
+              IgnoreSafeArea="False">
 
-            <VerticalStackLayout Grid.Row="0"
-                    Spacing="5"
-                    Margin="0,10,0,20">
+            <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,10,0,20" BackgroundColor="Transparent">
                 <Label Text="{Binding PageTitle}"
                        TextColor="#4FC3F7"
                        FontSize="12"
@@ -46,32 +42,31 @@
             <RefreshView Grid.Row="1"
                          Command="{Binding LoadNewsCommand}"
                          IsRefreshing="{Binding IsRefreshing}"
-                         RefreshColor="#4FC3F7">
+                         RefreshColor="#4FC3F7"
+                         BackgroundColor="Transparent"
+                         IsEnabled="{Binding IsSearchMode,Converter={StaticResource InverseBoolConverter}}">
 
                 <CollectionView ItemsSource="{Binding Articles}"
                                 SelectionMode="Single"
                                 x:Name="NewsCollection"
-                                SelectionChanged="OnSelectionChanged">
+                                SelectionChanged="OnSelectionChanged"
+                                BackgroundColor="Transparent">
 
-                                            <CollectionView.EmptyView>
-                            <VerticalStackLayout Padding="30" Spacing="20" HorizontalOptions="Center" VerticalOptions="Center">
-                                
-                                <VerticalStackLayout IsVisible="{Binding IsLoading}">
-                                    <ActivityIndicator IsRunning="True" Color="#4FC3F7" HeightRequest="50" WidthRequest="50"/>
-                                    <Label Text="Buscando noticias que contengan el término..." 
-                                        HorizontalTextAlignment="Center" TextColor="#8A99A8" FontSize="16" Margin="0,10,0,0"/>
-                                </VerticalStackLayout>
 
-                                <VerticalStackLayout IsVisible="{Binding NoResultsFound}">
-                                    <Label Text="🔎" FontSize="40" HorizontalTextAlignment="Center" Margin="0,0,0,10"/>
-                                    <Label Text="No se ha encontrado nada..." HorizontalTextAlignment="Center" 
-                                        TextColor="White" FontSize="18" FontAttributes="Bold"/>
-                                    <Label Text="Prueba con otra palabra..." HorizontalTextAlignment="Center" 
-                                        TextColor="#8A99A8" FontSize="14"/>
-                                </VerticalStackLayout>
-
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20" Padding="30" BackgroundColor="Transparent">
+                            <VerticalStackLayout IsVisible="{Binding IsLoading}" Spacing="10" BackgroundColor="Transparent">
+                                <ActivityIndicator IsRunning="True" Color="#4FC3F7" HeightRequest="50" WidthRequest="50" BackgroundColor="Transparent"/>
+                                <Label Text="Buscando noticias..." HorizontalTextAlignment="Center" TextColor="#8A99A8" FontSize="16"/>
                             </VerticalStackLayout>
-                        </CollectionView.EmptyView>
+
+                            <VerticalStackLayout IsVisible="{Binding NoResultsFound}" Spacing="15" BackgroundColor="Transparent">
+                                <Label Text="🔎" FontSize="40" HorizontalTextAlignment="Center"/>
+                                <Label Text="No se ha encontrado nada" HorizontalTextAlignment="Center" TextColor="White" FontSize="18" FontAttributes="Bold"/>
+                                <Label Text="Intenta con otra palabra en el buscador de abajo" HorizontalTextAlignment="Center" TextColor="#8A99A8" FontSize="14"/>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:NewsItem">
@@ -80,66 +75,30 @@
                                     StrokeShape="RoundRectangle 20"
                                     Margin="0,0,0,20"
                                     BackgroundColor="#0F253E"
-                                    Padding="0"
-                                    MaximumWidthRequest="800">
-
-
+                                    Padding="0">
                                 <VerticalStackLayout Spacing="0">
                                     <Grid IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
-                                        <Image Source="{Binding ImageUrl}"
-                                               HeightRequest="200"
-                                               Aspect="AspectFill"
-                                               HorizontalOptions="Fill"/>
-                                        <BoxView VerticalOptions="End"
-                                                HeightRequest="60">
+                                        <Image Source="{Binding ImageUrl}" HeightRequest="200" Aspect="AspectFill" HorizontalOptions="Fill"/>
+                                        <BoxView VerticalOptions="End" HeightRequest="60">
                                             <BoxView.Background>
-                                                <LinearGradientBrush StartPoint="0,0"
-                                                        EndPoint="0,1">
-                                                    <GradientStop Color="Transparent"
-                                                            Offset="0.8"/>
-                                                    <GradientStop Color="#0F253E"
-                                                            Offset="1"/>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Color="Transparent" Offset="0.8"/>
+                                                    <GradientStop Color="#0F253E" Offset="1"/>
                                                 </LinearGradientBrush>
                                             </BoxView.Background>
                                         </BoxView>
                                     </Grid>
 
-                                    <VerticalStackLayout Padding="15"
-                                            Spacing="10">
-                                        <Label Text="{Binding Title}"
-                                               FontAttributes="Bold"
-                                               FontSize="18"
-                                               TextColor="White"
-                                               LineBreakMode="WordWrap"/>
-
-                                        <Grid ColumnDefinitions="Auto,Auto,*"
-                                                ColumnSpacing="8">
-                                            <Label Grid.Column="0"
-                                                   Text="{Binding Source}"
-                                                   FontSize="12"
-                                                   TextColor="#4FC3F7"
-                                                   FontAttributes="Bold"/>
-                                            <Label Grid.Column="1"
-                                                   Text="•"
-                                                   TextColor="#8A99A8"/>
-                                            <Label Grid.Column="2"
-                                                   Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
-                                                   FontSize="12"
-                                                   TextColor="#8A99A8"/>
+                                    <VerticalStackLayout Padding="15" Spacing="10">
+                                        <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="18" TextColor="White" LineBreakMode="WordWrap"/>
+                                        <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+                                            <Label Grid.Column="0" Text="{Binding Source}" FontSize="12" TextColor="#4FC3F7" FontAttributes="Bold"/>
+                                            <Label Grid.Column="1" Text="•" TextColor="#8A99A8"/>
+                                            <Label Grid.Column="2" Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="#8A99A8"/>
                                         </Grid>
-
-                                        <Label Text="{Binding Description}"
-                                               FontSize="14"
-                                               TextColor="#CBD5E1"
-                                               LineBreakMode="TailTruncation"
-                                               MaxLines="3"
+                                        <Label Text="{Binding Description}" FontSize="14" TextColor="#CBD5E1" LineBreakMode="TailTruncation" MaxLines="3" 
                                                IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
-
-                                        <Label Text="Leer más →"
-                                               TextColor="#4FC3F7"
-                                               FontSize="12"
-                                               HorizontalOptions="End"
-                                               Margin="0,5,0,0"/>
+                                        <Label Text="Leer más →" TextColor="#4FC3F7" FontSize="12" HorizontalOptions="End" Margin="0,5,0,0"/>
                                     </VerticalStackLayout>
                                 </VerticalStackLayout>
                             </Border>
@@ -147,33 +106,44 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </RefreshView>
+
+            
         </Grid>
 
-        <BoxView VerticalOptions="Start"
-                 HeightRequest="20"
-                 InputTransparent="True"
-                 Margin="0,120,0,0">
+                <Border VerticalOptions="End"
+                    Margin="20,0,20,25" 
+                    HeightRequest="50" 
+                    StrokeShape="RoundRectangle 25" 
+                    Stroke="#2a4a6a" 
+                    BackgroundColor="#1a3a5a">
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.4"/>
+                        </Border.Shadow>
+                        <SearchBar x:Name="SearchBarControl"
+                                Placeholder="Prueba a buscar por palabra..." 
+                                Text="{Binding SearchText}" 
+                                SearchCommand="{Binding SearchInPageCommand}"
+                                TextColor="White" 
+                                PlaceholderColor="#80FFFFFF" 
+                                FontSize="14" 
+                                BackgroundColor="Transparent"
+                                SearchButtonPressed="OnSearchButtonPressed"
+                                />
+                </Border>
+        <BoxView VerticalOptions="Start" HeightRequest="20" InputTransparent="True" Margin="0,120,0,0">
             <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0"
-                        EndPoint="0,1">
-                    <GradientStop Color="#12304D"
-                            Offset="0"/>
-                    <GradientStop Color="Transparent"
-                            Offset="1.0"/>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#12304D" Offset="0"/>
+                    <GradientStop Color="Transparent" Offset="1.0"/>
                 </LinearGradientBrush>
             </BoxView.Background>
         </BoxView>
 
-        <BoxView VerticalOptions="End"
-                 HeightRequest="20"
-                 InputTransparent="True">
+        <BoxView VerticalOptions="End" HeightRequest="20" InputTransparent="True">
             <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0"
-                        EndPoint="0,1">
-                    <GradientStop Color="Transparent"
-                            Offset="0"/>
-                    <GradientStop Color="#12304D"
-                            Offset="1.0"/>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="Transparent" Offset="0"/>
+                    <GradientStop Color="#12304D" Offset="1.0"/>
                 </LinearGradientBrush>
             </BoxView.Background>
         </BoxView>

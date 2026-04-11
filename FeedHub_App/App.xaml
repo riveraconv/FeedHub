@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:FeedHub_App"
              xmlns:conv="clr-namespace:FeedHub_App.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FeedHub_App.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -13,6 +14,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
+            <toolkit:InvertedBoolConverter x:Key="InverseBoolConverter"/>
 
         </ResourceDictionary>
     </Application.Resources>
