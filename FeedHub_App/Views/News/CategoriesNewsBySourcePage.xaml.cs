@@ -14,4 +14,18 @@ public partial class CategoriesNewsBySourcePage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
 	}
+	protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+    
+        this.Opacity = 0;
+        this.TranslationX = 60;
+            
+    	await Task.Delay(50);
+            
+        await Task.WhenAll(
+            this.FadeTo(1, 350, Easing.SinOut),
+            this.TranslateTo(0, 0, 350, Easing.SinOut)
+        );
+    }
 }
