@@ -63,12 +63,16 @@
                                    FontSize="11" 
                                    CharacterSpacing="1.5"
                                    TextColor="#3B82F6" 
-                                   FontAttributes="Bold" />
+                                   FontAttributes="Bold"
+                                   Margin="5,0,0,0" />
 
                             <Label x:Name="TitleLabel"
                                    Text="Cargando título..."
                                    FontSize="20"
                                    LineHeight="1.2"
+                                   TextType="Text"
+                                   HorizontalTextAlignment="Justify"
+                                   Margin="5,0,5,0"
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=Black, Dark=White}" />
 

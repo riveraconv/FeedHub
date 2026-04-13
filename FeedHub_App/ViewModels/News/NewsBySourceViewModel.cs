@@ -98,7 +98,7 @@ public partial class NewsBySourceViewModel : ObservableObject
             "eltiempo" or "eltiempoes" => "El Tiempo.es",
             "efeverde" => "EFE VERDE",
             "esa" => "ESA",
-            "ecoticias" => "Econoticias",
+            "ecoticias" => "Ecoticias",
             "astroaficion" => "Astroafición",
             "fronteraespacial" => "Frontera Espacial",
             "eurogamer" => "Eurogamer",
