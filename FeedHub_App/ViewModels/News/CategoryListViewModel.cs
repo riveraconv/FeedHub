@@ -45,6 +45,7 @@ namespace FeedHub_App.ViewModels.News
         [ObservableProperty]
         bool isSearchMode;
         public event Action? SearchCompleted;
+        private string? _initialQuery;
 
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
         {
@@ -57,9 +58,9 @@ namespace FeedHub_App.ViewModels.News
             if (query.ContainsKey("category"))
             {
                 IsSearchMode = false;
+                _initialQuery = null;
                 var newCategory = Uri.UnescapeDataString(query["category"]?.ToString() ?? "");
 
-                // SOLO cargamos si la categoría ha cambiado o si la lista está vacía
                 if (Category != newCategory || Articles.Count == 0)
                 {
                     Category = newCategory;
@@ -70,9 +71,13 @@ namespace FeedHub_App.ViewModels.News
             else if (query.ContainsKey("search"))
             {
                 var queryText = Uri.UnescapeDataString(query["search"]?.ToString() ?? "");
-                Category = queryText;
-                PageTitle = $"Resultados de '{queryText}'";
-                PerformSearch(queryText);
+
+                if(Articles.Count == 0)
+                {
+                    Category = queryText;
+                    PageTitle = $"Resultados de '{queryText}'";
+                    PerformSearch(queryText);
+                }    
             }
         }
         private async void PerformSearch(string queryText)
