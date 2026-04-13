@@ -71,13 +71,14 @@ namespace FeedHub_App.ViewModels.News
             else if (query.ContainsKey("search"))
             {
                 var queryText = Uri.UnescapeDataString(query["search"]?.ToString() ?? "");
-
-                if(Articles.Count == 0)
-                {
-                    Category = queryText;
-                    PageTitle = $"Resultados de '{queryText}'";
-                    PerformSearch(queryText);
-                }    
+                
+                // Si es la misma query que ya tenemos cargada, no recargamos
+                if (_initialQuery == queryText && Articles.Count > 0) return;
+                
+                _initialQuery = queryText;
+                Category = queryText;
+                PageTitle = $"Resultados de '{queryText}'";
+                PerformSearch(queryText);
             }
         }
         private async void PerformSearch(string queryText)
