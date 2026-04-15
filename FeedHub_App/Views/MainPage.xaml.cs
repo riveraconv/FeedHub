@@ -1,6 +1,4 @@
 using FeedHub_App.ViewModels;
-using CommunityToolkit.Maui.Behaviors;
-using CommunityToolkit.Maui.Core;
 
 namespace FeedHub_App.Views;
 
