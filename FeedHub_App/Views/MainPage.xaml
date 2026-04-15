@@ -8,7 +8,22 @@
     x:Class="FeedHub_App.Views.MainPage"
     BackgroundColor="#0F172A">
 
-    <Grid RowDefinitions="*, Auto" IgnoreSafeArea="True">
+    <Grid IgnoreSafeArea="True">
+             <BoxView IsEnabled="False" 
+                 InputTransparent="True"
+                 HorizontalOptions="Fill"
+                 VerticalOptions="Fill">
+            <BoxView.Background>
+                <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
+                    
+                    <GradientStop Color="#2638BDF8" Offset="0.1" />
+                    
+                    <GradientStop Color="#000F172A" Offset="0.8" />
+                </RadialGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+    <Grid RowDefinitions="*, Auto">
 
 
     <ScrollView Grid.Row="0">
@@ -88,5 +103,6 @@
         <Grid Grid.Row="1" Padding="25,10,25,60">
             <Label Text="V.1.0 • Build 1" TextColor="#475569" FontSize="12" HorizontalOptions="Center"/>
         </Grid>
+    </Grid>
     </Grid>
 </ContentPage>

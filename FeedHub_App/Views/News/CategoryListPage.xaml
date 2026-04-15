@@ -5,153 +5,142 @@
              x:Class="FeedHub_App.Views.News.CategoryListPage"
              x:DataType="viewmodels:CategoryListViewModel"
              Shell.NavBarIsVisible="False"
-             Title="{Binding PageTitle}">
+             BackgroundColor="#0F172A">
 
-    <Grid RowDefinitions="Auto, *, Auto">
+<Grid IgnoreSafeArea="True">
 
-        <BoxView Grid.RowSpan="3">
+        <BoxView IsEnabled="False" InputTransparent="True" HorizontalOptions="Fill" VerticalOptions="Fill">
             <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#0D253F" Offset="0.1" />
-                    <GradientStop Color="#813B83F6" Offset="1.0" />
-                </LinearGradientBrush>
+                <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
+                    <GradientStop Color="#2638BDF8" Offset="0.1" />
+                    <GradientStop Color="#000F172A" Offset="0.8" />
+                </RadialGradientBrush>
             </BoxView.Background>
         </BoxView>
 
-        <VerticalStackLayout Grid.Row="0" Padding="25,30,25,30">
-            <Label Text="FEEDHUB" FontSize="11" TextColor="#4a9eff" FontAttributes="Bold" CharacterSpacing="4" />
-            <Label Text="Explora por caterorías" FontSize="28" TextColor="White" FontAttributes="Bold" />
-            <BoxView HeightRequest="1" BackgroundColor="#1A3A5A"
-                     WidthRequest="100" HorizontalOptions="Start" Margin="0,20,0,0"/>
-        </VerticalStackLayout>
+    <Grid RowDefinitions="Auto, *, Auto" Padding="0,45,0,0">
+        <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,30,25,30">
+            <Label Text="FEEDHUB" TextColor="#38BDF8" FontSize="11" FontAttributes="Bold" CharacterSpacing="2"/>
+                <Label Text="Explora categorías" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
+                <BoxView HeightRequest="3" BackgroundColor="#38BDF8" WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
+            </VerticalStackLayout>
 
         <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="10" Padding="20,15,20,10">
+            <VerticalStackLayout Spacing="12" Padding="25,15,25,10">
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                        <!-- Contenido con padding -->
-                        <Grid ColumnDefinitions="32, *, Auto" Padding="10,6" InputTransparent="True">
-                            <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf57d;', Color=#4a9eff, Size=18}"/>
-                            <Label Grid.Column="1" Text="Internacional" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                            <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf57d;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Internacional" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Internacional"/>
                         </Grid>
-                        <!-- Botón encima, sin padding, cubre todo el Border -->
-                        <Button BackgroundColor="Transparent"
-                                Command="{Binding SelectCategoryCommand}"
-                                CommandParameter="Internacional"/>
-                    </Grid>
-                </Border>
+                    </Border>
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                    <Grid ColumnDefinitions="32, *, Auto" Padding="10,6">
-                        <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf19c;', Color=#4a9eff, Size=18}"/>
-                        <Label Grid.Column="1" Text="Política" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                        <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
-                    </Grid>
-                    <Button BackgroundColor="Transparent"
-                            Command="{Binding SelectCategoryCommand}"
-                            CommandParameter="Politica"/>    
-                    </Grid>
-                </Border>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf19c;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Política" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Politica"/>
+                        </Grid>
+                    </Border>
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                    <Grid ColumnDefinitions="32, *, Auto" Padding="10,6">
-                        <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf51e;', Color=#4a9eff, Size=18}"/>
-                        <Label Grid.Column="1" Text="Economía" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                        <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
-                        
-                    </Grid>
-                    <Button BackgroundColor="Transparent"
-                            Command="{Binding SelectCategoryCommand}" 
-                            CommandParameter="Economia"/>
-                    </Grid>
-                </Border>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf51e;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Economía" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Economia"/>
+                        </Grid>
+                    </Border>
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                    <Grid ColumnDefinitions="32, *, Auto" Padding="10,6">
-                        <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf2db;', Color=#4a9eff, Size=18}"/>
-                        <Label Grid.Column="1" Text="Tecnología" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                        <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
-                        
-                    </Grid>
-                    <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Tecnologia"/>
-                    </Grid>
-                </Border>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf2db;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Tecnología" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Tecnologia"/>
+                        </Grid>
+                    </Border>
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                    <Grid ColumnDefinitions="32, *, Auto" Padding="10,6">
-                
-                        <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf0c3;', Color=#4a9eff, Size=18}"/>
-                        <Label Grid.Column="1" Text="Ciencia" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                        <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
-                
-                    </Grid>
-                    <Button BackgroundColor="Transparent"
-                            Command="{Binding SelectCategoryCommand}" 
-                            CommandParameter="Ciencia"/>
-                    </Grid>
-                </Border>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf0c3;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Ciencia" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Ciencia"/>
+                        </Grid>
+                    </Border>
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                    <Grid ColumnDefinitions="32, *, Auto" Padding="10,6">
-                        <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf0c0;', Color=#4a9eff, Size=18}"/>
-                        <Label Grid.Column="1" Text="Sociedad" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                        <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
-                        
-                    </Grid>
-                    <Button Grid.ColumnSpan="3" BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Sociedad"/>
-                    </Grid>
-                </Border>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf0c0;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Sociedad" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Sociedad"/>
+                        </Grid>
+                    </Border>
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                    <Grid ColumnDefinitions="32, *, Auto" Padding="10,6">
-                        <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf630;', Color=#4a9eff, Size=18}"/>
-                        <Label Grid.Column="1" Text="Cultura" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                        <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
-                        
-                    </Grid>
-                    <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Cultura"/>
-                    </Grid>
-                </Border>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf630;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Cultura" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Cultura"/>
+                        </Grid>
+                    </Border>
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                    <Grid ColumnDefinitions="32, *, Auto" Padding="10,6">
-                        <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf434;', Color=#4a9eff, Size=18}"/>
-                        <Label Grid.Column="1" Text="Deportes" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                        <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
-                        
-                    </Grid>
-                    <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Deportes"/>
-                    </Grid>
-                </Border>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf434;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Deportes" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Deportes"/>
+                        </Grid>
+                    </Border>
 
-                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#0AFFFFFF" Stroke="#2a4a6a" StrokeThickness="1">
-                    <Grid>
-                        <Grid ColumnDefinitions="32, *, Auto" Padding="10,6">
-                        <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf11b;', Color=#4a9eff, Size=18}"/>
-                        <Label Grid.Column="1" Text="Entretenimiento" Margin="12,0,0,0" VerticalOptions="Center" FontSize="14" FontAttributes="Bold" TextColor="White"/>
-                        <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#40ffffff" FontSize="16" VerticalOptions="Center"/>
-                    </Grid>
-                    <Button Grid.ColumnSpan="3" BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Entretenimiento"/>
-                    </Grid>
-                </Border>
+                <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Grid>
+                            <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
+                                <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf11b;', Color=#38BDF8, Size=18}"/>
+                                <Label Grid.Column="1" Text="Entretenimiento" Margin="12,0,0,0" VerticalOptions="Center" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Label Grid.Column="2" Text="&#xf105;" FontFamily="FontAwesome" TextColor="#475569" FontSize="18" VerticalOptions="Center"/>
+                            </Grid>
+                            <Button BackgroundColor="Transparent" Command="{Binding SelectCategoryCommand}" CommandParameter="Entretenimiento"/>
+                        </Grid>
+                    </Border>
 
             </VerticalStackLayout>
         </ScrollView>
 
-        <Border Grid.Row="2" Margin="20,5,20,25" HeightRequest="48" StrokeShape="RoundRectangle 24" Stroke="#2a4a6a" BackgroundColor="#1a3a5a">
+        <Border Grid.Row="2" Margin="25,10,25,60" HeightRequest="48" 
+                StrokeShape="RoundRectangle 24" Stroke="#2a4a6a" StrokeThickness="3"
+                BackgroundColor="#1a3a5a">
             <Grid ColumnDefinitions="Auto, *">
-                <SearchBar Grid.Column="1" Placeholder="Prueba a buscar por palabra..." Text="{Binding SearchText}" SearchCommand="{Binding SearchCommand}"
-                           TextColor="White" PlaceholderColor="#80FFFFFF" FontSize="14" BackgroundColor="Transparent"/>
+                <SearchBar Grid.Column="1" Placeholder="{Binding DynamicPlaceholder}"
+                           Text="{Binding SearchText}" 
+                           SearchCommand="{Binding SearchCommand}"
+                           PlaceholderColor="#64748B"
+                           TextColor="White" FontSize="14" BackgroundColor="Transparent"/>
             </Grid>
         </Border>
+    </Grid>
     </Grid>
 </ContentPage>

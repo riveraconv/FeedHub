@@ -7,227 +7,152 @@
              x:Class="FeedHub_App.Views.News.LatestNewsPage"
              x:Name="Page"
              Shell.NavBarIsVisible="False"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
-
-
-    <Grid IgnoreSafeArea="True">
-        <BoxView>
-            <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0"
-                        EndPoint="1,1">
-                    <GradientStop Color="#0D253F"
-                            Offset="0.1"/>
-                    <GradientStop Color="#813B83F6"
-                            Offset="1.0"/>
-                </LinearGradientBrush>
-            </BoxView.Background>
-        </BoxView>
-
-        <Grid RowDefinitions="Auto,*"
-                Padding="20,20,20,0">
-
-            <VerticalStackLayout Grid.Row="0"
-                    Spacing="5"
-                    Margin="0,10,0,20">
-                <Label Text="ÚLTIMAS NOTICIAS"
-                       TextColor="#4FC3F7"
-                       FontSize="12"
-                       FontAttributes="Bold"
-                       CharacterSpacing="2"/>
-                <Label Text="FeedHub"
-                       TextColor="White"
-                       FontSize="32"
-                       FontAttributes="Bold"/>
-                <BoxView HeightRequest="1"
-                         BackgroundColor="#1A3A5A"
-                         WidthRequest="100"
-                         HorizontalOptions="Start"/>
-            </VerticalStackLayout>
-
-            <RefreshView Grid.Row="1"
-                         x:DataType="viewmodels:LatestNewsViewModel"
-                         Command="{Binding LoadNewsCommand}"
-                         IsRefreshing="{Binding IsRefreshing}"
-                         RefreshColor="#4FC3F7">
-
-                <CollectionView ItemsSource="{Binding News}"
-                                SelectionMode="Single"
-                                x:Name="NewsCollection"
-                                SelectionChanged="OnSelectionChanged">
-
-                    <CollectionView.EmptyView>
-                        <VerticalStackLayout x:DataType="viewmodels:LatestNewsViewModel"
-                                            Padding="30"
-                                            Spacing="20"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center">
-                        
-                            <Label Text="Preparando noticias..."
-                                   HorizontalTextAlignment="Center"
-                                   TextColor="#8A99A8"
-                                   FontSize="16"/>
-                        </VerticalStackLayout>
-                    </CollectionView.EmptyView>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:NewsItem">
-                            <Border Stroke="#1E3A5A"
-                                    StrokeThickness="1"
-                                    StrokeShape="RoundRectangle 20"
-                                    Margin="0,10,0,10"
-                                    BackgroundColor="#0F253E"
-                                    Padding="0"
-                                    MaximumWidthRequest="800">
-
-
-                                <Grid RowDefinitions="Auto, Auto">
-
-                                    <Grid Grid.Row="0"
-                                            IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
-                                        <Image Source="{Binding ImageUrl}"
-                                               HeightRequest="200"
-                                               Aspect="AspectFill"
-                                               HorizontalOptions="Fill"
-                                               MaximumHeightRequest="200"/>
-
-                                        <BoxView VerticalOptions="End"
-                                                HeightRequest="60">
-                                            <BoxView.Background>
-                                                <LinearGradientBrush StartPoint="0,0"
-                                                        EndPoint="0,1">
-                                                    <GradientStop Color="Transparent"
-                                                            Offset="0.8"/>
-                                                    <GradientStop Color="#0F253E"
-                                                            Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </BoxView.Background>
-                                        </BoxView>
-                                    </Grid>
-
-                                    <Grid Grid.Row="1"
-                                            Padding="15"
-                                            RowSpacing="10"
-                                            RowDefinitions="Auto, Auto, Auto, Auto">
-
-                                        <Label Grid.Row="0"
-                                               Text="{Binding Title}"
-                                               FontAttributes="Bold"
-                                               FontSize="18"
-                                               TextColor="White"
-                                               LineBreakMode="WordWrap"/>
-
-                                        <Grid Grid.Row="1"
-                                                ColumnDefinitions="Auto,Auto,*"
-                                                ColumnSpacing="8">
-                                            <Label Grid.Column="0"
-                                                   Text="{Binding Source}"
-                                                   FontSize="12"
-                                                   TextColor="#4FC3F7"
-                                                   FontAttributes="Bold"/>
-                                            <Label Grid.Column="1"
-                                                   Text="•"
-                                                   TextColor="#8A99A8"/>
-                                            <Label Grid.Column="2"
-                                                   Text="{Binding PublishDate, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
-                                                   FontSize="12"
-                                                   TextColor="#8A99A8"/>
-                                        </Grid>
-
-                                        <Label Grid.Row="2"
-                                               Text="{Binding Description}"
-                                               FontSize="14"
-                                               TextColor="#CBD5E1"
-                                               LineBreakMode="TailTruncation"
-                                               MaxLines="3"
-                                               IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
-
-                                        <Label Grid.Row="3"
-                                               Text="Leer más →"
-                                               TextColor="#4FC3F7"
-                                               FontSize="12"
-                                               HorizontalOptions="End"
-                                               Margin="0,5,0,0"/>
-                                    </Grid>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-
-                        <CollectionView.Footer>
-                            <Grid Padding="20,5,20,0" 
-                                RowDefinitions="40, 50" 
-                                RowSpacing="10">
-                                
-                                <ActivityIndicator Grid.Row="1"
-                                                IsRunning="{Binding IsLoading}"
-                                                IsVisible="{Binding IsLoading}"
-                                                Color="#0F253E"
-                                                HeightRequest="40"
-                                                WidthRequest="40"
-                                                HorizontalOptions="Center"/>
-
-                                <Border Grid.Row="0"
-                                        IsVisible="{Binding CanLoadMore}"
-                                        BackgroundColor="#1a3a5a"
-                                        StrokeShape="RoundRectangle 25"
-                                        HeightRequest="50"
-                                        HorizontalOptions="Fill">
-    
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding LoadMoreCommand}"/>
-                                    </Border.GestureRecognizers>
-
-                                    <HorizontalStackLayout HorizontalOptions="Center" 
-                                                        VerticalOptions="Center" 
-                                                        Spacing="12">
-                                        
-                                        <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#4a9eff, Size=18}"
-                                            VerticalOptions="Center"/>
-
-                                        <Label Text="Cargar más noticias"
-                                            TextColor="#4a9eff"
-                                            FontAttributes="Bold"
-                                            FontSize="14"
-                                            VerticalOptions="Center"/>
-
-                                        <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#4a9eff, Size=18}"
-                                            VerticalOptions="Center"/>
-                                        
-                                    </HorizontalStackLayout>
-                                </Border>
-                            </Grid>
-                    </CollectionView.Footer>
-            </CollectionView>
-                
-            </RefreshView>
-        </Grid>
-        <BoxView VerticalOptions="Start"
-                 HeightRequest="20"
+             BackgroundColor="#0F172A"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"> 
+             
+             <Grid IgnoreSafeArea="True">
+             <BoxView IsEnabled="False" 
                  InputTransparent="True"
-                 Margin="0,120,0,0">
+                 HorizontalOptions="Fill"
+                 VerticalOptions="Fill">
             <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0"
-                        EndPoint="0,1">
-                    <GradientStop Color="#12304D"
-                            Offset="0"/>
-                    <GradientStop Color="Transparent"
-                            Offset="1.0"/>
-                </LinearGradientBrush>
+                <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
+                    
+                    <GradientStop Color="#2638BDF8" Offset="0.1" />
+                    
+                    <GradientStop Color="#000F172A" Offset="0.8" />
+                </RadialGradientBrush>
             </BoxView.Background>
         </BoxView>
 
-        <BoxView VerticalOptions="End"
-                 HeightRequest="20"
-                 InputTransparent="True">
-            <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0"
-                        EndPoint="0,1">
-                    <GradientStop Color="Transparent"
-                            Offset="0"/>
-                    <GradientStop Color="#12304D"
-                            Offset="1.0"/>
-                </LinearGradientBrush>
-            </BoxView.Background>
-        </BoxView>
+
+             <Grid RowDefinitions="Auto, *" Padding="0,45,0,0">
+                 <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
+                    <Label Text="ÚLTIMAS NOTICIAS" TextColor="#38BDF8" FontSize="11" FontAttributes="Bold" CharacterSpacing="2"/>
+                    <Label Text="FeedHub" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
+                    <BoxView HeightRequest="3" BackgroundColor="#38BDF8" WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
+                </VerticalStackLayout>
+
+        <RefreshView Grid.Row="1"
+                    x:DataType="viewmodels:LatestNewsViewModel" 
+                     Command="{Binding LoadNewsCommand}"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     RefreshColor="#38BDF8">
+
+            <CollectionView ItemsSource="{Binding News}"
+                            SelectionMode="Single"
+                            x:Name="NewsCollection"
+                            SelectionChanged="OnSelectionChanged">
+
+                    <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
+                        </CollectionView.ItemsLayout>
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout x:DataType="viewmodels:LatestNewsViewModel" Padding="30" Spacing="15" HorizontalOptions="Center" VerticalOptions="Center">
+                        <ActivityIndicator IsRunning="True" Color="#38BDF8" IsVisible="{Binding IsLoading}" />
+                        <Label Text="Preparando noticias..." HorizontalTextAlignment="Center" TextColor="#94A3B8" FontSize="16"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:NewsItem">
+                        <Border StrokeThickness="2" Stroke="#1E3A5A" 
+                                StrokeShape="RoundRectangle 24"
+                                Margin="10,10,10,10"
+                                BackgroundColor="#1E293B"> 
+                            
+                            <Grid RowDefinitions="Auto, Auto">
+                                <Grid Grid.Row="0" IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
+                                    <Image Source="{Binding ImageUrl}"
+                                           HeightRequest="200"
+                                           Aspect="AspectFill"
+                                           MaximumHeightRequest="200" />
+
+                                    <BoxView VerticalOptions="End" HeightRequest="30">
+                                        <BoxView.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="Transparent" Offset="0"/>
+                                                <GradientStop Color="#1E293B" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </BoxView.Background>
+                                    </BoxView>
+                                </Grid>
+
+                                <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
+                                    <Label Text="{Binding Title}"
+                                           FontAttributes="Bold"
+                                           FontSize="19"
+                                           TextColor="#F8FAFC"
+                                           LineBreakMode="WordWrap"/>
+
+                                    <Grid ColumnDefinitions="Auto, Auto, *" ColumnSpacing="6">
+                                        <Label Grid.Column="0" Text="{Binding Source}" FontSize="12" TextColor="#38BDF8" FontAttributes="Bold"/>
+                                        <Label Grid.Column="1" Text="•" TextColor="#475569"/>
+                                        <Label Grid.Column="2" Text="{Binding PublishDate, StringFormat='{0:dd MMM, HH:mm}'}" FontSize="12" TextColor="#94A3B8"/>
+                                    </Grid>
+
+                                    <Label Text="{Binding Description}"
+                                           FontSize="14"
+                                           TextColor="#94A3B8"
+                                           LineBreakMode="TailTruncation"
+                                           MaxLines="3"
+                                           IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
+
+                                    <Label Text="Leer noticia completa →" 
+                                           TextColor="#38BDF8" 
+                                           FontSize="13" 
+                                           FontAttributes="Bold"
+                                           HorizontalOptions="End" 
+                                           Margin="0,5,0,0"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.Footer>
+                    <VerticalStackLayout Padding="35,10,35,50" Spacing="0">
+
+                        <Grid HeightRequest="50">
+                            
+                            <Border IsVisible="{Binding CanLoadMore}"
+                                    BackgroundColor="#334155"
+                                    StrokeShape="RoundRectangle 25"
+                                    StrokeThickness="1" Stroke="#1E3A5A"
+                                    HorizontalOptions="Fill"
+                                    WidthRequest="200">
+                                
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsLoading}" Value="True">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding LoadMoreCommand}"/>
+                </Border.GestureRecognizers>
+
+                <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
+                    <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#38BDF8, Size=16}" VerticalOptions="Center"/>
+                    <Label Text="Cargar más noticias" TextColor="#F8FAFC" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#38BDF8, Size=16}" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               IsVisible="{Binding IsLoading}"
+                               Color="#38BDF8"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               HeightRequest="30"
+                               WidthRequest="30"/>
+        </Grid>
+
+    </VerticalStackLayout>
+</CollectionView.Footer>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
     </Grid>
 </ContentPage>

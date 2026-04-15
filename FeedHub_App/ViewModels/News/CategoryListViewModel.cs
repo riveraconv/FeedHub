@@ -51,10 +51,33 @@ namespace FeedHub_App.ViewModels.News
         [ObservableProperty]
         private bool canLoadMore;
 
+        [ObservableProperty]
+        string dynamicPlaceholder; 
+        private int _actualIndex = 0;
+        private readonly string[] _sugestions =
+        {
+            "No encuentras alguna noticia...?",
+            "Prueba a buscar por palabras!"
+        };
+
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
         {
             _aggregator = aggregator;
             _logger = logger;
+            StartPlaceholderAnimation();
+        }
+        public void StartPlaceholderAnimation()
+        {
+            DynamicPlaceholder = _sugestions[0];
+            
+            IDispatcherTimer timer = Application.Current.Dispatcher.CreateTimer();
+            timer.Interval = TimeSpan.FromSeconds(5);
+            timer.Tick += (s, e) => 
+            {
+                _actualIndex = (_actualIndex + 1) % _sugestions.Length;
+                DynamicPlaceholder = _sugestions[_actualIndex];
+            };
+            timer.Start();
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
