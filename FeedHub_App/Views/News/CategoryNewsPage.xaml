@@ -50,13 +50,14 @@
                                 SelectionMode="Single"
                                 x:Name="NewsCollection"
                                 SelectionChanged="OnSelectionChanged"
-                                BackgroundColor="Transparent">
+                                BackgroundColor="Transparent"
+                                Scrolled="OnNewsCollectionScrolled">
 
 
                     <CollectionView.EmptyView>
                         <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20" Padding="30" BackgroundColor="Transparent">
                             <VerticalStackLayout IsVisible="{Binding IsLoading}" Spacing="10" BackgroundColor="Transparent">
-                                <ActivityIndicator IsRunning="True" Color="#4FC3F7" HeightRequest="50" WidthRequest="50" BackgroundColor="Transparent"/>
+                            
                                 <Label Text="Buscando noticias..." HorizontalTextAlignment="Center" TextColor="#8A99A8" FontSize="16"/>
                             </VerticalStackLayout>
 
@@ -104,13 +105,59 @@
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
+
+                    <CollectionView.Footer>
+                            <Grid Padding="20,5,20,0" 
+                                RowDefinitions="40, 50" 
+                                RowSpacing="10">
+                                
+                                <ActivityIndicator Grid.Row="1"
+                                                IsRunning="{Binding IsLoading}"
+                                                IsVisible="{Binding IsLoading}"
+                                                Color="#0F253E"
+                                                HeightRequest="40"
+                                                WidthRequest="40"
+                                                HorizontalOptions="Center"/>
+
+                                <Border Grid.Row="0"
+                                        IsVisible="{Binding CanLoadMore}"
+                                        BackgroundColor="#1a3a5a"
+                                        StrokeShape="RoundRectangle 25"
+                                        HeightRequest="50"
+                                        HorizontalOptions="Fill">
+    
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding LoadMoreCommand}"/>
+                                    </Border.GestureRecognizers>
+
+                                    <HorizontalStackLayout HorizontalOptions="Center" 
+                                                        VerticalOptions="Center" 
+                                                        Spacing="12">
+                                        
+                                        <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#4a9eff, Size=18}"
+                                            VerticalOptions="Center"/>
+
+                                        <Label Text="Cargar más noticias"
+                                            TextColor="#4a9eff"
+                                            FontAttributes="Bold"
+                                            FontSize="14"
+                                            VerticalOptions="Center"/>
+
+                                        <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#4a9eff, Size=18}"
+                                            VerticalOptions="Center"/>
+                                        
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </Grid>
+                    </CollectionView.Footer>
                 </CollectionView>
             </RefreshView>
 
             
         </Grid>
 
-                <Border VerticalOptions="End"
+                <Border x:Name="BottomSearchBar"
+                    VerticalOptions="End"
                     Margin="20,0,20,25" 
                     HeightRequest="50" 
                     StrokeShape="RoundRectangle 25" 

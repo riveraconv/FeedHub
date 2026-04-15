@@ -49,6 +49,26 @@ namespace FeedHub_App.Views.News
                 ((CollectionView)sender).SelectedItem = null;
             }
         }
+        private bool _isBarVisible = true;
+
+        private async void OnNewsCollectionScrolled(object sender, ItemsViewScrolledEventArgs e)
+        {
+            var viewModel = BindingContext as CategoryListViewModel;
+            if (viewModel == null) return;
+
+            bool isAtEnd = e.LastVisibleItemIndex >= viewModel.Articles.Count - 1;
+
+            if (isAtEnd && _isBarVisible)
+            {
+                _isBarVisible = false;
+                await BottomSearchBar.TranslateTo(0, 100, 250, Easing.SinIn);
+            }
+            else if (!isAtEnd && !_isBarVisible)
+            {
+                _isBarVisible = true;
+                await BottomSearchBar.TranslateTo(0, 0, 250, Easing.SinOut);
+            }
+        }
     }
 }
 

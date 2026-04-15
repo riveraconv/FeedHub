@@ -22,6 +22,10 @@ public partial class NewsBySourceViewModel : ObservableObject
     private bool isRefreshing;
     [ObservableProperty]
     private bool isLoading;
+    private int _currentOffset = 0;
+    private const int PageSize = 20;
+    [ObservableProperty]
+    private bool canLoadMore;
     
     public ObservableCollection<NewsItem> NewsItems{get; set;} = new();
     public NewsBySourceViewModel(INewsAggregatorService newsService)
@@ -56,12 +60,14 @@ public partial class NewsBySourceViewModel : ObservableObject
         {
             if (!IsRefreshing)
                 IsLoading = true;
+                _currentOffset = 0;
 
             var items = await _newsService.GetBySourceAsync(SourceId); 
-
+            var initialItems = items.Take(PageSize).ToList();
             NewsItems.Clear();
             foreach (var item in items) 
                 NewsItems.Add(item);
+                CanLoadMore = items.Count >= PageSize;
         }
         catch (Exception ex) 
         { 
@@ -72,6 +78,34 @@ public partial class NewsBySourceViewModel : ObservableObject
             IsLoading = false;
             IsRefreshing = false;
         }
+    }
+    [RelayCommand]
+    private async Task LoadMore()
+    {
+        if (IsLoading || !CanLoadMore) return;
+
+        try
+        {
+            IsLoading = true;
+            _currentOffset += PageSize;
+
+            var allItems = await _newsService.GetBySourceAsync(SourceId); 
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var existing = NewsItems.Select(n => n.Link).ToHashSet();
+                var newItems = allItems.Skip(_currentOffset)
+                                       .Take(PageSize)
+                                       .Where(n => !existing.Contains(n.Link))
+                                       .ToList();
+
+                foreach (var item in newItems) NewsItems.Add(item);
+
+                CanLoadMore = newItems.Count >= PageSize;
+            });
+        }
+        catch (Exception ex) { _logger?.Error(ex.Message); }
+        finally { IsLoading = false; }
     }
 
     private string GetFriendlyName(string id)

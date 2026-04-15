@@ -46,6 +46,10 @@ namespace FeedHub_App.ViewModels.News
         bool isSearchMode;
         public event Action? SearchCompleted;
         private string? _initialQuery;
+        private int _currentOffset = 0;
+        private const int PageSize = 20;
+        [ObservableProperty]
+        private bool canLoadMore;
 
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
         {
@@ -63,6 +67,7 @@ namespace FeedHub_App.ViewModels.News
 
                 if (Category != newCategory || Articles.Count == 0)
                 {
+                    _currentOffset = 0;
                     Category = newCategory;
                     PageTitle = Category;
                     LoadNewsCommand.Execute(null);
@@ -83,19 +88,27 @@ namespace FeedHub_App.ViewModels.News
         }
         private async void PerformSearch(string queryText)
         {
-            isSearchMode = true;
+            IsSearchMode = true;
+            CanLoadMore = false;
             IsLoading = true;
             NoResultsFound = false;
-            Articles.Clear();
+            _currentOffset = 0;
+
             try
             {
                 var results = await Task.Run(() => _aggregator.SearchByKeywordAsync(queryText, 50));
-                if(results != null & results.Any())
+
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    foreach (var item in results)
-                    Articles.Add(item);
-                }
-                NoResultsFound = Articles.Count == 0;
+                    Articles.Clear();
+
+                    if(results != null & results.Any())
+                    {
+                        foreach (var item in results)
+                        Articles.Add(item);
+                    }
+                    NoResultsFound = Articles.Count == 0;
+                });
             }
             catch (Exception ex) { _logger.Error(ex.Message); }
             finally 
@@ -111,14 +124,14 @@ namespace FeedHub_App.ViewModels.News
             // Lógica espejo de LatestNewsViewModel: 
             // Si ya hay artículos y NO es un "Pull to Refresh", no hacemos nada.
             if (Articles.Count > 0 && !IsRefreshing) return;
-
             if (string.IsNullOrWhiteSpace(Category) || IsLoading) return;
 
             try
             {
                 if (!IsRefreshing) IsLoading = true;
+                _currentOffset = 0;
 
-                var items = await _aggregator.GetByCategoryAsync(Category, 100);
+                var items = await _aggregator.GetByCategoryAsync(Category, PageSize);
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -132,6 +145,7 @@ namespace FeedHub_App.ViewModels.News
 
                     foreach (var item in filtered)
                         Articles.Add(item);
+                        CanLoadMore = items.Count >= PageSize;
                 });
             }
             catch (Exception ex)
@@ -187,9 +201,36 @@ namespace FeedHub_App.ViewModels.News
             var query = SearchText;
             SearchText = string.Empty;
             PageTitle = $"Resultados de '{query}'";
+            CanLoadMore = false;
             PerformSearch(query);
         }
+        [RelayCommand]
+        public async Task LoadMoreAsync()
+        {
+            if(IsLoading || !CanLoadMore || IsSearchMode) return;
 
+            try
+            {
+                IsLoading = true;
+                _currentOffset = Articles.Count;
+
+                var more = await _aggregator.GetByCategoryAsync(Category, PageSize + _currentOffset);
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    var existing = Articles.Select(n => n.Link).ToHashSet();
+                    var newItems = more.Skip(_currentOffset)
+                                    .Where(n => !existing.Contains(n.Link))
+                                    .ToList();
+
+                    foreach (var item in newItems) Articles.Add(item);
+
+                    CanLoadMore = newItems.Count >= PageSize;
+                });
+            }
+            catch (Exception ex) { _logger?.Error(ex.Message); }
+            finally { IsLoading = false; }
+            }
+        }
     }
-}
 
