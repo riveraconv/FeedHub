@@ -4,61 +4,81 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Utilities;
-
+using Kotlin.Properties;
+using FeedHub_App.ViewModels.News;
 
 namespace FeedHub_App.ViewModels.News
 {
+
     public partial class CategoryListViewModel : ObservableObject, IQueryAttributable
     {
         private readonly INewsAggregatorService _aggregator;
         private readonly ILogger _logger;
 
         public ObservableCollection<NewsItem> Articles { get; } = new();
+
         public ObservableCollection<string> Categories { get; } = new()
-        {
-            "Internacional",
-            "Política",
-            "Economía",
-            "Tecnología",
-            "Ciencia",
-            "Deportes",
-            "Sociedad",
-            "Cultura",
-            "Entretenimiento",
-        };
+    {
+        "Internacional",
+        "Política",
+        "Economía",
+        "Tecnología",
+        "Ciencia",
+        "Deportes",
+        "Sociedad",
+        "Cultura",
+        "Entretenimiento",
+    };
 
         [ObservableProperty]
-        public string category;
+        private string category = string.Empty;
 
         [ObservableProperty]
-        public bool isLoading;
+        private bool isLoading;
 
         [ObservableProperty]
-        public bool isRefreshing;
+        private bool isRefreshing;
 
         [ObservableProperty]
-        private string searchText;
+        private string searchText = string.Empty;
+
         [ObservableProperty]
-        string pageTitle;
+        private string pageTitle = string.Empty;
+
         [ObservableProperty]
-        bool noResultsFound;
+        private bool noResultsFound;
+
         [ObservableProperty]
-        bool isSearchMode;
+        private bool isSearchMode;
+
         public event Action? SearchCompleted;
+
         private string? _initialQuery;
         private int _currentOffset = 0;
         private const int PageSize = 20;
+
         [ObservableProperty]
         private bool canLoadMore;
 
         [ObservableProperty]
-        string dynamicPlaceholder; 
+        private string dynamicPlaceholder = string.Empty;
+
         private int _actualIndex = 0;
+
         private readonly string[] _sugestions =
         {
-            "No encuentras alguna noticia...?",
-            "Prueba a buscar por palabras!"
-        };
+        "No encuentras alguna noticia...?",
+        "Prueba a buscar por palabras!"
+    };
+
+        [ObservableProperty]
+        private bool isLoadingMore;
+
+        // 🔥 ESTE ES EL CAMBIO IMPORTANTE
+        [ObservableProperty]
+        private CategoryViewState viewState;
+        private List<NewsItem> _fullListCache = new();
+
 
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
         {
@@ -69,10 +89,10 @@ namespace FeedHub_App.ViewModels.News
         public void StartPlaceholderAnimation()
         {
             DynamicPlaceholder = _sugestions[0];
-            
+
             IDispatcherTimer timer = Application.Current.Dispatcher.CreateTimer();
             timer.Interval = TimeSpan.FromSeconds(5);
-            timer.Tick += (s, e) => 
+            timer.Tick += (s, e) =>
             {
                 _actualIndex = (_actualIndex + 1) % _sugestions.Length;
                 DynamicPlaceholder = _sugestions[_actualIndex];
@@ -99,10 +119,10 @@ namespace FeedHub_App.ViewModels.News
             else if (query.ContainsKey("search"))
             {
                 var queryText = Uri.UnescapeDataString(query["search"]?.ToString() ?? "");
-                
+
                 // Si es la misma query que ya tenemos cargada, no recargamos
                 if (_initialQuery == queryText && Articles.Count > 0) return;
-                
+
                 _initialQuery = queryText;
                 Category = queryText;
                 PageTitle = $"Resultados de '{queryText}'";
@@ -119,24 +139,39 @@ namespace FeedHub_App.ViewModels.News
 
             try
             {
-                var results = await Task.Run(() => _aggregator.SearchByKeywordAsync(queryText, 50));
+                // 1. Buscamos hasta 100 resultados (o los que quieras de tope)
+                var results = await Task.Run(() => _aggregator.SearchByKeywordAsync(queryText, 100));
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
+                    _fullListCache = results?.ToList() ?? new List<NewsItem>();
                     Articles.Clear();
 
-                    if(results != null & results.Any())
+                    if (_fullListCache.Any())
                     {
-                        foreach (var item in results)
-                        Articles.Add(item);
+                        // 2. Cargamos el primer bloque de 20
+                        var firstBatch = _fullListCache.Take(PageSize).ToList();
+                        foreach (var item in firstBatch)
+                            Articles.Add(item);
+
+                        _currentOffset = Articles.Count;
+                        
+                        // 3. Verificamos si podemos cargar más después
+                        CanLoadMore = _fullListCache.Count > Articles.Count;
                     }
+
                     NoResultsFound = Articles.Count == 0;
+                    ViewState = NoResultsFound ? CategoryViewState.Empty : CategoryViewState.Content;
                 });
             }
-            catch (Exception ex) { _logger.Error(ex.Message); }
-            finally 
+            catch (Exception ex) 
             { 
-                IsLoading = false; 
+                _logger.Error(ex.Message); 
+                ViewState = CategoryViewState.Empty;
+            }
+            finally
+            {
+                IsLoading = false;
                 SearchCompleted?.Invoke();
             }
         }
@@ -144,41 +179,54 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         public async Task LoadNewsAsync()
         {
-            // Lógica espejo de LatestNewsViewModel: 
-            // Si ya hay artículos y NO es un "Pull to Refresh", no hacemos nada.
-            if (Articles.Count > 0 && !IsRefreshing) return;
-            if (string.IsNullOrWhiteSpace(Category) || IsLoading) return;
+            if (string.IsNullOrWhiteSpace(Category))
+                return;
 
             try
             {
-                if (!IsRefreshing) IsLoading = true;
-                _currentOffset = 0;
+                IsLoading = true;
+                IsRefreshing = false;
+                IsLoadingMore = false;
+                NoResultsFound = false;
+                ViewState = CategoryViewState.Loading;
 
-                var items = await _aggregator.GetByCategoryAsync(Category, PageSize);
+                var items = await _aggregator.GetByCategoryAsync(Category, 100);
 
-                MainThread.BeginInvokeOnMainThread(() =>
+                var processed = items
+                    .GroupBy(i => i.Source)
+                    .SelectMany(g => g.Take(4))
+                    .OrderByDescending(i => i.PublishDate)
+                    .ToList() ?? new List<NewsItem>();
+
+                    _fullListCache = processed;
+
+                Articles.Clear();
+
+                if (_fullListCache.Any())
                 {
-                    Articles.Clear();
-
-                    var filtered = items
-                        .GroupBy(i => i.Source)
-                        .SelectMany(g => g.Take(4)) // No más de 4 seguidas del mismo
-                        .OrderByDescending(i => i.PublishDate)
-                        .Take(100);
-
-                    foreach (var item in filtered)
+                    var firstBatch = _fullListCache.Take(PageSize).ToList();
+                    foreach (var item in firstBatch)
+                    {
                         Articles.Add(item);
-                        CanLoadMore = items.Count >= PageSize;
-                });
+                    }
+                    _currentOffset = Articles.Count;
+                    CanLoadMore = _fullListCache.Count > Articles.Count;
+                    ViewState = CategoryViewState.Content;
+                }
+                else
+                {
+                    NoResultsFound = true;
+                    ViewState = CategoryViewState.Empty;
+                }    
             }
-            catch (Exception ex)
-            {
-                _logger?.Error($"Categories Loading Error {Category}: {ex.Message}");
+            catch (Exception ex) 
+            { 
+                _logger.Error(ex.Message); 
+                ViewState = CategoryViewState.Empty; // O un estado de Error si lo tienes
             }
             finally
             {
                 IsLoading = false;
-                IsRefreshing = false;
             }
         }
 
@@ -219,7 +267,7 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         public async Task SearchInPageAsync()
         {
-            if(string.IsNullOrWhiteSpace(SearchText)) return;
+            if (string.IsNullOrWhiteSpace(SearchText)) return;
 
             var query = SearchText;
             SearchText = string.Empty;
@@ -230,30 +278,38 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         public async Task LoadMoreAsync()
         {
-            if(IsLoading || !CanLoadMore || IsSearchMode) return;
+            // Si ya estamos cargando o no hay más en el caché, salimos
+            if (IsLoadingMore || !CanLoadMore) return;
 
             try
             {
-                IsLoading = true;
+                IsLoadingMore = true;
+
+                // Simulamos un micro-delay (500ms) para que el usuario vea que la app "hace algo"
+                // Como los datos ya están en _fullListCache, esto sería instantáneo sin el delay.
+                await Task.Delay(500);
+
+                // 1. Obtenemos el siguiente bloque de la lista que ya tenemos descargada
+                var nextItems = _fullListCache
+                    .Skip(_currentOffset)
+                    .Take(PageSize)
+                    .ToList();
+
+                // 2. Los añadimos a la lista visible
+                foreach (var item in nextItems)
+                    Articles.Add(item);
+
+                // 3. Actualizamos el puntero
                 _currentOffset = Articles.Count;
 
-                var more = await _aggregator.GetByCategoryAsync(Category, PageSize + _currentOffset);
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    var existing = Articles.Select(n => n.Link).ToHashSet();
-                    var newItems = more.Skip(_currentOffset)
-                                    .Where(n => !existing.Contains(n.Link))
-                                    .ToList();
-
-                    foreach (var item in newItems) Articles.Add(item);
-
-                    CanLoadMore = newItems.Count >= PageSize;
-                });
+                // 4. ¿Quedan más noticias en el caché por mostrar?
+                CanLoadMore = _fullListCache.Count > Articles.Count;
             }
-            catch (Exception ex) { _logger?.Error(ex.Message); }
-            finally { IsLoading = false; }
+            finally
+            {
+                IsLoadingMore = false;
             }
         }
     }
+}
 

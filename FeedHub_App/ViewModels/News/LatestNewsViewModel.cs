@@ -4,6 +4,7 @@ using FeedHub_Core.Models;
 using FeedHub_Core.Services;
 using System.Collections.ObjectModel;
 using FeedHub_Core.Utilities;
+using Android.Text;
 
 namespace FeedHub_App.ViewModels.News
 {
@@ -19,6 +20,8 @@ namespace FeedHub_App.ViewModels.News
 
         [ObservableProperty]
         private bool isLoading;
+        [ObservableProperty]
+        private bool isLoadingMore;
 
         [ObservableProperty]
         private bool isInitialLoadComplete = false;
@@ -32,44 +35,45 @@ namespace FeedHub_App.ViewModels.News
             News = new ObservableCollection<NewsItem>();
         }
 
-[RelayCommand]
-public async Task LoadNewsAsync()
-{
-    // 1. Si ya hay noticias y no estamos refrescando, no hacemos nada
-    if (News.Count > 0 && !IsRefreshing) return;
-
-    try
-    {
-        // 2. Control de los indicadores de carga
-        if (!IsRefreshing) IsLoading = true;
-        _currentOffset = 0; // Reiniciamos el offset para una nueva carga
-
-        // 3. Traemos las noticias (Esto se hace en un hilo secundario, ¡bien!)
-        var selected = await _aggregatorService.GetLatestMixedAsync(PageSize);
-
-        // 4. EL CAMBIO CLAVE: 
-        // En lugar de hacer .Clear() y luego un bucle .Add() que congela la UI 30 veces,
-        // creamos la colección de golpe en el hilo principal.
-        MainThread.BeginInvokeOnMainThread(() => 
+        [RelayCommand]
+        public async Task LoadNewsAsync()
         {
-           foreach(var item in selected)
+            // Si ya estamos cargando (ya sea carga inicial o pull), abortamos
+            if (IsLoading || IsRefreshing) return;
+
+            try
             {
-                News.Add(item);
+                // DETERMINAR QUÉ SPINNER SE MUESTRA:
+                // Si la lista está vacía, es carga inicial -> Usamos IsLoading (Spinner central)
+                // Si el usuario hizo "pull", IsRefreshing ya será true -> No entramos aquí
+                if (News.Count == 0) 
+                {
+                    IsLoading = true; 
+                }
+
+                _currentOffset = 0;
+                var selected = await _aggregatorService.GetLatestMixedAsync(PageSize);
+
+                MainThread.BeginInvokeOnMainThread(() => 
+                {
+                    News.Clear();
+                    foreach(var item in selected) News.Add(item);
+                    CanLoadMore = selected.Count >= PageSize;
+                });
             }
-            CanLoadMore = selected.Count >= PageSize; // Si recibimos menos que el tamaño de página, no hay más para cargar
-        });
-    }
-    catch (Exception ex) 
-    { 
-        _logger?.Error($"Error cargando noticias: {ex.Message}"); 
-    }
-    finally
-    {
-        // 5. Limpiamos estados de carga
-        IsLoading = false;
-        IsRefreshing = false; 
-    }
-}
+            catch (Exception ex) 
+            { 
+                _logger?.Error($"Error: {ex.Message}"); 
+            }
+            finally
+            {
+                // Apagamos ambos. 
+                // Si IsLoading era el que estaba activo, se quita el del centro.
+                // Si IsRefreshing era el activo, se quita el nactivo de arriba.
+                IsLoading = false;
+                IsRefreshing = false; 
+            }
+        }
 
         [RelayCommand]
         private async Task OpenNewsAsync(NewsItem item)
@@ -85,10 +89,10 @@ public async Task LoadNewsAsync()
         [RelayCommand]
         public async Task LoadMoreAsync()
         {
-            if (IsLoading) return;
+            if (IsLoading || IsLoadingMore) return;
             try
             {
-                IsLoading = true;
+                IsLoadingMore = true;
                 _currentOffset += PageSize;
                 var more = await _aggregatorService.GetLatestMixedAsync(PageSize + _currentOffset);
 
@@ -110,7 +114,7 @@ public async Task LoadNewsAsync()
             }
             finally
             {
-                IsLoading = false;
+                IsLoadingMore = false;
             }
         }
         [RelayCommand]

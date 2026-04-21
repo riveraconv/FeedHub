@@ -6,7 +6,12 @@
     Shell.NavBarIsVisible="False"
     x:DataType="vm:MainViewModel"
     x:Class="FeedHub_App.Views.MainPage"
-    BackgroundColor="#0F172A">
+    BackgroundColor="#0F172A"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
+        <ContentPage.Behaviors>
+                <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="LightContent" />
+        </ContentPage.Behaviors>
 
     <Grid IgnoreSafeArea="True">
              <BoxView IsEnabled="False" 
@@ -100,8 +105,8 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <Grid Grid.Row="1" Padding="25,10,25,60">
-            <Label Text="V.1.0 • Build 1" TextColor="#475569" FontSize="12" HorizontalOptions="Center"/>
+        <Grid Grid.Row="1" Padding="25,10,25,50">
+            <Label Text="V.1.0 • Build 1" TextColor="#475569" FontSize="12" HorizontalOptions="Start"/>
         </Grid>
     </Grid>
     </Grid>

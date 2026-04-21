@@ -23,13 +23,16 @@ public partial class LatestNewsPage : ContentPage
         }
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        if (_viewModel.News.Count == 0 && _viewModel.LoadNewsCommand.CanExecute(null))
+        // Comprobamos si la lista está vacía
+        if (_viewModel.News.Count == 0)
         {
-            _viewModel.LoadNewsCommand.Execute(null);
+            // En lugar de Execute(null), llamamos directamente al método Task 
+            // para que sea una carga "interna" y no dispare el estado visual del RefreshView
+            await _viewModel.LoadNewsAsync();
         }
     }
 }
