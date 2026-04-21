@@ -106,7 +106,7 @@
         </ScrollView>
 
         <Grid Grid.Row="1" Padding="25,10,25,50">
-            <Label Text="V.1.0 • Build 1" TextColor="#475569" FontSize="12" HorizontalOptions="Start"/>
+            <Label Text="{Binding AppVersion}" TextColor="#475569" FontSize="12" HorizontalOptions="Start"/>
         </Grid>
     </Grid>
     </Grid>

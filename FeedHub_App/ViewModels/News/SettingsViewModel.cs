@@ -7,12 +7,15 @@ public partial class SettingsViewModel : ObservableObject
 {
     [ObservableProperty]
     private bool _isDarkMode;
+    [ObservableProperty]
+    string appVersion;
 
     public SettingsViewModel()
     {
         // Al arrancar, leemos de Preferences. 
         // Si no existe, usamos el tema actual del sistema.
         IsDarkMode = Preferences.Default.Get("DarkMode", Application.Current.RequestedTheme == AppTheme.Dark);
+        appVersion = $"V.{AppInfo.Current.VersionString} (Build {AppInfo.Current.BuildString})";
     }
 
     // Este m�todo se ejecuta AUTOM�TICAMENTE cuando cambias el Switch

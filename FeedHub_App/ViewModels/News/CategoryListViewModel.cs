@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Utilities;
-using Kotlin.Properties;
-using FeedHub_App.ViewModels.News;
 
 namespace FeedHub_App.ViewModels.News
 {

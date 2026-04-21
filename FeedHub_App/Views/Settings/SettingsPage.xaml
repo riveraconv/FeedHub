@@ -2,67 +2,67 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:FeedHub_App.ViewModels.Settings"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FeedHub_App.Views.Settings.SettingsPage"
              x:DataType="vm:SettingsViewModel"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#0F172A">
+
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
 
     <Grid IgnoreSafeArea="True">
-        <BoxView>
+        <BoxView IsEnabled="False" 
+                 InputTransparent="True"
+                 HorizontalOptions="Fill"
+                 VerticalOptions="Fill">
             <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#0D253F" Offset="0.1" />
-                    <GradientStop Color="#813B83F6" Offset="1.0" />
-                </LinearGradientBrush>
+                <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
+                    <GradientStop Color="#2638BDF8" Offset="0.1" />
+                    <GradientStop Color="#000F172A" Offset="0.8" />
+                </RadialGradientBrush>
             </BoxView.Background>
         </BoxView>
 
-        <Grid RowDefinitions="Auto, *" Padding="25">
+        <Grid RowDefinitions="Auto, *" Padding="0,45,0,0">
             
-            <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,10,0,30">
-                <Label Text="AJUSTES" 
-                       TextColor="#4FC3F7" 
-                       FontSize="12" 
-                       FontAttributes="Bold" 
-                       CharacterSpacing="2"/>
-                <Label Text="Configuración" 
-                       TextColor="White" 
-                       FontSize="32" 
-                       FontAttributes="Bold"/>
-                <BoxView HeightRequest="1" 
-                         BackgroundColor="#1A3A5A" 
-                         WidthRequest="100" 
-                         HorizontalOptions="Start"/>
+            <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
+                <Label Text="AJUSTES" TextColor="#38BDF8" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+                <Label Text="Configuración" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
+                <BoxView HeightRequest="3" BackgroundColor="#38BDF8" WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
             </VerticalStackLayout>
 
-            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-                <VerticalStackLayout Spacing="15">
+            <Grid Grid.Row="1" RowDefinitions="*, Auto" Padding="25,10,25,20">
+                <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Grid.Row="0" Spacing="15">
                     
                     <Border Stroke="#1E3A5A"
                             StrokeThickness="1"
-                            StrokeShape="RoundRectangle 20"
-                            BackgroundColor="#0F253E"
+                            StrokeShape="RoundRectangle 24"
+                            BackgroundColor="#1E293B"
                             Padding="20">
                         <Grid ColumnDefinitions="*, Auto">
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                 <Label Text="Modo oscuro" FontSize="18" FontAttributes="Bold" TextColor="White"/>
-                                <Label Text="Forzar tema oscuro para la aplicación" FontSize="13" TextColor="#8A99A8" />
+                                <Label Text="Forzar tema oscuro para la vista rápida" FontSize="13" TextColor="#94A3B8" />
                             </VerticalStackLayout>
                             <Switch Grid.Column="1" 
                                     IsToggled="{Binding IsDarkMode}"
-                                    OnColor="#4FC3F7"
+                                    OnColor="#38BDF8"
                                     ThumbColor="White" />
                         </Grid>
                     </Border>
 
                     <Border Stroke="#1E3A5A"
                             StrokeThickness="1"
-                            StrokeShape="RoundRectangle 20"
-                            BackgroundColor="#0F253E"
+                            StrokeShape="RoundRectangle 24"
+                            BackgroundColor="#1E293B"
                             Padding="20">
                         <Grid ColumnDefinitions="*, Auto">
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                 <Label Text="Limpiar Caché" FontSize="18" FontAttributes="Bold" TextColor="White" />
-                                <Label Text="Borra temporalmente los datos" FontSize="13" TextColor="#8A99A8" />
+                                <Label Text="Borra temporalmente los datos locales" FontSize="13" TextColor="#94A3B8" />
                             </VerticalStackLayout>
                             <Button Grid.Column="1" 
                                     Command="{Binding ClearCacheCommand}"
@@ -72,12 +72,22 @@
                                     HeightRequest="40"
                                     WidthRequest="100"
                                     CornerRadius="20"
-                                    BackgroundColor="#1A3A5A"
-                                    TextColor="#4FC3F7" />
+                                    BackgroundColor="#0F172A"
+                                    TextColor="#38BDF8"/>
                         </Grid>
                     </Border>
                 </VerticalStackLayout>
             </ScrollView>
+            
+                <Label Grid.Row="1" 
+                        Text="{Binding AppVersion}" 
+                        TextColor="#475569" 
+                        FontSize="11" 
+                        HorizontalOptions="Start"
+                        VerticalOptions="End"
+                        Margin="0,0,0,30"/>
+
+            </Grid>
         </Grid>
     </Grid>
 </ContentPage>
