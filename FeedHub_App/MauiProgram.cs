@@ -18,6 +18,10 @@ namespace FeedHub_App
     {
         public static MauiApp CreateMauiApp()
         {
+
+            try
+            {
+                
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             var builder = MauiApp.CreateBuilder();
             builder
@@ -48,7 +52,6 @@ namespace FeedHub_App
                 var editText = searchView.GetChildrenOfType<Android.Widget.EditText>().FirstOrDefault();
                 if (editText != null)
                 {
-                    System.Diagnostics.Debug.WriteLine(">>>> [DEBUG SEARCH] Cursor encontrado y cambiado a Blanco");
                     editText.TextCursorDrawable?.SetTint(Android.Graphics.Color.White);
                 }
             });
@@ -71,7 +74,7 @@ namespace FeedHub_App
             // --- VIEWMODELS ---
 
             builder.Services.AddSingleton<MainViewModel>();
-            builder.Services.AddSingleton<LatestNewsViewModel>();
+            builder.Services.AddTransient<LatestNewsViewModel>();
             builder.Services.AddTransient<CategoryListViewModel>();
             builder.Services.AddSingleton<CategoriesBySourceViewModel>();
             builder.Services.AddTransient<QuickViewViewModel>();
@@ -82,7 +85,7 @@ namespace FeedHub_App
             // --- PAGES ---
 
             builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<LatestNewsPage>();
+            builder.Services.AddTransient<LatestNewsPage>();
             builder.Services.AddTransient<QuickViewPage>();
             builder.Services.AddTransient<CategoryListPage>();
             builder.Services.AddSingleton<CategoriesNewsBySourcePage>();
@@ -96,6 +99,19 @@ namespace FeedHub_App
 #endif
 
             return builder.Build();
+            var app = builder.Build();
+                System.Diagnostics.Debug.WriteLine("DEBUG: MauiApp construido correctamente");
+                return app;
+            }
+            catch(Exception ex)
+            {
+                System.IO.File.WriteAllText(
+                    System.IO.Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "startup_crash.log"),
+                    $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+                throw;
+            }
         }
     }
 }

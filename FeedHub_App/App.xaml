@@ -14,7 +14,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
-            <toolkit:InvertedBoolConverter x:Key="InverseBoolConverter"/>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
 
         </ResourceDictionary>
     </Application.Resources>

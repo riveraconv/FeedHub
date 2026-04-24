@@ -6,6 +6,9 @@
              Shell.NavBarIsVisible="False"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
+<ContentPage.Behaviors>
+    <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="DarkContent"/>
+</ContentPage.Behaviors>
 
 <ContentPage.Resources>
     <Style x:Key="ActionBtnStyle" TargetType="Button">
@@ -106,7 +109,7 @@
                      
                 <Border VerticalOptions="End" 
                         HorizontalOptions="Center" 
-                        Margin="0,0,0,30" 
+                        Margin="0,0,0,50" 
                         Padding="10,2"
                         StrokeShape="RoundRectangle 30" 
                         BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#1E293B}"
@@ -136,6 +139,11 @@
                             </Label>
                         </HorizontalStackLayout>
 
+                    <Button x:Name="ToggleViewButton"
+                            Text="🌐"
+                            Clicked="OnToggleViewClicked"
+                            IsVisible="False"
+                            Style="{StaticResource ActionBtnStyle}"/>
                         <BoxView WidthRequest="1" 
                                         HeightRequest="20" 
                                         Color="#E2E8F0" 

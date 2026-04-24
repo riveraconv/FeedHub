@@ -11,7 +11,6 @@ namespace FeedHub_App.ViewModels.News
     {
         private readonly INewsAggregatorService _aggregatorService;
         private readonly ILogger _logger;
-        private ObservableCollection<NewsItem>_news = new();
         public ObservableCollection<NewsItem> News {get;} = new();
 
         [ObservableProperty]
@@ -28,9 +27,10 @@ namespace FeedHub_App.ViewModels.News
         private const int PageSize = 20;
         [ObservableProperty]
         private bool canLoadMore = false;
-        public LatestNewsViewModel(INewsAggregatorService aggregatorService)
+        public LatestNewsViewModel(INewsAggregatorService aggregatorService, ILogger logger)
         {
             _aggregatorService = aggregatorService;
+            _logger = logger;
             News = new ObservableCollection<NewsItem>();
         }
 
@@ -42,16 +42,16 @@ namespace FeedHub_App.ViewModels.News
 
             try
             {
+                System.Diagnostics.Debug.WriteLine("DEBUG: LoadNews iniciando...");
                 // DETERMINAR QUÉ SPINNER SE MUESTRA:
                 // Si la lista está vacía, es carga inicial -> Usamos IsLoading (Spinner central)
                 // Si el usuario hizo "pull", IsRefreshing ya será true -> No entramos aquí
-                if (News.Count == 0) 
-                {
-                    IsLoading = true; 
-                }
+                if (News.Count == 0) IsLoading = true;
 
                 _currentOffset = 0;
                 var selected = await _aggregatorService.GetLatestMixedAsync(PageSize);
+
+                System.Diagnostics.Debug.WriteLine("DEBUG: Llamando al aggregator...");
 
                 MainThread.BeginInvokeOnMainThread(() => 
                 {
@@ -61,16 +61,18 @@ namespace FeedHub_App.ViewModels.News
                 });
             }
             catch (Exception ex) 
-            { 
-                _logger?.Error($"Error: {ex.Message}"); 
+            {
+                System.Diagnostics.Debug.WriteLine($"DEBUG ERROR: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}"); 
+                _logger?.Error($" DEBUG: Error en LoadNews: {ex.Message}"); 
             }
             finally
             {
-                // Apagamos ambos. 
-                // Si IsLoading era el que estaba activo, se quita el del centro.
-                // Si IsRefreshing era el activo, se quita el nactivo de arriba.
-                IsLoading = false;
-                IsRefreshing = false; 
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IsLoading = false;
+                    IsRefreshing = false;
+                });
+                System.Diagnostics.Debug.WriteLine("DEBUG: LoadNews finalizado"); 
             }
         }
 
@@ -113,7 +115,10 @@ namespace FeedHub_App.ViewModels.News
             }
             finally
             {
-                IsLoadingMore = false;
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IsLoadingMore = false;
+                });
             }
         }
         [RelayCommand]

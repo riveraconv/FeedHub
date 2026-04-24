@@ -22,6 +22,10 @@ public partial class NewsBySourceViewModel : ObservableObject
     private bool isRefreshing;
     [ObservableProperty]
     private bool isLoading;
+    [ObservableProperty]
+    private bool noResultsFound;
+    [ObservableProperty]
+    private bool isLoadingMore;
     private int _currentOffset = 0;
     private const int PageSize = 20;
     [ObservableProperty]
@@ -49,29 +53,35 @@ public partial class NewsBySourceViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+[RelayCommand]
     public async Task LoadNews()
     {
-        System.Diagnostics.Debug.WriteLine($"*** CARGANDO FUENTE: {SourceId} ***");
-
-        if (NewsItems.Count > 0 && !IsRefreshing) return;
+        if (IsLoading) return;
 
         try
         {
-            if (!IsRefreshing)
-                IsLoading = true;
-                _currentOffset = 0;
+            if (!IsRefreshing) IsLoading = true;
+            
+            NoResultsFound = false;
+            _currentOffset = 0;
 
-            var items = await _newsService.GetBySourceAsync(SourceId); 
-            var initialItems = items.Take(PageSize).ToList();
+            // Obtenemos los datos
+            var allItems = await _newsService.GetBySourceAsync(SourceId, 100); 
+            
+            // Filtramos la primera página
+            var items = allItems.Take(PageSize).ToList();
+
             NewsItems.Clear();
             foreach (var item in items) 
                 NewsItems.Add(item);
-                CanLoadMore = items.Count >= PageSize;
+
+            // Estados finales
+            CanLoadMore = allItems.Count > PageSize;
+            NoResultsFound = NewsItems.Count == 0;
         }
         catch (Exception ex) 
         { 
-            _logger?.Error(ex.Message); 
+            System.Diagnostics.Debug.WriteLine($"Error cargando noticias: {ex.Message}");
         }
         finally
         {
@@ -79,33 +89,49 @@ public partial class NewsBySourceViewModel : ObservableObject
             IsRefreshing = false;
         }
     }
+
     [RelayCommand]
     private async Task LoadMore()
     {
-        if (IsLoading || !CanLoadMore) return;
+        // Si ya está cargando o no hay más, salimos
+        if (IsLoading || IsLoadingMore || !CanLoadMore) return;
 
         try
         {
-            IsLoading = true;
+            IsLoadingMore = true; // Activamos estado específico para el footer
             _currentOffset += PageSize;
 
-            var allItems = await _newsService.GetBySourceAsync(SourceId); 
+            var allItems = await _newsService.GetBySourceAsync(SourceId, 100); 
+            
+            // Simular un pequeño delay para que la transición no sea brusca (opcional)
+            await Task.Delay(300);
 
-            MainThread.BeginInvokeOnMainThread(() =>
+            var existingLinks = NewsItems.Select(n => n.Link).ToHashSet();
+            var newItems = allItems.Skip(_currentOffset)
+                                   .Take(PageSize)
+                                   .Where(n => !existingLinks.Contains(n.Link))
+                                   .ToList();
+
+            if (newItems.Any())
             {
-                var existing = NewsItems.Select(n => n.Link).ToHashSet();
-                var newItems = allItems.Skip(_currentOffset)
-                                       .Take(PageSize)
-                                       .Where(n => !existing.Contains(n.Link))
-                                       .ToList();
-
-                foreach (var item in newItems) NewsItems.Add(item);
-
-                CanLoadMore = newItems.Count >= PageSize;
-            });
+                foreach (var item in newItems) 
+                    NewsItems.Add(item);
+                
+                CanLoadMore = allItems.Count > NewsItems.Count;
+            }
+            else
+            {
+                CanLoadMore = false;
+            }
         }
-        catch (Exception ex) { _logger?.Error(ex.Message); }
-        finally { IsLoading = false; }
+        catch (Exception ex) 
+        { 
+            System.Diagnostics.Debug.WriteLine($"Error cargando más: {ex.Message}");
+        }
+        finally 
+        { 
+            IsLoadingMore = false; 
+        }
     }
 
     private string GetFriendlyName(string id)

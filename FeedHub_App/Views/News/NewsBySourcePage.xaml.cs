@@ -10,15 +10,15 @@ public partial class NewsBySourcePage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
 	}
-	private async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	private async void OnNewsClicked(object sender, EventArgs e)
 	{
-		if (e.CurrentSelection.FirstOrDefault() is NewsItem selectedItem)
+		if (sender is Button btn && btn.BindingContext is NewsItem item)
 		{
-			((CollectionView)sender).SelectedItem = null;
-			if (BindingContext is NewsBySourceViewModel vm)
-			{
-				await vm.SelectNewsCommand.ExecuteAsync(selectedItem);
-			}
+			await ((NewsBySourceViewModel)BindingContext).SelectNewsCommand.ExecuteAsync(item);
 		}
+	}
+	private async void OnLoadMoreClicked(object sender, EventArgs e)
+	{
+		await ((NewsBySourceViewModel)BindingContext).LoadMoreCommand.ExecuteAsync(null);
 	}
 }

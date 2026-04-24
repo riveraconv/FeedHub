@@ -36,11 +36,6 @@
             </VerticalStackLayout>
 
             <Grid Grid.Row="1">
-                
-                <RefreshView Command="{Binding LoadNewsCommand}"
-                             IsRefreshing="{Binding IsRefreshing}"
-                             RefreshColor="#38BDF8"
-                             BackgroundColor="Transparent">
 
                     <CollectionView ItemsSource="{Binding News}"
                                     SelectionMode="Single"
@@ -68,8 +63,11 @@
                                         BackgroundColor="#1E293B"> 
                                     <Grid RowDefinitions="Auto, Auto">
                                         <Grid Grid.Row="0" IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
-                                            <Image Source="{Binding ImageUrl}" HeightRequest="200" Aspect="AspectFill" MaximumHeightRequest="200" />
-                                            <BoxView VerticalOptions="End" HeightRequest="30">
+                                            <Image Source="{Binding ImageUrl}" 
+                                                HeightRequest="200" 
+                                                Aspect="AspectFill" />
+
+                                            <BoxView VerticalOptions="End" HeightRequest="30" InputTransparent="True">
                                                 <BoxView.Background>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                                         <GradientStop Color="Transparent" Offset="0"/>
@@ -120,7 +118,6 @@
                             </VerticalStackLayout>
                         </CollectionView.Footer>
                     </CollectionView>
-                </RefreshView>
 
                 <VerticalStackLayout IsVisible="{Binding IsLoading}"
 

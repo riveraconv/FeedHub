@@ -25,9 +25,9 @@
 
         <Grid RowDefinitions="Auto, *, Auto" Padding="0,45,0,0">
             
-            <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
+            <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,5">
                 <Label Text="FEEDHUB" TextColor="#38BDF8" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
-                <Label Text="Categorías" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
+                <Label Text="Noticias por categoría" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
                 <BoxView HeightRequest="3" BackgroundColor="#38BDF8" WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
             </VerticalStackLayout>
 
@@ -35,7 +35,7 @@
                 <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
                     <VerticalStackLayout Spacing="12" Padding="25,15,25,20">
                         
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf57d;', Color=#38BDF8, Size=18}"/>
@@ -46,7 +46,7 @@
                             </Grid>
                         </Border>
 
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf19c;', Color=#38BDF8, Size=18}"/>
@@ -57,7 +57,7 @@
                             </Grid>
                         </Border>
 
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf51e;', Color=#38BDF8, Size=18}"/>
@@ -68,7 +68,7 @@
                             </Grid>
                         </Border>
 
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf2db;', Color=#38BDF8, Size=18}"/>
@@ -79,7 +79,7 @@
                             </Grid>
                         </Border>
 
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf0c3;', Color=#38BDF8, Size=18}"/>
@@ -90,7 +90,7 @@
                             </Grid>
                         </Border>
 
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf0c0;', Color=#38BDF8, Size=18}"/>
@@ -101,7 +101,7 @@
                             </Grid>
                         </Border>
 
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf630;', Color=#38BDF8, Size=18}"/>
@@ -112,7 +112,7 @@
                             </Grid>
                         </Border>
 
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf434;', Color=#38BDF8, Size=18}"/>
@@ -123,7 +123,7 @@
                             </Grid>
                         </Border>
 
-                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="1">
+                        <Border StrokeShape="RoundRectangle 18" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeThickness="2">
                             <Grid>
                                 <Grid ColumnDefinitions="32, *, Auto" Padding="15,12" InputTransparent="True">
                                     <Image Grid.Column="0" Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf11b;', Color=#38BDF8, Size=18}"/>

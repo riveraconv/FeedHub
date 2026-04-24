@@ -27,13 +27,24 @@ public partial class LatestNewsPage : ContentPage
     {
         base.OnAppearing();
 
-        // Comprobamos si la lista está vacía
-        if (_viewModel.News.Count == 0)
+        // Leer logs de crash anteriores
+        foreach (var logFile in new[] { "crash.log", "task_crash.log", "startup_crash.log" })
         {
-            // En lugar de Execute(null), llamamos directamente al método Task 
-            // para que sea una carga "interna" y no dispare el estado visual del RefreshView
-            await _viewModel.LoadNewsAsync();
+            var path = System.IO.Path.Combine(FileSystem.AppDataDirectory, logFile);
+            if (!System.IO.File.Exists(path))
+            {
+                path = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), logFile);
+            }
+            if (System.IO.File.Exists(path))
+            {
+                System.Diagnostics.Debug.WriteLine($">>> {logFile}: {System.IO.File.ReadAllText(path)}");
+                System.IO.File.Delete(path);
+            }
         }
+
+        if (_viewModel.News.Count == 0)
+            await _viewModel.LoadNewsAsync();
     }
 }
 

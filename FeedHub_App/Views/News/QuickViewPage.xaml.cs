@@ -2,9 +2,9 @@
 using FeedHub_Core.Utilities;
 using FeedHub_App.ViewModels.News;
 
-
 namespace FeedHub_App.Views.News
 {
+    
     [QueryProperty(nameof(Link), "link")]
     public partial class QuickViewPage : ContentPage, IQueryAttributable
     {
@@ -15,6 +15,8 @@ namespace FeedHub_App.Views.News
         public string? Link { get; set; }
         public string Source { get; set; }
         private bool _articleLoaded = false;
+        private bool _quickViewAvailable = false;
+        private bool _fullWebAvailable = false;
 
         public QuickViewPage(ILogger logger, QuickViewViewModel viewModel)
         {
@@ -195,48 +197,49 @@ namespace FeedHub_App.Views.News
         }
 
         private void ShowQuickView()
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                // 1. Verificamos que los componentes críticos existan
-                if (QuickViewContainer == null) return;
-
-                // 2. Visibilidad de contenedores
-                QuickViewContainer.IsVisible = true;
-                FullWebView.IsVisible = false;
-
-                // 3. Estado de los botones
-
-                ShareButton.IsVisible = true;
-                SpeakButton.IsVisible = true;
-
-                _logger.Info("Modo QuickView establecido correctamente");
-            });
-        }
+{
+    MainThread.BeginInvokeOnMainThread(() =>
+    {
+        if (QuickViewContainer == null) return;
+        QuickViewContainer.IsVisible = true;
+        FullWebView.IsVisible = false;
+        ShareButton.IsVisible = true;
+        SpeakButton.IsVisible = true;
+        _quickViewAvailable = true;
+        ToggleViewButton.IsVisible = _fullWebAvailable;
+        ToggleViewButton.Text = "🌐";
+        _logger.Info("Modo QuickView establecido correctamente");
+    });
+}
 
 private void ShowFullWeb()
 {
     MainThread.BeginInvokeOnMainThread(() =>
     {
-        // 1. Verificamos nulos
         if (FullWebView == null) return;
-
-        // 2. Visibilidad de contenedores
         QuickViewContainer.IsVisible = false;
         FullWebView.IsVisible = true;
-
-        // 3. Ajuste de botones (Solo dejamos compartir y cerrar)
         ShareButton.IsVisible = true;
         SpeakButton.IsVisible = false;
-
-        // 4. Lógica inteligente del botón de cerrar
-        // Si hay un título cargado, significa que podemos "volver" a la Vista Rápida
-        bool canGoBackToQuickView = !string.IsNullOrEmpty(TitleLabel?.Text) && 
-                                    TitleLabel.Text != "Cargando título...";
-
+        _fullWebAvailable = true;
+        ToggleViewButton.IsVisible = _quickViewAvailable;
+        ToggleViewButton.Text = "📄";
         _logger.Info("Modo FullWeb establecido correctamente");
     });
 }
+        private void OnToggleViewClicked(object sender, EventArgs e)
+        {
+            if (QuickViewContainer.IsVisible)
+            {
+                ShowFullWeb();
+                if (FullWebView.Source == null || FullWebView.Source is UrlWebViewSource s && string.IsNullOrEmpty(s.Url))
+                    FullWebView.Source = new UrlWebViewSource { Url = Link };
+            }
+            else
+            {
+                ShowQuickView();
+            }
+        }
         private void OnSourceClicked(object sender, EventArgs e)
         {
             if (BindingContext is QuickViewViewModel vm)
@@ -263,13 +266,44 @@ private void ShowFullWeb()
                 Title = "Share the new"
             });
         }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            UpdateSystemBars();
+        }
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+
             if (BindingContext is QuickViewViewModel vm)
-            {
                 vm.StopSpeaking();
-            }
+
+        #if ANDROID
+            var activity = Platform.CurrentActivity as AndroidX.AppCompat.App.AppCompatActivity;
+            var controller = AndroidX.Core.View.WindowCompat.GetInsetsController(
+                activity!.Window!, activity.Window!.DecorView);
+            controller.AppearanceLightNavigationBars = false;
+            controller.AppearanceLightStatusBars = false;
+        #endif
+        }
+
+        private void UpdateSystemBars()
+        {
+        #if ANDROID
+            var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
+            var activity = Platform.CurrentActivity as AndroidX.AppCompat.App.AppCompatActivity;
+            var controller = AndroidX.Core.View.WindowCompat.GetInsetsController(
+                activity!.Window!, activity.Window!.DecorView);
+            controller.AppearanceLightNavigationBars = !isDark;
+            controller.AppearanceLightStatusBars = !isDark;
+        #endif
+        }
+
+        protected override void OnHandlerChanged()
+        {
+            base.OnHandlerChanged();
+            Application.Current!.RequestedThemeChanged += (s, e) => UpdateSystemBars();
         }
 
             public string ArticleHtmlContent(string ArticleContent) => $@"
@@ -351,6 +385,7 @@ private void ShowFullWeb()
             </body>
             </html>";
     }
+    
 }
 
 
