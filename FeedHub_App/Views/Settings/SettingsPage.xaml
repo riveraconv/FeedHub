@@ -76,6 +76,30 @@
                                     TextColor="#38BDF8"/>
                         </Grid>
                     </Border>
+
+                    <Border Stroke="#1E3A5A"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 24"
+                            BackgroundColor="#1E293B"
+                            Padding="20">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToFiltersCommand}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid ColumnDefinitions="*, Auto">
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="Personalizar contenido" FontSize="18" FontAttributes="Bold" TextColor="White"/>
+                                <Label Text="Filtra tus categorías o medios preferidos" FontSize="13" TextColor="#94A3B8"/>
+                            </VerticalStackLayout>
+                            
+                            <Label Grid.Column="1" 
+                                Text="→" 
+                                TextColor="#38BDF8" 
+                                FontSize="22" 
+                                VerticalOptions="Center" 
+                                Margin="10,0,10,0"/>
+                        </Grid>
+                    </Border>
                 </VerticalStackLayout>
             </ScrollView>
             

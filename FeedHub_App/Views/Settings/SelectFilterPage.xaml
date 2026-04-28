@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FeedHub_App.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="FeedHub_App.Views.Settings.SelectFilterPage"
+             xmlns:models="clr-namespace:FeedHub_Core.Models;assembly=FeedHub_Core"
+             x:DataType="vm:FilterViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#0F172A">
+
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
+
+    <Grid IgnoreSafeArea="True">
+        <BoxView InputTransparent="True" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <BoxView.Background>
+                <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
+                    <GradientStop Color="#2638BDF8" Offset="0.1" />
+                    <GradientStop Color="#000F172A" Offset="0.8" />
+                </RadialGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <Grid RowDefinitions="Auto, Auto, *" Padding="0,45,0,0">
+            
+            <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
+                <Label Text="AJUSTES" TextColor="#38BDF8" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+                <Label Text="Personalizar contenido" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
+                <BoxView HeightRequest="3" BackgroundColor="#38BDF8" WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
+            </VerticalStackLayout>
+
+            <Border Grid.Row="1" Margin="25,10" Padding="4" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeShape="RoundRectangle 25" StrokeThickness="2">
+                <Grid ColumnDefinitions="*,*">
+                    
+                    <Button x:Name="BtnCat" Text="CATEGORÍAS" 
+                            Command="{Binding ChangeTabCommand}" CommandParameter="cat"
+                            CornerRadius="22" HeightRequest="45" FontSize="12" FontAttributes="Bold">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding ShowCategories}" Value="True">
+                                <Setter Property="BackgroundColor" Value="#38BDF8" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Button" Binding="{Binding ShowCategories}" Value="False">
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                <Setter Property="TextColor" Value="#94A3B8" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                    
+                    <Button Grid.Column="1" Text="FUENTES" 
+                            Command="{Binding ChangeTabCommand}" CommandParameter="src"
+                            CornerRadius="22" HeightRequest="45" FontSize="12" FontAttributes="Bold">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding ShowCategories}" Value="False">
+                                <Setter Property="BackgroundColor" Value="#38BDF8" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Button" Binding="{Binding ShowCategories}" Value="True">
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                <Setter Property="TextColor" Value="#94A3B8" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <ScrollView Grid.Row="2" Margin="0,10,0,0" Padding="25,0">
+                <VerticalStackLayout Spacing="10" Padding="0,0,0,20">
+                    
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Categories}" 
+                                         IsVisible="{Binding ShowCategories}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:FilterItem">
+                                <Border Margin="0,0,0,10" Padding="20,0" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeShape="RoundRectangle 24" StrokeThickness="2">
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <Label Text="{Binding Title}" TextColor="#F8FAFC" VerticalOptions="Center" FontSize="16" FontAttributes="Bold"/>
+                                        <Switch Grid.Column="1" 
+                                                IsToggled="{Binding IsActive}"
+                                                Toggled="OnFilterToggled" 
+                                                OnColor="#38BDF8" 
+                                                ThumbColor="White" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Sources}" 
+                                         IsVisible="{Binding ShowCategories, Converter={toolkit:InvertedBoolConverter}}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:FilterItem">
+                                <Border Margin="0,0,0,10" Padding="20,0" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeShape="RoundRectangle 24" StrokeThickness="2">
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <Label Text="{Binding Title}" TextColor="#F8FAFC" VerticalOptions="Center" FontSize="16" FontAttributes="Bold"/>
+                                        <Switch Grid.Column="1" IsToggled="{Binding IsActive}" OnColor="#38BDF8" ThumbColor="White" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -11,6 +11,7 @@ using FeedHub_App.ViewModels;
 using CommunityToolkit.Maui;
 using System.Diagnostics;
 using Microsoft.Maui.Platform;
+using FeedHub_App.Services;
 
 namespace FeedHub_App
 {
@@ -70,7 +71,10 @@ namespace FeedHub_App
             builder.Services.AddSingleton<QuickArticleResult>();
             builder.Services.AddSingleton<FeedHub_Core.Utilities.ILogger, PlatformLogger>();
             builder.Services.AddSingleton<INewsAggregatorService, NewsAggregatorService>();
-
+            builder.Services.AddSingleton<IPreferencesService, MauiPreferencesService>();
+            builder.Services.AddSingleton<FilterPreferencesService>();
+            
+            
             // --- VIEWMODELS ---
 
             builder.Services.AddSingleton<MainViewModel>();
@@ -81,6 +85,7 @@ namespace FeedHub_App
             builder.Services.AddSingleton<SettingsViewModel>();
             builder.Services.AddTransient<CategoryNewsViewModel>();
             builder.Services.AddTransient<NewsBySourceViewModel>();
+            builder.Services.AddTransient<FilterViewModel>();
 
             // --- PAGES ---
 
@@ -92,6 +97,8 @@ namespace FeedHub_App
             builder.Services.AddTransient<CategoryNewsPage>();
             builder.Services.AddSingleton<SettingsPage>();
             builder.Services.AddTransient<NewsBySourcePage>();
+            builder.Services.AddTransient<SelectFilterPage>();
+
 
 
 #if DEBUG

@@ -1,17 +1,29 @@
 ﻿
 using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
-using FeedHub_Core.Services;
 using FeedHub_Core.Utilities;
 using System.Collections.Concurrent;
 using FeedHub_Core.Helpers;
 
-public class NewsAggregatorService : INewsAggregatorService
-{
-    private readonly IRssService _rssService;
-    private readonly ILogger _logger;
+namespace FeedHub_Core.Services;
 
-    private readonly Dictionary<string, string> _feeds = new()
+
+    public class NewsAggregatorService : INewsAggregatorService
+    {
+        private readonly IRssService _rssService;
+        private readonly FilterPreferencesService _filterService;
+        private readonly ILogger _logger;
+        public List<string> GetAvailableCategories() => 
+                            _feeds.Values.Distinct().OrderBy(x => x).ToList();
+
+        public List<string> GetAvailableSources() => 
+                            _feeds.Keys.Select(url => SourceNameSolver.Resolve(url))
+                            .Distinct()
+                            .OrderBy(x => x)
+                            .ToList();
+                            
+
+        private readonly Dictionary<string, string> _feeds = new()
     {
         //El Pais 
 
@@ -129,129 +141,136 @@ public class NewsAggregatorService : INewsAggregatorService
         {"https://fronteraespacial.com/feed/", "ciencia" },
     };
 
-
-
-    public NewsAggregatorService(IRssService rssService, ILogger logger)
-    {
-        _rssService = rssService;
-        _logger = logger;
-    }
-
-    public async Task<List<NewsItem>> GetLatestMixedAsync(int limit)
-    {
-        var tempList = new ConcurrentBag<NewsItem>();
-        var options = new ParallelOptions { MaxDegreeOfParallelism = 3 };
-
-        await Parallel.ForEachAsync(_feeds, options, async (kvp, ct) =>
+        public NewsAggregatorService(IRssService rssService, ILogger logger, FilterPreferencesService filterService)
         {
-            try
-            {
-                // Timeout individual de 10 seg por feed
-                using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-                cts.CancelAfter(TimeSpan.FromSeconds(10));
-
-                var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
-                var latestTwo = items.OrderByDescending(i => i.PublishDate).Take(2);
-
-                foreach (var item in latestTwo) 
-                {
-                    item.Category = kvp.Value;
-                    item.Source = SourceNameSolver.Resolve(item.Link);
-                    tempList.Add(item);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Warn($"Fallo en feed mixto {kvp.Key}: {ex.Message}");
-            }
-        });
-        return tempList.OrderByDescending(x => x.PublishDate)
-                   .Take(limit)
-                   .ToList();
-    }
-
-    public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
-    {
-        var allItems = new ConcurrentBag<NewsItem>();
-        DateTime cutOffDate = category == "ciencia" || category == "cultura" || category == "entretenimiento"
-                            ? DateTime.Now.AddDays(-2)
-                            : DateTime.Now.AddDays(-7);
-
-        var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
-
-        await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) => //number of HTTP conections
-        {
-            try
-            {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
-                var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
-
-                foreach (var item in items)
-                {
-                    if(item.PublishDate >= cutOffDate)
-                    {
-                       item.Category = kvp.Value;
-                       item.Source = SourceNameSolver.Resolve(item.Link);
-                       allItems.Add(item); 
-                    }
-                    
-                }
-            }
-            catch { /* Ignorar errores de red */}
-        });
-
-        return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
-    }
-
-    public async Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit = 40)
-    {
-        if (string.IsNullOrWhiteSpace(query)) return Enumerable.Empty<NewsItem>();
-
-        var allResults = new ConcurrentBag<NewsItem>();
-
-        // Buscamos en todos los feeds en paralelo para encontrar la palabra clave
-        await Parallel.ForEachAsync(_feeds, new ParallelOptions { MaxDegreeOfParallelism = 20 }, async (kvp, ct) =>
-        {
-            try
-            {
-                var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
-                var filtered = items.Where(n =>
-                    (n.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (n.Description?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
-
-                foreach (var item in filtered) 
-                {
-                    item.Source = SourceNameSolver.Resolve(item.Link);
-                    allResults.Add(item);
-                }
-            }
-            catch { /* fail silently */ }
-        });
-
-        return allResults.OrderByDescending(n => n.PublishDate).Take(limit);
-    }
-    public async Task<List<NewsItem>> GetBySourceAsync(string sourceId, int limit = 20)
-    {
-    var allItems = new ConcurrentBag<NewsItem>();
-    
-    var cleanSourceId = sourceId.ToLower().Replace(".", "");
-    var sourceFeeds = _feeds.Where(kvp => 
-    kvp.Key.ToLower().Replace(".","").Contains(cleanSourceId));
-
-    await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (kvp, ct) =>
-    {
-        try
-        {
-            var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
-            foreach (var item in items)
-            {
-                item.Source = SourceNameSolver.Resolve(item.Link);
-                allItems.Add(item);
-            }
+            _rssService = rssService;
+            _logger = logger;
+            _filterService = filterService;
         }
-        catch { /* Silencio */ }
-    });
 
-    return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+        public async Task<List<NewsItem>> GetLatestMixedAsync(int limit)
+        {
+            var tempList = new ConcurrentBag<NewsItem>();
+            var options = new ParallelOptions { MaxDegreeOfParallelism = 3 };
+
+            var filteredFeeds = _feeds.Where(kvp =>
+            {
+                var sourceName = SourceNameSolver.Resolve(kvp.Key);
+                return _filterService.IsCategoryActive(kvp.Value) && _filterService.IsSourceActive(sourceName);
+            });
+
+            await Parallel.ForEachAsync(filteredFeeds, options, async (kvp, ct) =>
+            {
+                try
+                {
+                    // Timeout individual de 10 seg por feed
+                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    cts.CancelAfter(TimeSpan.FromSeconds(10));
+
+                    var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
+                    var latestTwo = items.OrderByDescending(i => i.PublishDate).Take(2);
+
+                    foreach (var item in latestTwo)
+                    {
+                        item.Category = kvp.Value;
+                        item.Source = SourceNameSolver.Resolve(item.Link);
+                        tempList.Add(item);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn($"Fallo en feed mixto {kvp.Key}: {ex.Message}");
+                }
+            });
+            return tempList.OrderByDescending(x => x.PublishDate)
+                       .Take(limit)
+                       .ToList();
+        }
+    
+
+        public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
+        {
+            var allItems = new ConcurrentBag<NewsItem>();
+            DateTime cutOffDate = category == "ciencia" || category == "cultura" || category == "entretenimiento"
+                                ? DateTime.Now.AddDays(-2)
+                                : DateTime.Now.AddDays(-7);
+
+            var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
+
+            await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) => //number of HTTP conections
+            {
+                try
+                {
+                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+                    var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
+
+                    foreach (var item in items)
+                    {
+                        if (item.PublishDate >= cutOffDate)
+                        {
+                            item.Category = kvp.Value;
+                            item.Source = SourceNameSolver.Resolve(item.Link);
+                            allItems.Add(item);
+                        }
+
+                    }
+                }
+                catch { /* Ignorar errores de red */}
+            });
+
+            return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+        }
+
+        public async Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit = 40)
+        {
+            if (string.IsNullOrWhiteSpace(query)) return Enumerable.Empty<NewsItem>();
+
+            var allResults = new ConcurrentBag<NewsItem>();
+
+            // Buscamos en todos los feeds en paralelo para encontrar la palabra clave
+            await Parallel.ForEachAsync(_feeds, new ParallelOptions { MaxDegreeOfParallelism = 20 }, async (kvp, ct) =>
+            {
+                try
+                {
+                    var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
+                    var filtered = items.Where(n =>
+                        (n.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (n.Description?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
+
+                    foreach (var item in filtered)
+                    {
+                        item.Source = SourceNameSolver.Resolve(item.Link);
+                        allResults.Add(item);
+                    }
+                }
+                catch { /* fail silently */ }
+            });
+
+            return allResults.OrderByDescending(n => n.PublishDate).Take(limit);
+        }
+        public async Task<List<NewsItem>> GetBySourceAsync(string sourceId, int limit = 20)
+        {
+            var allItems = new ConcurrentBag<NewsItem>();
+
+            var cleanSourceId = sourceId.ToLower().Replace(".", "");
+            var sourceFeeds = _feeds.Where(kvp =>
+            kvp.Key.ToLower().Replace(".", "").Contains(cleanSourceId));
+
+            await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (kvp, ct) =>
+            {
+                try
+                {
+                    var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
+                    foreach (var item in items)
+                    {
+                        item.Source = SourceNameSolver.Resolve(item.Link);
+                        allItems.Add(item);
+                    }
+                }
+                catch { /* Silencio */ }
+            });
+
+            return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+        }
     }
-}
+

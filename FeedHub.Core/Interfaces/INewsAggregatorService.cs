@@ -1,10 +1,5 @@
-﻿using FeedHub_Core.Models;
-using FeedHub_Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using FeedHub_Core.Models;
 
 namespace FeedHub_Core.Services
 {
@@ -14,5 +9,8 @@ namespace FeedHub_Core.Services
         Task<List<NewsItem>> GetByCategoryAsync(string category, int limit);
         Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit);
         Task<List<NewsItem>> GetBySourceAsync(string sourceId, int limit = 20);
+        List<string> GetAvailableCategories();
+        List<string> GetAvailableSources();
     }
+    
 }

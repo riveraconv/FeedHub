@@ -51,14 +51,10 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon_feedhub.svg" 
-          Color="#0D253F" 
-          ForegroundScale="0.65"/>
+		<MauiIcon Include="Resources\AppIcon\appicon_feedhub.svg" Color="#0D253F" ForegroundScale="0.65" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash_feedhub1.svg" 
-                  Color="#0D253F" 
-                  BaseSize="128,128"/>
+		<MauiSplashScreen Include="Resources\Splash\splash_feedhub1.svg" Color="#0D253F" BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -95,6 +91,9 @@
 	  <Compile Update="Views\News\CategoryListPage.xaml.cs">
 	    <DependentUpon>CategoryListPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\Settings\SelectFilterPage.xaml.cs">
+	    <DependentUpon>SelectFilterPage.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -126,6 +125,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Platforms\Android\Handlers\" />
+	  <Folder Include="Services\" />
 	</ItemGroup>
 
 </Project>

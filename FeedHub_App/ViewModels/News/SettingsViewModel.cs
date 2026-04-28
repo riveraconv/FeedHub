@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FeedHub_App.Views.Settings;
 
 namespace FeedHub_App.ViewModels.Settings;
 
@@ -44,6 +45,11 @@ public partial class SettingsViewModel : ObservableObject
     public async Task GoBackToMainMenu()
     {
         await Shell.Current.GoToAsync("..");
+    }
+    [RelayCommand]
+    public async Task GoToFilters()
+    {
+        await Shell.Current.GoToAsync(nameof(SelectFilterPage));
     }
 
     
