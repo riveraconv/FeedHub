@@ -94,7 +94,11 @@
                                 <Border Margin="0,0,0,10" Padding="20,0" BackgroundColor="#1E293B" Stroke="#1E3A5A" StrokeShape="RoundRectangle 24" StrokeThickness="2">
                                     <Grid ColumnDefinitions="*, Auto">
                                         <Label Text="{Binding Title}" TextColor="#F8FAFC" VerticalOptions="Center" FontSize="16" FontAttributes="Bold"/>
-                                        <Switch Grid.Column="1" IsToggled="{Binding IsActive}" OnColor="#38BDF8" ThumbColor="White" />
+                                        <Switch Grid.Column="1" 
+                                                IsToggled="{Binding IsActive}"
+                                                Toggled="OnFilterToggled" 
+                                                OnColor="#38BDF8" 
+                                                ThumbColor="White" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>

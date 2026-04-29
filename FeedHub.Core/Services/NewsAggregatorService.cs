@@ -195,7 +195,9 @@ namespace FeedHub_Core.Services;
                                 ? DateTime.Now.AddDays(-2)
                                 : DateTime.Now.AddDays(-7);
 
-            var filteredFeeds = _feeds.Where(kvp => kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase));
+            var filteredFeeds = _feeds.Where(kvp => 
+                kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase) &&
+                _filterService.IsSourceActive(SourceNameSolver.Resolve(kvp.Key)));
 
             await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) => //number of HTTP conections
             {
@@ -251,10 +253,11 @@ namespace FeedHub_Core.Services;
         public async Task<List<NewsItem>> GetBySourceAsync(string sourceId, int limit = 20)
         {
             var allItems = new ConcurrentBag<NewsItem>();
-
             var cleanSourceId = sourceId.ToLower().Replace(".", "");
+
             var sourceFeeds = _feeds.Where(kvp =>
-            kvp.Key.ToLower().Replace(".", "").Contains(cleanSourceId));
+            kvp.Key.ToLower().Replace(".", "").Contains(cleanSourceId) &&
+            _filterService.IsCategoryActive(kvp.Value));
 
             await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (kvp, ct) =>
             {

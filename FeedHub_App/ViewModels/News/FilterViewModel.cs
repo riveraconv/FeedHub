@@ -43,22 +43,10 @@ public partial class FilterViewModel : ObservableObject
 
         Sources.Clear();
         foreach (var src in _aggregator.GetAvailableSources())
-        {
-            string cleanSrc = src.ToLower().Trim();
-            string friendlyName = src;
-
-            if (cleanSrc.Contains("elmundo") || cleanSrc.Contains("e00"))
-            {
-                friendlyName = "El Mundo";
-            }
-            else if (cleanSrc == "feeds" || cleanSrc.Contains("bbc"))
-            {
-                friendlyName = "BBC News";
-            }
-                        
+        {                    
             Sources.Add(new FilterItem
             {
-                Title = friendlyName,
+                Title = src,
                 Code = src,
                 IsActive = _filterService.IsSourceActive(src),
             });
