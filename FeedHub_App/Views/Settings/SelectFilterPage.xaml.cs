@@ -19,6 +19,7 @@ public partial class SelectFilterPage : ContentPage
 		{
 			// Detectamos si es categoría o fuente por la visibilidad
 			bool isCategory = _viewModel.ShowCategories; 
+			System.Diagnostics.Debug.WriteLine($"#debug switch [{(isCategory ? "CATEGORÍA" : "FUENTE")}] '{item.Title}' (Code: '{item.Code}') → {(item.IsActive ? "ACTIVADO" : "DESACTIVADO")}");
 			_viewModel.SavePreference(item, isCategory);
 		}
 	}

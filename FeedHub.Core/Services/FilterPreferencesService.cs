@@ -1,3 +1,4 @@
+using System.IO.Pipelines;
 using System.Text.Json;
 using FeedHub_Core.Interfaces;
 
@@ -33,7 +34,10 @@ public class FilterPreferencesService
         var disabled = GetDisabledSources();
         if (!active) disabled.Add(sourceId);
         else disabled.Remove(sourceId);
+
+        var json =  JsonSerializer.Serialize(disabled);
         _prefs.Set(DisabledSourcesKey, JsonSerializer.Serialize(disabled));
+        System.Diagnostics.Debug.WriteLine($"#debug filters [SOURCE] '{sourceId}' → {(active ? "ACTIVA" : "DESACTIVADA")} | Desactivadas: [{string.Join(", ", disabled)}]");
     }
 
     public void SetCategoryActive(string category, bool active)
@@ -41,18 +45,27 @@ public class FilterPreferencesService
         var disabled = GetDisabledCategories();
         if (!active) disabled.Add(category);
         else disabled.Remove(category);
+
+        var json = JsonSerializer.Serialize(disabled);
         _prefs.Set(DisabledCategoriesKey, JsonSerializer.Serialize(disabled));
+        System.Diagnostics.Debug.WriteLine($"#debug filters [CATEGORY] '{category}' → {(active ? "ACTIVA" : "DESACTIVADA")} | Desactivadas: [{string.Join(", ", disabled)}]");
     }
 
     public bool IsSourceActive(string sourceId)
     {
         var disabled = GetDisabledSources();
-        return !disabled.Contains(sourceId);
+        var result = !disabled.Contains(sourceId);
+
+        System.Diagnostics.Debug.WriteLine($"#debug filters [CHECK SOURCE] '{sourceId}' → {(result ? "PASA" : "BLOQUEADA")}");
+        return result;
     }
 
     public bool IsCategoryActive(string category)
     {
         var disabled = GetDisabledCategories();
-        return !disabled.Contains(category);
+        var result = !disabled.Contains(category);
+        
+        System.Diagnostics.Debug.WriteLine($"#debug filters [CHECK CAT] '{category}' → {(result ? "PASA" : "BLOQUEADA")}");
+        return result;
     }
 }

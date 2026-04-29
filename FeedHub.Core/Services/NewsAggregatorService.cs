@@ -153,11 +153,22 @@ namespace FeedHub_Core.Services;
             var tempList = new ConcurrentBag<NewsItem>();
             var options = new ParallelOptions { MaxDegreeOfParallelism = 3 };
 
+            System.Diagnostics.Debug.WriteLine("#debug aggregator [LATEST] Aplicando filtros...");
+
             var filteredFeeds = _feeds.Where(kvp =>
             {
                 var sourceName = SourceNameSolver.Resolve(kvp.Key);
+                var srcOk = _filterService.IsSourceActive(sourceName);
+                var catOk = _filterService.IsCategoryActive(kvp.Value);
+
+                if (!srcOk || !catOk)
+                 System.Diagnostics.Debug.WriteLine($"#debug aggregator [LATEST] BLOQUEADO: {sourceName} | cat:{kvp.Value} | srcOk:{srcOk} catOk:{catOk}");
                 return _filterService.IsCategoryActive(kvp.Value) && _filterService.IsSourceActive(sourceName);
-            });
+
+            }).ToList();
+
+            System.Diagnostics.Debug.WriteLine($"#debug aggregator [LATEST] Feeds tras filtro: {filteredFeeds.Count}/{_feeds.Count}");
+
 
             await Parallel.ForEachAsync(filteredFeeds, options, async (kvp, ct) =>
             {
@@ -168,6 +179,9 @@ namespace FeedHub_Core.Services;
                     cts.CancelAfter(TimeSpan.FromSeconds(10));
 
                     var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
+
+                    System.Diagnostics.Debug.WriteLine($"#debug feeds [{SourceNameSolver.Resolve(kvp.Key)}] {items.Count} artículos obtenidos");
+
                     var latestTwo = items.OrderByDescending(i => i.PublishDate).Take(2);
 
                     foreach (var item in latestTwo)
@@ -182,9 +196,13 @@ namespace FeedHub_Core.Services;
                     _logger.Warn($"Fallo en feed mixto {kvp.Key}: {ex.Message}");
                 }
             });
-            return tempList.OrderByDescending(x => x.PublishDate)
+
+            var result = tempList.OrderByDescending(x => x.PublishDate)
                        .Take(limit)
                        .ToList();
+
+            System.Diagnostics.Debug.WriteLine($"#debug ui [LATEST] Artículos enviados a UI: {result.Count}");
+            return result;
         }
     
 
@@ -195,9 +213,19 @@ namespace FeedHub_Core.Services;
                                 ? DateTime.Now.AddDays(-2)
                                 : DateTime.Now.AddDays(-7);
 
-            var filteredFeeds = _feeds.Where(kvp => 
-                kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase) &&
-                _filterService.IsSourceActive(SourceNameSolver.Resolve(kvp.Key)));
+            System.Diagnostics.Debug.WriteLine($"#debug aggregator [CATEGORY] Cargando '{category}' con filtros...");
+
+            var filteredFeeds = _feeds.Where(kvp =>
+            {
+                    if (!kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase)) return false;
+                    var sourceName = SourceNameSolver.Resolve(kvp.Key);
+                    var srcOk = _filterService.IsSourceActive(sourceName);
+                    if (!srcOk)
+                        System.Diagnostics.Debug.WriteLine($"#debug aggregator [CATEGORY] BLOQUEADO: {sourceName}");
+                    return srcOk;
+            }).ToList();
+
+            System.Diagnostics.Debug.WriteLine($"#debug aggregator [CATEGORY] Feeds tras filtro: {filteredFeeds.Count}");
 
             await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) => //number of HTTP conections
             {
@@ -205,6 +233,8 @@ namespace FeedHub_Core.Services;
                 {
                     using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
                     var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
+
+                    System.Diagnostics.Debug.WriteLine($"#debug feeds [{SourceNameSolver.Resolve(kvp.Key)}] {items.Count} artículos obtenidos");
 
                     foreach (var item in items)
                     {
@@ -220,7 +250,9 @@ namespace FeedHub_Core.Services;
                 catch { /* Ignorar errores de red */}
             });
 
-            return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+            var result = allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+            System.Diagnostics.Debug.WriteLine($"#debug ui [CATEGORY] Artículos enviados a UI: {result.Count}");
+            return result;
         }
 
         public async Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit = 40)
@@ -255,15 +287,25 @@ namespace FeedHub_Core.Services;
             var allItems = new ConcurrentBag<NewsItem>();
             var cleanSourceId = sourceId.ToLower().Replace(".", "");
 
+            System.Diagnostics.Debug.WriteLine($"#debug aggregator [SOURCE] Cargando fuente '{sourceId}' con filtros...");
+
             var sourceFeeds = _feeds.Where(kvp =>
-            kvp.Key.ToLower().Replace(".", "").Contains(cleanSourceId) &&
-            _filterService.IsCategoryActive(kvp.Value));
+            {
+                if (!kvp.Key.ToLower().Replace(".", "").Contains(cleanSourceId)) return false;
+                var catOk = _filterService.IsCategoryActive(kvp.Value);
+                if (!catOk)
+                    System.Diagnostics.Debug.WriteLine($"#debug aggregator [SOURCE] BLOQUEADO: cat '{kvp.Value}' desactivada");
+                return catOk;
+            }).ToList();
+
+            System.Diagnostics.Debug.WriteLine($"#debug aggregator [SOURCE] Feeds tras filtro: {sourceFeeds.Count}");
 
             await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (kvp, ct) =>
             {
                 try
                 {
                     var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
+                    System.Diagnostics.Debug.WriteLine($"#debug feeds [{kvp.Value}] {items.Count} artículos obtenidos");
                     foreach (var item in items)
                     {
                         item.Source = SourceNameSolver.Resolve(item.Link);
@@ -273,7 +315,9 @@ namespace FeedHub_Core.Services;
                 catch { /* Silencio */ }
             });
 
-            return allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+            var result = allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
+            System.Diagnostics.Debug.WriteLine($"#debug ui [SOURCE] Artículos enviados a UI: {result.Count}");
+            return result;
         }
     }
 
