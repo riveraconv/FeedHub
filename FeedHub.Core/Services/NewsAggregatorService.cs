@@ -167,6 +167,10 @@ namespace FeedHub_Core.Services;
 
             }).ToList();
 
+            int perFeed = filteredFeeds.Count > 0
+                ? Math.Max(2, (int)Math.Ceiling((double)limit / filteredFeeds.Count))
+                : 2;
+
             System.Diagnostics.Debug.WriteLine($"#debug aggregator [LATEST] Feeds tras filtro: {filteredFeeds.Count}/{_feeds.Count}");
 
 
@@ -182,9 +186,9 @@ namespace FeedHub_Core.Services;
 
                     System.Diagnostics.Debug.WriteLine($"#debug feeds [{SourceNameSolver.Resolve(kvp.Key)}] {items.Count} artículos obtenidos");
 
-                    var latestTwo = items.OrderByDescending(i => i.PublishDate).Take(2);
+                    var latest = items.OrderByDescending(i => i.PublishDate).Take(perFeed);
 
-                    foreach (var item in latestTwo)
+                    foreach (var item in latest)
                     {
                         item.Category = kvp.Value;
                         item.Source = SourceNameSolver.Resolve(item.Link);

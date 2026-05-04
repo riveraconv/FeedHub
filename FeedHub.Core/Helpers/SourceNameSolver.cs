@@ -7,13 +7,13 @@ public static class SourceNameSolver
     private static readonly Dictionary<string, string> _domainMap = new()
     {
         { "elpais.com", "El País" },
-        { "elmundo.es", "El Mundo" },
+        { "e00-elmundo.uecdn.es", "El Mundo" },
         { "lavanguardia.com", "La Vanguardia" },
         { "elperiodico.com", "El Periódico" },
         { "20minutos.es", "20 Minutos" },
         { "elconfidencial.com", "El Confidencial" },
         { "eldiario.es", "elDiario.es" },
-        { "bbc.co.uk", "BBC Mundo" },
+        { "feeds.bbci.co.uk", "BBC Mundo" },
         { "xataka.com", "Xataka" },
         { "applesfera.com", "Applesfera" },
         { "microsiervos.com", "Microsiervos" },
