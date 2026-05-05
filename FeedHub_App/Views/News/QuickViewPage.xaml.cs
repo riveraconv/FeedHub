@@ -197,36 +197,40 @@ namespace FeedHub_App.Views.News
         }
 
         private void ShowQuickView()
-{
-    MainThread.BeginInvokeOnMainThread(() =>
-    {
-        if (QuickViewContainer == null) return;
-        QuickViewContainer.IsVisible = true;
-        FullWebView.IsVisible = false;
-        ShareButton.IsVisible = true;
-        SpeakButton.IsVisible = true;
-        _quickViewAvailable = true;
-        ToggleViewButton.IsVisible = _fullWebAvailable;
-        ToggleViewButton.Text = "🌐";
-        _logger.Info("Modo QuickView establecido correctamente");
-    });
-}
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (QuickViewContainer == null) return;
+                QuickViewContainer.IsVisible = true;
+                FullWebView.IsVisible = false;
 
-private void ShowFullWeb()
-{
-    MainThread.BeginInvokeOnMainThread(() =>
-    {
-        if (FullWebView == null) return;
-        QuickViewContainer.IsVisible = false;
-        FullWebView.IsVisible = true;
-        ShareButton.IsVisible = true;
-        SpeakButton.IsVisible = false;
-        _fullWebAvailable = true;
-        ToggleViewButton.IsVisible = _quickViewAvailable;
-        ToggleViewButton.Text = "📄";
-        _logger.Info("Modo FullWeb establecido correctamente");
-    });
-}
+                ShareButton.IsVisible = true;
+                SpeakButton.IsVisible = true;
+                _quickViewAvailable = true;
+
+                ToggleViewButton.IsVisible = true;
+                ToggleViewButton.Text = "🌐";
+                _logger.Info("Modo QuickView establecido correctamente");
+            });
+        }
+
+        private void ShowFullWeb()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (FullWebView == null) return;
+                QuickViewContainer.IsVisible = false;
+                FullWebView.IsVisible = true;
+
+                ShareButton.IsVisible = true;
+                SpeakButton.IsVisible = true;
+                _fullWebAvailable = true;
+
+                ToggleViewButton.IsVisible = true;
+                ToggleViewButton.Text = "📄";
+                _logger.Info("Modo FullWeb establecido correctamente");
+            });
+        }
         private void OnToggleViewClicked(object sender, EventArgs e)
         {
             if (QuickViewContainer.IsVisible)
@@ -276,6 +280,9 @@ private void ShowFullWeb()
         {
             base.OnDisappearing();
 
+            if (Application.Current != null)
+                Application.Current.RequestedThemeChanged -= OnThemeChanged;
+
             if (BindingContext is QuickViewViewModel vm)
                 vm.StopSpeaking();
 
@@ -300,90 +307,79 @@ private void ShowFullWeb()
         #endif
         }
 
+        private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(() => UpdateSystemBars());
+        }
         protected override void OnHandlerChanged()
         {
             base.OnHandlerChanged();
-            Application.Current!.RequestedThemeChanged += (s, e) => UpdateSystemBars();
+            if (Application.Current != null)
+            {
+                Application.Current.RequestedThemeChanged -= OnThemeChanged;
+                Application.Current.RequestedThemeChanged += OnThemeChanged;
+            }
+            UpdateSystemBars();
         }
 
-            public string ArticleHtmlContent(string ArticleContent) => $@"
-            <!DOCTYPE html>
-            <html lang='es'>
-            <head>
-                <meta charset='utf-8'>
-                <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
-                <meta name='color-scheme' content='light dark'>
-                <style>
-                    /* 1. Configuramos el soporte para temas del sistema */
-                    :root {{
-                        color-scheme: light dark;
-                        supports-color-scheme: light dark;
-                    }}
+        public string ArticleHtmlContent(string ArticleContent)
+        {
+            var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
+            var bgColor = isDark ? "#1E293B" : "#FFFFFF";
+            var textColor = isDark ? "#F1F5F9" : "#1E293B";
+            var linkColor = isDark ? "#60A5FA" : "#2563EB";
+            var boldColor = isDark ? "#FFFFFF" : "#000000";
 
-                    /* 2. Estilos base para que el WebView sea transparente y use buena fuente */
-                    html, body {{
-                        background-color: transparent !important;
-                        margin: 0;
-                        padding: 0;
-                        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                        -webkit-text-size-adjust: 100%;
-
-                    }}
-
-                    body {{
-                        text-align: justify !important;
-                        text-justify: inter-word;
-                        padding: 15px 20px;
-                        hypens: auto;
-                        word-break: break-word;
-                        line-height: 1.5;
-                        font-size: 14px;
-                    }}
-
-                    /* 3. LA SOLUCIÓN NUCLEAR: Forzamos colores por tema */
-                    
-                    /* MODO OSCURO (Letras blancas sobre fondo oscuro de la app) */
-                    @media (prefers-color-scheme: dark) {{
-                        * {{
-                            color: #F1F5F9 !important; /* Blanco suave */
-                            background-color: transparent !important;
-                        }}
-                        a {{ color: #60A5FA !important; text-decoration: none; font-weight: bold; }}
-                        strong, b {{ color: #FFFFFF !important; }}
-                    }}
-
-                    /* MODO CLARO (Letras oscuras sobre fondo claro de la app) */
-                    @media (prefers-color-scheme: light) {{
-                        * {{
-                            color: #1E293B !important; /* Gris casi negro */
-                            background-color: transparent !important;
-                        }}
-                        a {{ color: #2563EB !important; text-decoration: none; font-weight: bold; }}
-                        strong, b {{ color: #000000 !important; }}
-                    }}
-
-                    /* 4. Ajustes de imágenes y otros elementos */
-                    img {{
-                        max-width: 100%;
-                        height: auto;
-                        border-radius: 12px;
-                        margin: 15px 0;
-                        display: block;
-                    }}
-
-                    p {{ margin-bottom: 1.2em; }}
-                    
-                    ul, ol {{ padding-left: 20px; }}
-                    li {{ margin-bottom: 8px; }}
-
-                </style>
-            </head>
-            <body>
-                <div class='main-content'>
-                    {ArticleContent}
-                </div>
-            </body>
-            </html>";
+            return $@"<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    <style>
+        html, body {{
+            margin: 0;
+            padding: 0;
+            background-color: {bgColor};
+            color: {textColor};
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-text-size-adjust: 100%;
+        }}
+        body {{
+            text-align: justify;
+            text-justify: inter-word;
+            padding: 15px 20px;
+            word-break: break-word;
+            line-height: 1.5;
+            font-size: 14px;
+        }}
+        * {{
+            color: {textColor} !important;
+            background-color: transparent !important;
+        }}
+        html, body {{
+            background-color: {bgColor} !important;
+        }}
+        a {{ color: {linkColor} !important; text-decoration: none; font-weight: bold; }}
+        strong, b {{ color: {boldColor} !important; }}
+        img {{
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin: 15px 0;
+            display: block;
+        }}
+        p {{ margin-bottom: 1.2em; }}
+        ul, ol {{ padding-left: 20px; }}
+        li {{ margin-bottom: 8px; }}
+    </style>
+</head>
+<body>
+    <div class='main-content'>
+        {ArticleContent}
+    </div>
+</body>
+</html>";
+        }
     }
     
 }

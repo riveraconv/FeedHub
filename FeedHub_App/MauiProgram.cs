@@ -9,7 +9,6 @@ using FeedHub_App.Utilities;
 using FeedHub_App.Views;
 using FeedHub_App.ViewModels;
 using CommunityToolkit.Maui;
-using System.Diagnostics;
 using Microsoft.Maui.Platform;
 using FeedHub_App.Services;
 
@@ -43,19 +42,16 @@ namespace FeedHub_App
                     fonts.AddFont("fa-solid.otf", "FontAwesome");
                 });
 #if ANDROID
-                //handler para cambiar los colores de la SearchBar de Categories
-                Microsoft.Maui.Handlers.SearchBarHandler.Mapper.AppendToMapping("CustomSearchVisuals", (handler, view) =>
-            {
-                var searchView = handler.PlatformView;
-
-                // 1. Color del Cursor (Blanco)
-                int searchEditTextId = searchView.Context.Resources.GetIdentifier("android:id/search_src_text", null, null);
-                var editText = searchView.GetChildrenOfType<Android.Widget.EditText>().FirstOrDefault();
-                if (editText != null)
-                {
-                    editText.TextCursorDrawable?.SetTint(Android.Graphics.Color.White);
-                }
-            });
+MainThread.BeginInvokeOnMainThread(() =>
+{
+    Microsoft.Maui.Handlers.SearchBarHandler.Mapper.AppendToMapping("CustomSearchVisuals", (handler, view) =>
+    {
+        var searchView = handler.PlatformView;
+        var editText = searchView.GetChildrenOfType<Android.Widget.EditText>().FirstOrDefault();
+        if (editText != null)
+            editText.TextCursorDrawable?.SetTint(Android.Graphics.Color.White);
+    });
+});
 #endif
 
             // --- SERVICIOS ---
@@ -80,7 +76,7 @@ namespace FeedHub_App
             builder.Services.AddSingleton<MainViewModel>();
             builder.Services.AddTransient<LatestNewsViewModel>();
             builder.Services.AddTransient<CategoryListViewModel>();
-            builder.Services.AddSingleton<CategoriesBySourceViewModel>();
+            builder.Services.AddTransient<CategoriesBySourceViewModel>();
             builder.Services.AddTransient<QuickViewViewModel>();
             builder.Services.AddSingleton<SettingsViewModel>();
             builder.Services.AddTransient<CategoryNewsViewModel>();
@@ -93,7 +89,7 @@ namespace FeedHub_App
             builder.Services.AddTransient<LatestNewsPage>();
             builder.Services.AddTransient<QuickViewPage>();
             builder.Services.AddTransient<CategoryListPage>();
-            builder.Services.AddSingleton<CategoriesNewsBySourcePage>();
+            builder.Services.AddTransient<CategoriesNewsBySourcePage>();
             builder.Services.AddTransient<CategoryNewsPage>();
             builder.Services.AddSingleton<SettingsPage>();
             builder.Services.AddTransient<NewsBySourcePage>();
@@ -105,7 +101,7 @@ namespace FeedHub_App
             builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+
             var app = builder.Build();
                 System.Diagnostics.Debug.WriteLine("DEBUG: MauiApp construido correctamente");
                 return app;

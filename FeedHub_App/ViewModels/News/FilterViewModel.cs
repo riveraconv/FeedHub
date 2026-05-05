@@ -24,11 +24,9 @@ public partial class FilterViewModel : ObservableObject
     {
         _filterService = filterService;
         _aggregator = aggregator;
-
-        LoadFilters();
     }
 
-    private void LoadFilters()
+    private async void LoadFilters()
     {
         System.Diagnostics.Debug.WriteLine("#debug filters [LOAD] Cargando filtros...");
 
@@ -42,7 +40,7 @@ public partial class FilterViewModel : ObservableObject
             {
                 Title = cat.ToUpper(),
                 Code = cat,
-                IsActive = _filterService.IsCategoryActive(cat)
+                IsActive = isActive
             });
         }
 
@@ -56,12 +54,18 @@ public partial class FilterViewModel : ObservableObject
             {
                 Title = src,
                 Code = src,
-                IsActive = _filterService.IsSourceActive(src),
+                IsActive = isActive
             });
         }
 
         System.Diagnostics.Debug.WriteLine($"#debug filters [LOAD] Categorías: {Categories.Count} | Fuentes: {Sources.Count}");
     }
+
+    	public void LoadFiltersIfNeeded()
+        {
+            if (Categories.Count > 0 || Sources.Count > 0) return;
+            LoadFilters();
+        }
 
     // Comando para guardar cuando el usuario toca el Switch
     public void SavePreference(FilterItem item, bool isCategory)

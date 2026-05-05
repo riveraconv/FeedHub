@@ -39,20 +39,21 @@
 
         <Label x:Name="InfoBanner"
                Grid.Row="0"
-               BackgroundColor="#1E293B"
+               BackgroundColor="Transparent"
                TextColor="White"
                FontSize="18"
                Padding="18"
                HorizontalTextAlignment="Center"
-               IsVisible="False"/>
+               IsVisible="False"
+               Margin="0,15,0,0"/>
 
         <Grid Grid.Row="1">
             <Grid x:Name="QuickViewContainer" 
                   IsVisible="False" 
-                  BackgroundColor="Transparent"
+                  BackgroundColor="{AppThemeBinding Light=White, Dark=#1E293B}"
                   Margin="5,0,5,0">
                 
-                <ScrollView >
+                <ScrollView BackgroundColor="{AppThemeBinding Light=White, Dark=#1E293B}">
                     <VerticalStackLayout Spacing="0">
                         
                         <Image x:Name="ArticleImage"
@@ -90,12 +91,13 @@
                                      HorizontalOptions="Fill"
                                      BackgroundColor="Transparent">
                             <WebView.Source>
-                                    <HtmlWebViewSource Html="{Binding ArticleContent}" />
+                                    <HtmlWebViewSource Html="{Binding ArticleContent}"/>
                             </WebView.Source>
                                      </WebView>
                                      <BoxView HeightRequest="1.5" 
                                      Color="#3B82F6"  
-                                     HorizontalOptions="Fill"/>
+                                     HorizontalOptions="Fill"
+                                     Margin="0,0,0,30"/>
                         </VerticalStackLayout>
                     </VerticalStackLayout>
                 </ScrollView>
@@ -105,55 +107,89 @@
                      IsVisible="False"
                      VerticalOptions="Fill"
                      HorizontalOptions="Fill"
-                     BackgroundColor="Transparent"/>
-                     
-                <Border VerticalOptions="End" 
-                        HorizontalOptions="Center" 
-                        Margin="0,0,0,50" 
-                        Padding="10,2"
-                        StrokeShape="RoundRectangle 30" 
-                        BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#1E293B}"
-                        Stroke="#E2E8F0" 
-                        StrokeThickness="1"> 
-                    <Border.Shadow>
-                        <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.15"/>
-                    </Border.Shadow>
+                     BackgroundColor="White"/>
 
-                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+            <Border VerticalOptions="End"
+                    HorizontalOptions="Fill"
+                    Margin="20,0,20,50"
+                    Padding="15,0,5,0"
+                    StrokeShape="RoundRectangle 30"
+                    BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#1E293B}"
+                    Stroke="#3B82F6"
+                    StrokeThickness="1"
+                    MaximumWidthRequest="400">
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Offset="0,10"
+                            Radius="20"
+                            Opacity="0.15"/>
+                </Border.Shadow>
 
-                        <HorizontalStackLayout Spacing="5" Margin="5,0,10,0" VerticalOptions="Center">
-                            <Label Text="Fuente original: " 
-                                TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
-                                FontSize="11"
-                                VerticalTextAlignment="Center"
-                                FontAttributes="Bold"/>
-                            <Label x:Name="SourceLabel"
-                                Text="Cargando..." 
-                                TextColor="#3B82F6" 
-                                FontSize="13" 
-                                VerticalTextAlignment="Center"
-                                FontAttributes="Bold">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnSourceClicked" />
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </HorizontalStackLayout>
+                <Grid ColumnDefinitions="*, 180"
+                        HeightRequest="60">
 
-                    <Button x:Name="ToggleViewButton"
-                            Text="🌐"
-                            Clicked="OnToggleViewClicked"
-                            IsVisible="False"
-                            Style="{StaticResource ActionBtnStyle}"/>
-                        <BoxView WidthRequest="1" 
-                                        HeightRequest="20" 
-                                        Color="#E2E8F0" 
-                                        VerticalOptions="Center"
-                                        Margin="0,0,5,0"/>
+                    <!-- SECCIÓN IZQUIERDA: Textos en vertical -->
+                    <VerticalStackLayout Grid.Column="0"
+                            VerticalOptions="Center"
+                            Spacing="0">
+                        <Label Text="FUENTE ORIGINAL"
+                               TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                               FontSize="9"
+                               HorizontalOptions="Center"
+                               CharacterSpacing="1"
+                               FontAttributes="Bold"
+                               Margin="0,0,0,2"/>
 
-                        <Button x:Name = "ShareButton" Text="🔗" Clicked="OnShareClicked" Style="{StaticResource ActionBtnStyle}"/>
-                        <Button x:Name = "SpeakButton" Text="{Binding SpeakIcon}" Command="{Binding SpeakNewsCommand}" Style="{StaticResource ActionBtnStyle}"/>
-                    </HorizontalStackLayout>
-                </Border>
-            </Grid>
-            </Grid>
+                        <Label x:Name="SourceLabel"
+                               Text="Cargando..."
+                               TextColor="#3B82F6"
+                               FontSize="13"
+                               HorizontalOptions="Center"
+                               FontAttributes="Bold"
+                               LineBreakMode="TailTruncation"
+                               VerticalTextAlignment="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSourceClicked"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </VerticalStackLayout>
+
+                    <!-- SECCIÓN DERECHA: Anclada y estática -->
+                    <!-- Usamos un Grid con 4 columnas fijas para que los botones no se desplacen entre sí -->
+                    <Grid Grid.Column="1"
+                            ColumnDefinitions="Auto, 50, 50, 50"
+                            VerticalOptions="Center">
+
+                        <!-- Separador vertical: Posición fija -->
+                        <BoxView Grid.Column="0"
+                                WidthRequest="1"
+                                HeightRequest="40"
+                                Color="#3B82F6"
+                                Opacity="0.8"
+                                Margin="0,0,5,0"/>
+
+                        <Button Grid.Column="1"
+                                x:Name="ToggleViewButton"
+                                Text="🌐"
+                                IsVisible="True"
+                                Clicked="OnToggleViewClicked"
+                                Style="{StaticResource ActionBtnStyle}"/>
+
+                        <Button Grid.Column="2"
+                                x:Name="ShareButton"
+                                Text="🔗"
+                                Clicked="OnShareClicked"
+                                Style="{StaticResource ActionBtnStyle}"/>
+
+                        <!-- Cuando este botón desaparece, su columna (la 3) queda vacía pero mantiene el ancho -->
+                        <Button Grid.Column="3"
+                                x:Name="SpeakButton"
+                                Text="{Binding SpeakIcon}"
+                                Command="{Binding SpeakNewsCommand}"
+                                Style="{StaticResource ActionBtnStyle}"/>
+                    </Grid>
+                    </Grid>
+            </Border>
+        </Grid>
+    </Grid>
 </ContentPage>
