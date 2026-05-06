@@ -25,11 +25,30 @@ namespace FeedHub_App
                     $"{e.Exception.Message}\n{e.Exception.StackTrace}");
                 e.SetObserved();
             };
+            RequestedThemeChanged += OnThemeChanged;
+        }
+        private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
+        {
+            UpdateSystemBars(e.RequestedTheme);
+        }
+        public static void UpdateSystemBars(AppTheme theme)
+        {
+    #if ANDROID
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var activity = Platform.CurrentActivity as AndroidX.AppCompat.App.AppCompatActivity;
+                if (activity?.Window == null) return;
+                var controller = AndroidX.Core.View.WindowCompat.GetInsetsController(
+                    activity.Window, activity.Window.DecorView);
+                bool isLight = theme == AppTheme.Light;
+                controller.AppearanceLightStatusBars = isLight;
+                controller.AppearanceLightNavigationBars = isLight;
+            });
+    #endif
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            // Mantenemos tu AppShell
             var window = new Window(new AppShell());
             return window;
         }

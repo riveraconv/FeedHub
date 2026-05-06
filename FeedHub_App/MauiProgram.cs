@@ -69,6 +69,7 @@ MainThread.BeginInvokeOnMainThread(() =>
             builder.Services.AddSingleton<INewsAggregatorService, NewsAggregatorService>();
             builder.Services.AddSingleton<IPreferencesService, MauiPreferencesService>();
             builder.Services.AddSingleton<FilterPreferencesService>();
+            builder.Services.AddSingleton<QuickArticleCacheService>();
             
             
             // --- VIEWMODELS ---

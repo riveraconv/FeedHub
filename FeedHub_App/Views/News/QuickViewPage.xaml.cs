@@ -1,13 +1,15 @@
 ﻿using FeedHub_Core.Services;
 using FeedHub_Core.Utilities;
 using FeedHub_App.ViewModels.News;
+using System.Net;
 
 namespace FeedHub_App.Views.News
 {
-    
+
     [QueryProperty(nameof(Link), "link")]
     public partial class QuickViewPage : ContentPage, IQueryAttributable
     {
+        private readonly QuickArticleCacheService _cacheService;
         private readonly QuickArticleService _articleService = new();
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
@@ -18,14 +20,17 @@ namespace FeedHub_App.Views.News
         private bool _quickViewAvailable = false;
         private bool _fullWebAvailable = false;
 
-        public QuickViewPage(ILogger logger, QuickViewViewModel viewModel)
+        public QuickViewPage(ILogger logger, QuickViewViewModel viewModel, QuickArticleCacheService cacheService)
         {
             _logger = logger;
             _logger.Info("Worked");
 
+            _cacheService = cacheService;
+
             InitializeComponent();
             BindingContext = viewModel;
 
+            ArticleWebView.Navigated += OnArticleNavigated;
             //header for not seem a bot
 
             var handler = new HttpClientHandler
@@ -74,12 +79,37 @@ namespace FeedHub_App.Views.News
 
         private async Task LoadArticleAsync()
         {
+            if (_cacheService.TryGet(Link, out var cached))
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ShowQuickView();
+
+                    TitleLabel.Text = cached.Title;
+
+                    if (!string.IsNullOrEmpty(cached.ImageUrl))
+                        ArticleImage.Source = cached.ImageUrl;
+
+                    ArticleWebView.Source = new HtmlWebViewSource
+                    {
+                        Html = ArticleHtmlContent(cached.Html)
+                    };
+
+                    if (BindingContext is QuickViewViewModel vm)
+                        vm.NewsContent = cached.Text;
+                });
+
+                return;
+            }
+
+
             if (string.IsNullOrEmpty(Link))
                 return;
 
             try
             {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15)); // Timeout razonable
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+
                 HttpResponseMessage? response = null;
                 int maxRetries = 2;
                 int attempt = 0;
@@ -87,96 +117,88 @@ namespace FeedHub_App.Views.News
                 while (attempt <= maxRetries)
                 {
                     attempt++;
+
                     response = await _httpClient.GetAsync(Link, cts.Token);
 
-                    // Evitar loops de redirección infinitos
+                    // 🔴 1. BLOQUEO DIRECTO (403, 401, etc)
+                    if (response.StatusCode == HttpStatusCode.Forbidden ||
+                        response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            ShowFullWeb();
+                            InfoBanner.IsVisible = true;
+                            InfoBanner.Text = "Este medio bloquea el acceso directo. Mostrando web original.";
+                            FullWebView.Source = new UrlWebViewSource { Url = Link };
+                        });
+                        return;
+                    }
+
+                    // 🔁 2. REDIRECCIONES CONTROLADAS
                     if ((int)response.StatusCode >= 300 && (int)response.StatusCode < 400)
                     {
                         var redirectUri = response.Headers.Location;
+
                         if (redirectUri != null && redirectUri != response.RequestMessage.RequestUri)
                         {
-                            Link = redirectUri.IsAbsoluteUri ? redirectUri.AbsoluteUri
-                                                             : new Uri(new Uri(Link), redirectUri).AbsoluteUri;
-                            continue; // Seguir con la nueva URL
+                            Link = redirectUri.IsAbsoluteUri
+                                ? redirectUri.AbsoluteUri
+                                : new Uri(new Uri(Link), redirectUri).AbsoluteUri;
+
+                            continue;
                         }
                     }
+
                     break;
                 }
 
+                if (response == null)
+                    throw new Exception("No response received");
+
                 response.EnsureSuccessStatusCode();
 
-                // Obtener HTML
+                // 📥 3. OBTENER HTML
                 var bytes = await response.Content.ReadAsByteArrayAsync();
                 var charset = response.Content.Headers.ContentType?.CharSet;
                 string html = _articleService.DecodeHtml(bytes, charset);
 
-                // Parseo pesado en background
+                // ⚙️ 4. PARSEO Y GUARDADO EN CACHE
                 var result = await Task.Run(() => _articleService.Extract(html));
+                _cacheService.Save(Link, result);
 
-                // Detectar contenido débil
+                // 🧪 5. DETECTAR HTML INÚTIL
                 bool htmlIsWeak = string.IsNullOrWhiteSpace(result.Html)
                                   || result.Html.Length < 400
                                   || !result.Html.Contains("<p");
 
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    
-
+                    // 🔴 6. FALLBACK A WEB
                     if (htmlIsWeak)
                     {
-                        // SOLO FULL WEB MODE
                         ShowFullWeb();
                         InfoBanner.IsVisible = true;
-                        InfoBanner.Text = "Fuiste redireccionado al sitio web original.";
+                        InfoBanner.Text = "No se pudo generar vista rápida. Mostrando web original.";
                         FullWebView.Source = new UrlWebViewSource { Url = Link };
-                    }
-                    else
-                    {
-                        // SOLO QUICKVIEW MODE
-                        ShowQuickView();
-
-                        if (BindingContext is QuickViewViewModel vm)
-                        {
-                            var cleanText = System.Text.RegularExpressions.Regex.Replace(result.Html, "<.*?>", string.Empty);
-                            vm.NewsContent = result.Text;
-                        }
-                        string finalHtml = ArticleHtmlContent(result.Html);
-
-                        TitleLabel.Text = result.Title ?? "Sin título";
-
-                        if (!string.IsNullOrEmpty(result.ImageUrl))
-                            ArticleImage.Source = result.ImageUrl;
-
-                        ArticleWebView.Source = new HtmlWebViewSource { Html = finalHtml };
+                        System.Diagnostics.Debug.WriteLine("FLOW: FALLBACK → FULLWEB");
+                        return;
                     }
 
-                    ArticleWebView.Navigated += async (s, e) =>
+                    // ✅ 7. QUICKVIEW
+                    ShowQuickView();
+
+                    if (BindingContext is QuickViewViewModel vm)
                     {
-                        if (Link.Contains("elconfidencial.com"))
-                        {
-                            string js = @"
-                                    const removeOverlay = () => {
-                                    const selectors = [
-                                    '.Mrc_popin', '.modal-overlay', '.paywall', '.overlay',
-                                    '.dscc__overlay', '#paywall', '#overlay', '.ec-ads-overlay'
-                        ];
-                            selectors.forEach(sel => {
-                            document.querySelectorAll(sel).forEach(n => n.remove());
-                        });
-                        document.body.style.overflow = 'auto';
-                        };
-                        setTimeout(removeOverlay, 300);
-                        removeOverlay();
-                        ";
+                        vm.NewsContent = result.Text;
+                    }
 
-                            try
-                            {
-                                await ArticleWebView.EvaluateJavaScriptAsync(js);
-                            }
-                            catch { }
-                        }
-                    };
+                    TitleLabel.Text = result.Title ?? "Sin título";
 
+                    if (!string.IsNullOrEmpty(result.ImageUrl))
+                        ArticleImage.Source = result.ImageUrl;
+
+                    string finalHtml = ArticleHtmlContent(result.Html);
+                    ArticleWebView.Source = new HtmlWebViewSource { Html = finalHtml };
 
                 });
             }
@@ -184,14 +206,22 @@ namespace FeedHub_App.Views.News
             {
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Timeout", "The request took too long to respond.", "OK");
+                    ShowFullWeb();
+                    await Task.Delay(50);
+                    InfoBanner.IsVisible = true;
+                    InfoBanner.Text = "La carga tardó demasiado. Mostrando web original.";
+                    FullWebView.Source = new UrlWebViewSource { Url = Link };
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Error", $"This article is not available right now: {ex.Message}", "OK");
+                    ShowFullWeb();
+                    await Task.Delay(50);
+                    InfoBanner.IsVisible = true;
+                    InfoBanner.Text = "No se pudo procesar el artículo. Mostrando web original.";
+                    FullWebView.Source = new UrlWebViewSource { Url = Link };
                 });
             }
         }
@@ -280,6 +310,8 @@ namespace FeedHub_App.Views.News
         {
             base.OnDisappearing();
 
+            ArticleWebView.Navigated -= OnArticleNavigated;
+
             if (Application.Current != null)
                 Application.Current.RequestedThemeChanged -= OnThemeChanged;
 
@@ -287,11 +319,7 @@ namespace FeedHub_App.Views.News
                 vm.StopSpeaking();
 
         #if ANDROID
-            var activity = Platform.CurrentActivity as AndroidX.AppCompat.App.AppCompatActivity;
-            var controller = AndroidX.Core.View.WindowCompat.GetInsetsController(
-                activity!.Window!, activity.Window!.DecorView);
-            controller.AppearanceLightNavigationBars = false;
-            controller.AppearanceLightStatusBars = false;
+            App.UpdateSystemBars(Application.Current?.RequestedTheme ?? AppTheme.Dark);
         #endif
         }
 
@@ -331,57 +359,79 @@ namespace FeedHub_App.Views.News
             var boldColor = isDark ? "#FFFFFF" : "#000000";
 
             return $@"<!DOCTYPE html>
-<html lang='es'>
-<head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
-    <style>
-        html, body {{
-            margin: 0;
-            padding: 0;
-            background-color: {bgColor};
-            color: {textColor};
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-text-size-adjust: 100%;
-        }}
-        body {{
-            text-align: justify;
-            text-justify: inter-word;
-            padding: 15px 20px;
-            word-break: break-word;
-            line-height: 1.5;
-            font-size: 14px;
-        }}
-        * {{
-            color: {textColor} !important;
-            background-color: transparent !important;
-        }}
-        html, body {{
-            background-color: {bgColor} !important;
-        }}
-        a {{ color: {linkColor} !important; text-decoration: none; font-weight: bold; }}
-        strong, b {{ color: {boldColor} !important; }}
-        img {{
-            max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            margin: 15px 0;
-            display: block;
-        }}
-        p {{ margin-bottom: 1.2em; }}
-        ul, ol {{ padding-left: 20px; }}
-        li {{ margin-bottom: 8px; }}
-    </style>
-</head>
-<body>
-    <div class='main-content'>
-        {ArticleContent}
-    </div>
-</body>
-</html>";
+            <html lang='es'>
+            <head>
+                <meta charset='utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+                <style>
+                    html, body {{
+                        margin: 0;
+                        padding: 0;
+                        background-color: {bgColor};
+                        color: {textColor};
+                        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                        -webkit-text-size-adjust: 100%;
+                    }}
+                    body {{
+                        text-align: justify;
+                        text-justify: inter-word;
+                        padding: 15px 20px;
+                        word-break: break-word;
+                        line-height: 1.5;
+                        font-size: 14px;
+                    }}
+                    * {{
+                        color: {textColor} !important;
+                        background-color: transparent !important;
+                    }}
+                    html, body {{
+                        background-color: {bgColor} !important;
+                    }}
+                    a {{ color: {linkColor} !important; text-decoration: none; font-weight: bold; }}
+                    strong, b {{ color: {boldColor} !important; }}
+                    img {{
+                        max-width: 100%;
+                        height: auto;
+                        border-radius: 12px;
+                        margin: 15px 0;
+                        display: block;
+                    }}
+                    p {{ margin-bottom: 1.2em; }}
+                    ul, ol {{ padding-left: 20px; }}
+                    li {{ margin-bottom: 8px; }}
+                </style>
+            </head>
+            <body>
+                <div class='main-content'>
+                    {ArticleContent}
+                </div>
+            </body>
+            </html>";
+        }
+        private async void OnArticleNavigated(object? sender, WebNavigatedEventArgs e)
+        {
+            if (Link?.Contains("elconfidencial.com") == true)
+            {
+                string js = @"
+            const removeOverlay = () => {
+                const selectors = [
+                    '.Mrc_popin', '.modal-overlay', '.paywall', '.overlay',
+                    '.dscc__overlay', '#paywall', '#overlay', '.ec-ads-overlay'
+                ];
+                selectors.forEach(sel => {
+                    document.querySelectorAll(sel).forEach(n => n.remove());
+                });
+                document.body.style.overflow = 'auto';
+            };
+            setTimeout(removeOverlay, 300);
+            removeOverlay();
+        ";
+                try { await ArticleWebView.EvaluateJavaScriptAsync(js); }
+                catch { }
+            }
         }
     }
-    
+
 }
 
 

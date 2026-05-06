@@ -29,10 +29,12 @@ namespace FeedHub_App.Platforms.Android
             Window!.DecorView.SetBackgroundColor(
                 global::Android.Graphics.Color.ParseColor("#0F172A"));
 
+            var isDark = Microsoft.Maui.Controls.Application.Current?.RequestedTheme != AppTheme.Light;
+
             // Iconos claros en ambas barras (para fondo oscuro)
             var controller = WindowCompat.GetInsetsController(Window!, Window!.DecorView);
-            controller.AppearanceLightNavigationBars = false;
-            controller.AppearanceLightStatusBars = false;
+            controller.AppearanceLightNavigationBars = !isDark;
+            controller.AppearanceLightStatusBars = !isDark;
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
