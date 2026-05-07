@@ -180,7 +180,6 @@ namespace FeedHub_App.Views.News
                         InfoBanner.IsVisible = true;
                         InfoBanner.Text = "No se pudo generar vista rápida. Mostrando web original.";
                         FullWebView.Source = new UrlWebViewSource { Url = Link };
-                        System.Diagnostics.Debug.WriteLine("FLOW: FALLBACK → FULLWEB");
                         return;
                     }
 

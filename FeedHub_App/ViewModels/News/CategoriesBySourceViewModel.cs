@@ -78,7 +78,6 @@ public partial class CategoriesBySourceViewModel : ObservableObject
     [RelayCommand]
     private async Task SelectSource(string sourceId)
     {
-        System.Diagnostics.Debug.WriteLine($"DEBUG: Click en {sourceId}");
         if (!string.IsNullOrEmpty(sourceId))
             await Shell.Current.GoToAsync($"{nameof(NewsBySourcePage)}?source={sourceId}");
     }

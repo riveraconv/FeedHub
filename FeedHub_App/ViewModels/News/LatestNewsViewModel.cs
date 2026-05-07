@@ -42,7 +42,6 @@ namespace FeedHub_App.ViewModels.News
 
             try
             {
-                System.Diagnostics.Debug.WriteLine("DEBUG: LoadNews iniciando...");
                 // DETERMINAR QUÉ SPINNER SE MUESTRA:
                 // Si la lista está vacía, es carga inicial -> Usamos IsLoading (Spinner central)
                 // Si el usuario hizo "pull", IsRefreshing ya será true -> No entramos aquí
@@ -50,8 +49,6 @@ namespace FeedHub_App.ViewModels.News
 
                 _currentOffset = 0;
                 var selected = await _aggregatorService.GetLatestMixedAsync(PageSize);
-
-                System.Diagnostics.Debug.WriteLine("DEBUG: Llamando al aggregator...");
 
                 MainThread.BeginInvokeOnMainThread(() => 
                 {
@@ -62,8 +59,6 @@ namespace FeedHub_App.ViewModels.News
             }
             catch (Exception ex) 
             {
-                System.Diagnostics.Debug.WriteLine($"DEBUG ERROR: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}"); 
-                _logger?.Error($" DEBUG: Error en LoadNews: {ex.Message}"); 
             }
             finally
             {
@@ -72,7 +67,6 @@ namespace FeedHub_App.ViewModels.News
                     IsLoading = false;
                     IsRefreshing = false;
                 });
-                System.Diagnostics.Debug.WriteLine("DEBUG: LoadNews finalizado"); 
             }
         }
 

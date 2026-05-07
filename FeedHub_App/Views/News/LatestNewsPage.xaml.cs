@@ -38,7 +38,6 @@ public partial class LatestNewsPage : ContentPage
             }
             if (System.IO.File.Exists(path))
             {
-                System.Diagnostics.Debug.WriteLine($">>> {logFile}: {System.IO.File.ReadAllText(path)}");
                 System.IO.File.Delete(path);
             }
         }

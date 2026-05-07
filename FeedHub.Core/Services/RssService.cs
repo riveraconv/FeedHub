@@ -187,7 +187,7 @@ private string? ExtractImageUrl(SyndicationItem item)
     }
     catch (Exception ex)
     {
-        System.Diagnostics.Debug.WriteLine($"Error en ExtractImageUrl: {ex.Message}");
+
     }
 
     return null;

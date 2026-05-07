@@ -37,7 +37,6 @@ public class FilterPreferencesService
 
         var json =  JsonSerializer.Serialize(disabled);
         _prefs.Set(DisabledSourcesKey, JsonSerializer.Serialize(disabled));
-        System.Diagnostics.Debug.WriteLine($"#debug filters [SOURCE] '{sourceId}' → {(active ? "ACTIVA" : "DESACTIVADA")} | Desactivadas: [{string.Join(", ", disabled)}]");
     }
 
     public void SetCategoryActive(string category, bool active)
@@ -48,7 +47,6 @@ public class FilterPreferencesService
 
         var json = JsonSerializer.Serialize(disabled);
         _prefs.Set(DisabledCategoriesKey, JsonSerializer.Serialize(disabled));
-        System.Diagnostics.Debug.WriteLine($"#debug filters [CATEGORY] '{category}' → {(active ? "ACTIVA" : "DESACTIVADA")} | Desactivadas: [{string.Join(", ", disabled)}]");
     }
 
     public bool IsSourceActive(string sourceId)
@@ -56,7 +54,6 @@ public class FilterPreferencesService
         var disabled = GetDisabledSources();
         var result = !disabled.Contains(sourceId);
 
-        System.Diagnostics.Debug.WriteLine($"#debug filters [CHECK SOURCE] '{sourceId}' → {(result ? "PASA" : "BLOQUEADA")}");
         return result;
     }
 
@@ -65,7 +62,6 @@ public class FilterPreferencesService
         var disabled = GetDisabledCategories();
         var result = !disabled.Contains(category);
         
-        System.Diagnostics.Debug.WriteLine($"#debug filters [CHECK CAT] '{category}' → {(result ? "PASA" : "BLOQUEADA")}");
         return result;
     }
 }

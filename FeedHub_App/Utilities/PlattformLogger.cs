@@ -15,8 +15,6 @@ namespace FeedHub_App.Utilities
             var timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
             var formatted = $"[{timestamp}] [{caller}] {message}";
 
-            System.Diagnostics.Debug.WriteLine($"[FH-GENERIC] {formatted}");
-
 #if ANDROID
 
             switch (level)
@@ -43,8 +41,6 @@ namespace FeedHub_App.Utilities
                 "WARN" => ConsoleColor.Yellow,
                 _ => ConsoleColor.White
             };
-
-            System.Diagnostics.Debug.WriteLine(formatted);
 
             Console.ForegroundColor = prevColor;
     

@@ -28,13 +28,10 @@ public partial class FilterViewModel : ObservableObject
 
     private async void LoadFilters()
     {
-        System.Diagnostics.Debug.WriteLine("#debug filters [LOAD] Cargando filtros...");
-
         Categories.Clear();
         foreach (var cat in _aggregator.GetAvailableCategories())
         {
             var isActive = _filterService.IsCategoryActive(cat);
-            System.Diagnostics.Debug.WriteLine($"#debug filters [LOAD CAT] '{cat}' → {(isActive ? "activa" : "desactivada")}");
 
             Categories.Add(new FilterItem
             {
@@ -48,7 +45,6 @@ public partial class FilterViewModel : ObservableObject
         foreach (var src in _aggregator.GetAvailableSources())
         {                    
             var isActive = _filterService.IsSourceActive(src);
-            System.Diagnostics.Debug.WriteLine($"#debug filters [LOAD SRC] '{src}' → {(isActive ? "activa" : "desactivada")}");
 
             Sources.Add(new FilterItem
             {
@@ -57,8 +53,6 @@ public partial class FilterViewModel : ObservableObject
                 IsActive = isActive
             });
         }
-
-        System.Diagnostics.Debug.WriteLine($"#debug filters [LOAD] Categorías: {Categories.Count} | Fuentes: {Sources.Count}");
     }
 
     	public void LoadFiltersIfNeeded()
@@ -70,8 +64,6 @@ public partial class FilterViewModel : ObservableObject
     // Comando para guardar cuando el usuario toca el Switch
     public void SavePreference(FilterItem item, bool isCategory)
     {
-        System.Diagnostics.Debug.WriteLine($"#debug filters [SAVE] {(isCategory ? "Categoría" : "Fuente")} '{item.Code}' → {(item.IsActive ? "activa" : "desactivada")}");
-
         if (isCategory)
             _filterService.SetCategoryActive(item.Code, item.IsActive);
         else
@@ -81,6 +73,5 @@ public partial class FilterViewModel : ObservableObject
     private void ChangeTab(string tab)
     {
         ShowCategories = (tab == "cat");
-        System.Diagnostics.Debug.WriteLine($"#debug ui [TAB] Cambiando a {(ShowCategories ? "CATEGORÍAS" : "FUENTES")}");
     }
 }

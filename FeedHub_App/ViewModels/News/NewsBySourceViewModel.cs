@@ -79,9 +79,8 @@ public partial class NewsBySourceViewModel : ObservableObject
             CanLoadMore = allItems.Count > PageSize;
             NoResultsFound = NewsItems.Count == 0;
         }
-        catch (Exception ex) 
+        catch (Exception) 
         { 
-            System.Diagnostics.Debug.WriteLine($"Error cargando noticias: {ex.Message}");
         }
         finally
         {
@@ -124,9 +123,8 @@ public partial class NewsBySourceViewModel : ObservableObject
                 CanLoadMore = false;
             }
         }
-        catch (Exception ex) 
+        catch (Exception) 
         { 
-            System.Diagnostics.Debug.WriteLine($"Error cargando más: {ex.Message}");
         }
         finally 
         { 

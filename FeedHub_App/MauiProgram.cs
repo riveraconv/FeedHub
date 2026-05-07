@@ -104,7 +104,6 @@ MainThread.BeginInvokeOnMainThread(() =>
 
 
             var app = builder.Build();
-                System.Diagnostics.Debug.WriteLine("DEBUG: MauiApp construido correctamente");
                 return app;
             }
             catch(Exception ex)
