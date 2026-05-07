@@ -63,12 +63,25 @@
                                         StrokeShape="RoundRectangle 24"
                                         Margin="10,10,10,10"
                                         BackgroundColor="#1E293B">
-                                <Grid RowDefinitions="Auto, Auto">
-                                        <Grid Grid.Row="0" IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}">
-                                            <Image Source="{Binding ImageUrl}"
-                                                    Aspect="AspectFill"
-                                                    MaximumHeightRequest="200"
-                                                    HeightRequest="200"/>
+                                
+                                <Grid RowDefinitions="200, Auto">
+                                    <Grid Grid.Row="0">
+
+                                        <BoxView BackgroundColor="#1E3A5A" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+
+                                        <Label Text="FeedHub"
+                                               TextColor="#4DA8E8"
+                                               FontSize="38"
+                                               FontAttributes="Bold"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               Opacity="0.3"/>
+
+                                        <Image Source="{Binding ImageUrl}"
+                                               HeightRequest="200"
+                                               Aspect="AspectFill"
+                                               IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}"/>
+                                               
                                             <BoxView VerticalOptions="End" HeightRequest="30">
                                                 <BoxView.Background>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
