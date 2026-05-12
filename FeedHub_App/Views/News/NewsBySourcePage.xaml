@@ -232,6 +232,32 @@
                             HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
 
+                <!-- Sin contenido por filtros -->
+                <Grid IsVisible="{Binding IsContentEmpty}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    TranslationY="-60">
+                    <VerticalStackLayout Spacing="15" Padding="40"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center">
+                        <Label Text="⚙️" FontSize="50" HorizontalTextAlignment="Center"/>
+                        <Label Text="No hay contenido disponible"
+                            TextColor="White"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="Center"/>
+                        <Label Text="Has filtrado todo el contenido. Ve a Ajustes para activar alguna categoría o fuente."
+                            TextColor="#94A3B8"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center"/>
+                        <Button Text="Ir a Ajustes"
+                                Command="{Binding GoToSettingsCommand}"
+                                BackgroundColor="#1E3A5A"
+                                TextColor="#38BDF8"
+                                CornerRadius="20"
+                                Margin="0,10,0,0"/>
+                    </VerticalStackLayout>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

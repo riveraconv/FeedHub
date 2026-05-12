@@ -5,12 +5,14 @@ using FeedHub_Core.Models;
 using FeedHub_Core.Utilities;
 using FeedHub_App.Views.News;
 using CommunityToolkit.Mvvm.Input;
+using FeedHub_App.Views.Settings;
 
 namespace FeedHub_App.ViewModels.News;
 
 [QueryProperty(nameof(SourceId), "source")]
 public partial class NewsBySourceViewModel : ObservableObject
 {
+    private readonly FilterPreferencesService _filterService;
     private readonly INewsAggregatorService _newsService;
     private readonly ILogger _logger;
 
@@ -30,11 +32,14 @@ public partial class NewsBySourceViewModel : ObservableObject
     private const int PageSize = 20;
     [ObservableProperty]
     private bool canLoadMore;
+    [ObservableProperty]
+    private bool isContentEmpty;
     
     public ObservableCollection<NewsItem> NewsItems{get; set;} = new();
-    public NewsBySourceViewModel(INewsAggregatorService newsService)
+    public NewsBySourceViewModel(INewsAggregatorService newsService, FilterPreferencesService filterService)
     {
         _newsService = newsService;
+        _filterService = filterService;
     }
     partial void OnSourceIdChanged(string value)
     {
@@ -63,6 +68,7 @@ public partial class NewsBySourceViewModel : ObservableObject
             if (!IsRefreshing) IsLoading = true;
             
             NoResultsFound = false;
+            IsContentEmpty = false;
             _currentOffset = 0;
 
             // Obtenemos los datos
@@ -77,7 +83,12 @@ public partial class NewsBySourceViewModel : ObservableObject
 
             // Estados finales
             CanLoadMore = allItems.Count > PageSize;
-            NoResultsFound = NewsItems.Count == 0;
+            
+            if(NewsItems.Count == 0)
+            {
+                IsContentEmpty = true;
+                NoResultsFound = false;
+            }
         }
         catch (Exception) 
         { 
@@ -175,5 +186,10 @@ public partial class NewsBySourceViewModel : ObservableObject
             { "imageUrl", item.ImageUrl ?? "" },
             { "source", item.Source ?? "Fuente" }
         });
+    }
+    [RelayCommand]
+    private async Task GoToSettings()
+    {
+        await Shell.Current.GoToAsync(nameof(SettingsPage));
     }
 }

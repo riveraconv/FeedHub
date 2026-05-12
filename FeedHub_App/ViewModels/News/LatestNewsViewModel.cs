@@ -4,6 +4,7 @@ using FeedHub_Core.Models;
 using FeedHub_Core.Services;
 using System.Collections.ObjectModel;
 using FeedHub_Core.Utilities;
+using FeedHub_App.Views.Settings;
 
 namespace FeedHub_App.ViewModels.News
 {
@@ -27,6 +28,8 @@ namespace FeedHub_App.ViewModels.News
         private const int PageSize = 20;
         [ObservableProperty]
         private bool canLoadMore = false;
+        [ObservableProperty]
+        private bool isContentEmpty = false;
         public LatestNewsViewModel(INewsAggregatorService aggregatorService, ILogger logger)
         {
             _aggregatorService = aggregatorService;
@@ -46,6 +49,7 @@ namespace FeedHub_App.ViewModels.News
                 // Si la lista está vacía, es carga inicial -> Usamos IsLoading (Spinner central)
                 // Si el usuario hizo "pull", IsRefreshing ya será true -> No entramos aquí
                 if (News.Count == 0) IsLoading = true;
+                IsContentEmpty = false;
 
                 _currentOffset = 0;
                 var selected = await _aggregatorService.GetLatestMixedAsync(PageSize);
@@ -55,9 +59,10 @@ namespace FeedHub_App.ViewModels.News
                     News.Clear();
                     foreach(var item in selected) News.Add(item);
                     CanLoadMore = selected.Count >= PageSize;
+                    IsContentEmpty = News.Count == 0;
                 });
             }
-            catch (Exception ex) 
+            catch (Exception) 
             {
             }
             finally
@@ -119,6 +124,11 @@ namespace FeedHub_App.ViewModels.News
         public async Task GoBack()
         {
             await Shell.Current.GoToAsync("//MainPage");
+        }
+        [RelayCommand]
+        public async Task GoToSettings()
+        {
+            await Shell.Current.GoToAsync(nameof(SettingsPage));
         }
     }
 }

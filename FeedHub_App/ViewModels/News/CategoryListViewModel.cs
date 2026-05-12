@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Utilities;
+using FeedHub_App.Views.Settings;
 
 namespace FeedHub_App.ViewModels.News
 {
@@ -72,11 +73,11 @@ namespace FeedHub_App.ViewModels.News
         [ObservableProperty]
         private bool isLoadingMore;
 
-        // 🔥 ESTE ES EL CAMBIO IMPORTANTE
         [ObservableProperty]
         private CategoryViewState viewState;
         private List<NewsItem> _fullListCache = new();
-
+        [ObservableProperty]
+        private bool isContentEmpty;
 
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
         {
@@ -133,6 +134,7 @@ namespace FeedHub_App.ViewModels.News
             CanLoadMore = false;
             IsLoading = true;
             NoResultsFound = false;
+            IsContentEmpty = false;
             _currentOffset = 0;
 
             try
@@ -177,6 +179,8 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         public async Task LoadNewsAsync()
         {
+            IsContentEmpty = false;
+
             if (string.IsNullOrWhiteSpace(Category))
                 return;
 
@@ -213,8 +217,10 @@ namespace FeedHub_App.ViewModels.News
                 }
                 else
                 {
-                    NoResultsFound = true;
+                    NoResultsFound = false;
+                    IsContentEmpty = true;
                     ViewState = CategoryViewState.Empty;
+                    
                 }    
             }
             catch (Exception ex) 
@@ -307,6 +313,11 @@ namespace FeedHub_App.ViewModels.News
             {
                 IsLoadingMore = false;
             }
+        }
+        [RelayCommand]
+        public async Task GoToSettings()
+        {
+            await Shell.Current.GoToAsync(nameof(SettingsPage));
         }
     }
 }

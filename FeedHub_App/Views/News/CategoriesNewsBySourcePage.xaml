@@ -25,7 +25,7 @@
 
         <Grid RowDefinitions="Auto,*" Padding="0,45,0,0">
 
-            <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,5">
+            <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,15">
                 <Label Text="FEEDHUB" TextColor="#38BDF8" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
                 <Label Text="Noticias por fuente" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
                 <BoxView HeightRequest="3" WidthRequest="40" BackgroundColor="#38BDF8" Margin="0,8,0,0" HorizontalOptions="Start"/>
