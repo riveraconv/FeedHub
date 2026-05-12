@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using FeedHub_App.Views.News;
 using FeedHub_App.Views.Settings;
+using FeedHub_App.Views;
 
 namespace FeedHub_App.ViewModels
 {
@@ -37,6 +38,11 @@ namespace FeedHub_App.ViewModels
         private async Task GoToCategoriesBySource()
         {
             await Shell.Current.GoToAsync(nameof(CategoriesNewsBySourcePage));
+        }
+        [RelayCommand]
+        private async Task GoToAbout()
+        {
+            await Shell.Current.GoToAsync(nameof(AboutPage));
         }
     }
 }

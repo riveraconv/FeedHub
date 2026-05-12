@@ -1,5 +1,8 @@
 ﻿using FeedHub_App.Views.News;
 using FeedHub_App.Views.Settings;
+using FeedHub_App.Views;
+
+
 namespace FeedHub_App
 {
     public partial class AppShell : Shell
@@ -16,6 +19,7 @@ namespace FeedHub_App
             Routing.RegisterRoute(nameof(CategoriesNewsBySourcePage), typeof(CategoriesNewsBySourcePage));
             Routing.RegisterRoute(nameof(NewsBySourcePage), typeof(NewsBySourcePage));
             Routing.RegisterRoute(nameof(SelectFilterPage), typeof(SelectFilterPage));
+            Routing.RegisterRoute(nameof(AboutPage), typeof(AboutPage));
         }
     }
 }

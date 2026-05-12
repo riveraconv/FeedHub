@@ -102,6 +102,18 @@
                     </Border>
                 </Grid>
 
+                <Border StrokeShape="RoundRectangle 24" StrokeThickness="1"
+                        BackgroundColor="#1E293B" HeightRequest="70" Stroke="#1E3A5A">
+                    <Grid ColumnDefinitions="80,*">
+                        <Label Grid.Column="0" Text="ℹ️" FontSize="34" VerticalOptions="Center" HorizontalOptions="Center"/>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="INFORMACIÓN" TextColor="#38BDF8" FontSize="10" FontAttributes="Bold"/>
+                            <Label Text="Acerca de FeedHub" TextColor="#F8FAFC" FontSize="18" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                        <Button Grid.ColumnSpan="2" BackgroundColor="Transparent" Command="{Binding GoToAboutCommand}"/>
+                    </Grid>
+                </Border>
+
             </VerticalStackLayout>
         </ScrollView>
 

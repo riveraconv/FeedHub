@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FeedHub_App.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="FeedHub_App.Views.AboutPage"
+             x:DataType="vm:AboutViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#0F172A">
+
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="LightContent"/>
+    </ContentPage.Behaviors>
+
+    <Grid IgnoreSafeArea="True">
+        <BoxView InputTransparent="True" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <BoxView.Background>
+                <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
+                    <GradientStop Color="#2638BDF8" Offset="0.1"/>
+                    <GradientStop Color="#000F172A" Offset="0.8"/>
+                </RadialGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <Grid RowDefinitions="Auto, Auto, *" Padding="0,45,0,0">
+
+            <!-- HEADER -->
+            <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
+                <Label Text="FEEDHUB" TextColor="#38BDF8" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+                <Label Text="Acerca de" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
+                <BoxView HeightRequest="3" BackgroundColor="#38BDF8" WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
+            </VerticalStackLayout>
+
+            <!-- TABS -->
+            <Border Grid.Row="1" Margin="25,0,25,10" Padding="4"
+                    BackgroundColor="#1E293B" Stroke="#1E3A5A"
+                    StrokeShape="RoundRectangle 25" StrokeThickness="2">
+                <Grid ColumnDefinitions="*,*">
+                    <Button Text="LA APP"
+                            Command="{Binding ChangeTabCommand}" CommandParameter="app"
+                            CornerRadius="22" HeightRequest="45" FontSize="12" FontAttributes="Bold">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding ShowApp}" Value="True">
+                                <Setter Property="BackgroundColor" Value="#38BDF8"/>
+                                <Setter Property="TextColor" Value="White"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Button" Binding="{Binding ShowApp}" Value="False">
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                                <Setter Property="TextColor" Value="#94A3B8"/>
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                    <Button Grid.Column="1" Text="LEGAL"
+                            Command="{Binding ChangeTabCommand}" CommandParameter="legal"
+                            CornerRadius="22" HeightRequest="45" FontSize="12" FontAttributes="Bold">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding ShowApp}" Value="False">
+                                <Setter Property="BackgroundColor" Value="#38BDF8"/>
+                                <Setter Property="TextColor" Value="White"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Button" Binding="{Binding ShowApp}" Value="True">
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                                <Setter Property="TextColor" Value="#94A3B8"/>
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- CONTENT -->
+            <ScrollView Grid.Row="2" Padding="25,10,25,40">
+                <VerticalStackLayout Spacing="16">
+
+                    <!-- PESTAÑA LA APP -->
+                    <VerticalStackLayout IsVisible="{Binding ShowApp}" Spacing="16">
+
+                        <Border StrokeShape="RoundRectangle 20" BackgroundColor="#1E293B"
+                                Stroke="#1E3A5A" StrokeThickness="1" Padding="20">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="¿Qué es FeedHub?" TextColor="#38BDF8" FontSize="13" FontAttributes="Bold"/>
+                                <Label TextColor="#CBD5E1" FontSize="14" LineBreakMode="WordWrap">
+                                    <Label.Text>FeedHub es un agregador de noticias que recopila contenido de medios españoles e internacionales. El contenido mostrado es responsabilidad de cada medio original — FeedHub actúa únicamente como lector y no modifica ni se apropia del contenido de terceros.</Label.Text>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border StrokeShape="RoundRectangle 20" BackgroundColor="#1E293B"
+                                Stroke="#1E3A5A" StrokeThickness="1" Padding="20">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Contenido externo" TextColor="#38BDF8" FontSize="13" FontAttributes="Bold"/>
+                                <Label TextColor="#CBD5E1" FontSize="14" LineBreakMode="WordWrap">
+                                    <Label.Text>Si un artículo no carga correctamente o muestra contenido incompleto, puede deberse a restricciones técnicas del medio original. FeedHub no tiene control sobre el contenido de terceros.</Label.Text>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border StrokeShape="RoundRectangle 20" BackgroundColor="#1E293B"
+                                Stroke="#1E3A5A" StrokeThickness="1" Padding="20">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Publicidad" TextColor="#38BDF8" FontSize="13" FontAttributes="Bold"/>
+                                <Label TextColor="#CBD5E1" FontSize="14" LineBreakMode="WordWrap">
+                                    <Label.Text>La publicidad mostrada en la app ayuda a mantenerla gratuita y en desarrollo continuo.</Label.Text>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border StrokeShape="RoundRectangle 20" BackgroundColor="#1E293B"
+                                Stroke="#1E3A5A" StrokeThickness="1" Padding="20">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Proyecto en desarrollo" TextColor="#38BDF8" FontSize="13" FontAttributes="Bold"/>
+                                <Label TextColor="#CBD5E1" FontSize="14" LineBreakMode="WordWrap">
+                                    <Label.Text>FeedHub es un proyecto personal en desarrollo continuo. Si encuentras algún problema, agradezco tu paciencia.</Label.Text>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border>
+
+                    </VerticalStackLayout>
+
+                    <!-- PESTAÑA LEGAL -->
+                    <VerticalStackLayout IsVisible="{Binding ShowApp, Converter={toolkit:InvertedBoolConverter}}" Spacing="16">
+
+                        <Border StrokeShape="RoundRectangle 20" BackgroundColor="#1E293B"
+                                Stroke="#1E3A5A" StrokeThickness="1" Padding="20">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Política de Privacidad" TextColor="#38BDF8" FontSize="13" FontAttributes="Bold"/>
+                                <Label TextColor="#CBD5E1" FontSize="14" LineBreakMode="WordWrap">
+                                    <Label.Text>La política de privacidad estará disponible próximamente en nuestra web.</Label.Text>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border StrokeShape="RoundRectangle 20" BackgroundColor="#1E293B"
+                                Stroke="#1E3A5A" StrokeThickness="1" Padding="20">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Publicidad y datos" TextColor="#38BDF8" FontSize="13" FontAttributes="Bold"/>
+                                <Label TextColor="#CBD5E1" FontSize="14" LineBreakMode="WordWrap">
+                                    <Label.Text>FeedHub utiliza Google AdMob para mostrar publicidad. AdMob puede recopilar datos del dispositivo para personalizar anuncios según la legislación vigente.</Label.Text>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border StrokeShape="RoundRectangle 20" BackgroundColor="#1E293B"
+                                Stroke="#1E3A5A" StrokeThickness="1" Padding="20">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Contenido de terceros" TextColor="#38BDF8" FontSize="13" FontAttributes="Bold"/>
+                                <Label TextColor="#CBD5E1" FontSize="14" LineBreakMode="WordWrap">
+                                    <Label.Text>El uso de esta aplicación implica la aceptación de los términos de uso de los medios de comunicación cuyos contenidos se muestran.</Label.Text>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border>
+
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+    </Grid>
+</ContentPage>

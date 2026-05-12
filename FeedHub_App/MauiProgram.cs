@@ -12,6 +12,8 @@ using CommunityToolkit.Maui;
 using Microsoft.Maui.Platform;
 using FeedHub_App.Services;
 
+
+
 namespace FeedHub_App
 {
     public static class MauiProgram
@@ -83,6 +85,7 @@ MainThread.BeginInvokeOnMainThread(() =>
             builder.Services.AddTransient<CategoryNewsViewModel>();
             builder.Services.AddTransient<NewsBySourceViewModel>();
             builder.Services.AddTransient<FilterViewModel>();
+            builder.Services.AddTransient<AboutViewModel>();
 
             // --- PAGES ---
 
@@ -95,6 +98,7 @@ MainThread.BeginInvokeOnMainThread(() =>
             builder.Services.AddSingleton<SettingsPage>();
             builder.Services.AddTransient<NewsBySourcePage>();
             builder.Services.AddTransient<SelectFilterPage>();
+            builder.Services.AddTransient<AboutPage>();
 
 
 
