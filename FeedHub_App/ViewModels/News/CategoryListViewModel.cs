@@ -14,20 +14,20 @@ namespace FeedHub_App.ViewModels.News
         private readonly INewsAggregatorService _aggregator;
         private readonly ILogger _logger;
 
-        public ObservableCollection<NewsItem> Articles { get; } = new();
+        public ObservableCollection<object> Articles { get; } = new();
 
         public ObservableCollection<string> Categories { get; } = new()
-    {
-        "Internacional",
-        "Política",
-        "Economía",
-        "Tecnología",
-        "Ciencia",
-        "Deportes",
-        "Sociedad",
-        "Cultura",
-        "Entretenimiento",
-    };
+        {
+            "Internacional",
+            "Política",
+            "Economía",
+            "Tecnología",
+            "Ciencia",
+            "Deportes",
+            "Sociedad",
+            "Cultura",
+            "Entretenimiento",
+        };
 
         [ObservableProperty]
         private string category = string.Empty;
@@ -66,9 +66,9 @@ namespace FeedHub_App.ViewModels.News
 
         private readonly string[] _sugestions =
         {
-        "No encuentras alguna noticia...?",
-        "Prueba a buscar por palabras!"
-    };
+            "No encuentras alguna noticia...?",
+            "Prueba a buscar por palabras!"
+        };
 
         [ObservableProperty]
         private bool isLoadingMore;
@@ -78,11 +78,13 @@ namespace FeedHub_App.ViewModels.News
         private List<NewsItem> _fullListCache = new();
         [ObservableProperty]
         private bool isContentEmpty;
+        private readonly AdInterleaveService _adService;
 
-        public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger)
+        public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger, AdInterleaveService adService)
         {
             _aggregator = aggregator;
             _logger = logger;
+            _adService = adService;
             StartPlaceholderAnimation();
         }
         public void StartPlaceholderAnimation()
@@ -149,15 +151,13 @@ namespace FeedHub_App.ViewModels.News
 
                     if (_fullListCache.Any())
                     {
-                        // 2. Cargamos el primer bloque de 20
                         var firstBatch = _fullListCache.Take(PageSize).ToList();
-                        foreach (var item in firstBatch)
+                        var mixed = _adService.Interleave(firstBatch);
+                        foreach (var item in mixed)
                             Articles.Add(item);
 
-                        _currentOffset = Articles.Count;
-                        
-                        // 3. Verificamos si podemos cargar más después
-                        CanLoadMore = _fullListCache.Count > Articles.Count;
+                        _currentOffset = firstBatch.Count;
+                        CanLoadMore = _fullListCache.Count > _currentOffset;
                     }
 
                     NoResultsFound = Articles.Count == 0;
@@ -207,12 +207,13 @@ namespace FeedHub_App.ViewModels.News
                 if (_fullListCache.Any())
                 {
                     var firstBatch = _fullListCache.Take(PageSize).ToList();
-                    foreach (var item in firstBatch)
+                    var mixed = _adService.Interleave(firstBatch);
+                    foreach (var item in mixed)
                     {
                         Articles.Add(item);
                     }
-                    _currentOffset = Articles.Count;
-                    CanLoadMore = _fullListCache.Count > Articles.Count;
+                    _currentOffset = firstBatch.Count;
+                    CanLoadMore = _fullListCache.Count > _currentOffset;
                     ViewState = CategoryViewState.Content;
                 }
                 else
@@ -300,14 +301,15 @@ namespace FeedHub_App.ViewModels.News
                     .ToList();
 
                 // 2. Los añadimos a la lista visible
-                foreach (var item in nextItems)
+                var mixed = _adService.Interleave(nextItems);
+                foreach (var item in mixed)
                     Articles.Add(item);
 
                 // 3. Actualizamos el puntero
-                _currentOffset = Articles.Count;
+                _currentOffset += nextItems.Count;
 
                 // 4. ¿Quedan más noticias en el caché por mostrar?
-                CanLoadMore = _fullListCache.Count > Articles.Count;
+                CanLoadMore = _fullListCache.Count > _currentOffset;
             }
             finally
             {

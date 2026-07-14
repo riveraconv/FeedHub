@@ -16,12 +16,15 @@ namespace FeedHub_App.Views.News
             BindingContext = _viewModel;
         }
 
-        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.CurrentSelection.FirstOrDefault() is NewsItem selected)
             {
-                // Usamos el comando que ya existe en tu ViewModel
-                _viewModel.OpenNewsCommand.Execute(selected);
+                ((CollectionView)sender).SelectedItem = null;
+                await _viewModel.OpenNewsCommand.ExecuteAsync(selected);
+            }
+            else
+            {
                 ((CollectionView)sender).SelectedItem = null;
             }
         }

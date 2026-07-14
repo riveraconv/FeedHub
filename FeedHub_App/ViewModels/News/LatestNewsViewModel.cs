@@ -6,13 +6,14 @@ using System.Collections.ObjectModel;
 using FeedHub_Core.Utilities;
 using FeedHub_App.Views.Settings;
 
+
 namespace FeedHub_App.ViewModels.News
 {
     public partial class LatestNewsViewModel : ObservableObject
     {
         private readonly INewsAggregatorService _aggregatorService;
         private readonly ILogger _logger;
-        public ObservableCollection<NewsItem> News {get;} = new();
+        public ObservableCollection<object> News {get;} = new();
 
         [ObservableProperty]
         private bool isRefreshing;
@@ -30,11 +31,13 @@ namespace FeedHub_App.ViewModels.News
         private bool canLoadMore = false;
         [ObservableProperty]
         private bool isContentEmpty = false;
-        public LatestNewsViewModel(INewsAggregatorService aggregatorService, ILogger logger)
+        private readonly AdInterleaveService _adService;
+        public LatestNewsViewModel(INewsAggregatorService aggregatorService, ILogger logger, AdInterleaveService adService)
         {
             _aggregatorService = aggregatorService;
             _logger = logger;
-            News = new ObservableCollection<NewsItem>();
+            _adService = adService;
+            News = new ObservableCollection<object>();
         }
 
         [RelayCommand]
@@ -57,7 +60,13 @@ namespace FeedHub_App.ViewModels.News
                 MainThread.BeginInvokeOnMainThread(() => 
                 {
                     News.Clear();
-                    foreach(var item in selected) News.Add(item);
+                    var mixed = _adService.Interleave(selected);
+                    System.Diagnostics.Debug.WriteLine($"DEBUG ADS: items={selected.Count}, mixed={mixed.Count}, ads={mixed.OfType<AdItem>().Count()}");
+                    foreach(var item in mixed)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"DEBUG ADDING: {item.GetType().Name}");
+                        News.Add(item);
+                    } 
                     CanLoadMore = selected.Count >= PageSize;
                     IsContentEmpty = News.Count == 0;
                 });
@@ -98,8 +107,15 @@ namespace FeedHub_App.ViewModels.News
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    var existing = News.Select(n => n.Link).ToHashSet();
-                    var newItems = more.Skip(_currentOffset).Where(n => !existing.Contains(n.Link)).ToList();
+                    var existing = News
+                    .OfType<NewsItem>()  // ← filtra solo NewsItem, ignora AdItem
+                    .Select(n => n.Link)
+                    .ToHashSet();
+
+                    var newItems = more
+                    .Skip(_currentOffset)
+                    .Where(n => !existing.Contains(n.Link))
+                    .ToList();
 
                     foreach (var item in newItems)
                     {

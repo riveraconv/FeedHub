@@ -7,6 +7,7 @@ using FeedHub_App.Views.News;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_App.Views.Settings;
 
+
 namespace FeedHub_App.ViewModels.News;
 
 [QueryProperty(nameof(SourceId), "source")]
@@ -15,6 +16,7 @@ public partial class NewsBySourceViewModel : ObservableObject
     private readonly FilterPreferencesService _filterService;
     private readonly INewsAggregatorService _newsService;
     private readonly ILogger _logger;
+    private readonly AdInterleaveService _adInterleaveService;
 
     [ObservableProperty]
     string sourceId;
@@ -35,11 +37,13 @@ public partial class NewsBySourceViewModel : ObservableObject
     [ObservableProperty]
     private bool isContentEmpty;
     
-    public ObservableCollection<NewsItem> NewsItems{get; set;} = new();
-    public NewsBySourceViewModel(INewsAggregatorService newsService, FilterPreferencesService filterService)
+    public ObservableCollection<object> NewsItems{get; set;} = new();
+
+    public NewsBySourceViewModel(INewsAggregatorService newsService, FilterPreferencesService filterService, AdInterleaveService adInterleaveService)
     {
         _newsService = newsService;
         _filterService = filterService;
+        _adInterleaveService = adInterleaveService;
     }
     partial void OnSourceIdChanged(string value)
     {
@@ -75,20 +79,24 @@ public partial class NewsBySourceViewModel : ObservableObject
             var allItems = await _newsService.GetBySourceAsync(SourceId, 100); 
             
             // Filtramos la primera página
-            var items = allItems.Take(PageSize).ToList();
+            var pagedItems = allItems.Take(PageSize).ToList();
+            var mixedItems = _adInterleaveService.Interleave(pagedItems);
 
-            NewsItems.Clear();
-            foreach (var item in items) 
-                NewsItems.Add(item);
-
-            // Estados finales
-            CanLoadMore = allItems.Count > PageSize;
-            
-            if(NewsItems.Count == 0)
+            System.Diagnostics.Debug.WriteLine($"DEBUG NewsBySource Items totales: {pagedItems.Count} | Tras mezcla: {mixedItems.Count}");
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                IsContentEmpty = true;
-                NoResultsFound = false;
-            }
+                NewsItems.Clear();
+                foreach (var item in mixedItems)
+                {
+                    NewsItems.Add(item);
+                }
+
+                CanLoadMore = allItems.Count > PageSize;
+                IsContentEmpty = NewsItems.Count == 0;
+                
+                // Si no hay nada tras filtrar, marcamos resultados no encontrados
+                NoResultsFound = !IsContentEmpty && pagedItems.Count == 0;
+            });
         }
         catch (Exception) 
         { 
@@ -116,18 +124,29 @@ public partial class NewsBySourceViewModel : ObservableObject
             // Simular un pequeño delay para que la transición no sea brusca (opcional)
             await Task.Delay(300);
 
-            var existingLinks = NewsItems.Select(n => n.Link).ToHashSet();
-            var newItems = allItems.Skip(_currentOffset)
-                                   .Take(PageSize)
-                                   .Where(n => !existingLinks.Contains(n.Link))
-                                   .ToList();
+            var existingLinks = NewsItems
+                .OfType<NewsItem>()  // ← filtra solo NewsItem
+                .Select(n => n.Link)
+                .ToHashSet();
+
+            var newItems = allItems
+                .Skip(_currentOffset)
+                .Take(PageSize)
+                .Where(n => !existingLinks.Contains(n.Link))
+                .ToList();
 
             if (newItems.Any())
             {
-                foreach (var item in newItems) 
-                    NewsItems.Add(item);
-                
-                CanLoadMore = allItems.Count > NewsItems.Count;
+                var mixedNewItems = _adInterleaveService.Interleave(newItems);
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    foreach (var item in mixedNewItems)
+                    {
+                        NewsItems.Add(item);
+                    }
+                    CanLoadMore = allItems.Count > NewsItems.OfType<NewsItem>().Count();
+                });
             }
             else
             {

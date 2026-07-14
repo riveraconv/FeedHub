@@ -4,6 +4,7 @@
              xmlns:viewmodels="clr-namespace:FeedHub_App.ViewModels.News"
              xmlns:models="clr-namespace:FeedHub_Core.Models;assembly=FeedHub_Core"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:utils="clr-namespace:FeedHub_App.Utilities"
              x:Class="FeedHub_App.Views.News.NewsBySourcePage"
              x:DataType="viewmodels:NewsBySourceViewModel"
              x:Name="thisPage"
@@ -14,11 +15,164 @@
         <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="LightContent"/>
     </ContentPage.Behaviors>
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- PLANTILLA PARA NOTICIAS -->
+            <DataTemplate x:Key="NewsTemplate" x:DataType="models:NewsItem">
+                <Grid>
+                    <Border Stroke="#1E3A5A"
+                            StrokeThickness="2"
+                            StrokeShape="RoundRectangle 24"
+                            Margin="10,10,10,10"
+                            BackgroundColor="#1E293B">
+                                
+                        <Grid RowDefinitions="200, Auto">
+                            <Grid Grid.Row="0">
+                                <BoxView BackgroundColor="#1E3A5A" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                                <Label Text="FeedHub"
+                                       TextColor="#4DA8E8"
+                                       FontSize="38"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       Opacity="0.3"/>
+                                <Image Source="{Binding ImageUrl}"
+                                       HeightRequest="200"
+                                       Aspect="AspectFill"
+                                       IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}"/>
+                                               
+                                <BoxView VerticalOptions="End" HeightRequest="30">
+                                    <BoxView.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="Transparent" Offset="0"/>
+                                            <GradientStop Color="#1E293B" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </BoxView.Background>
+                                </BoxView>
+                            </Grid>
+
+                            <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
+                                <Label Text="{Binding Title}"
+                                       FontAttributes="Bold"
+                                       FontSize="19"
+                                       TextColor="#F8FAFC"
+                                       LineBreakMode="WordWrap"/>
+                                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="6">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Source}"
+                                           FontSize="12"
+                                           TextColor="#38BDF8"
+                                           FontAttributes="Bold"/>
+                                    <Label Grid.Column="1"
+                                           Text="•"
+                                           TextColor="#94A3B8"/>
+                                    <Label Grid.Column="2"
+                                           Text="{Binding PublishDate, StringFormat='{0:dd MMM, HH:mm}'}"
+                                           FontSize="12"
+                                           TextColor="#94A3B8"/>
+                                </Grid>
+                                <Label Text="{Binding Description}"
+                                       FontSize="14"
+                                       TextColor="#94A3B8"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="3"
+                                       IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
+                                <Label Text="Leer noticia completa →"
+                                       TextColor="#38BDF8"
+                                       FontSize="13"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="End"
+                                       Margin="0,5,0,0"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <!-- Botón transparente para capturar el toque -->
+                    <Button BackgroundColor="Transparent"
+                            BorderWidth="0"
+                            CornerRadius="24"
+                            Clicked="OnNewsClicked"/>
+                </Grid>
+            </DataTemplate>
+
+            <!-- PLANTILLA PARA PUBLICIDAD (Opcional) -->
+<DataTemplate x:Key="AdTemplate">
+    <Border StrokeThickness="2" Stroke="#1E3A5A"
+            StrokeShape="RoundRectangle 24"
+            Margin="10,10,10,10"
+            BackgroundColor="#1E293B">
+        <Grid RowDefinitions="200, Auto">
+
+            <!-- ZONA IMAGEN — mismo tamaño que las noticias -->
+            <Grid Grid.Row="0" BackgroundColor="#0F172A">
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
+                    <Label Text="📢"
+                           FontSize="48"
+                           HorizontalOptions="Center"/>
+                    <Label Text="ESPACIO PUBLICITARIO"
+                           TextColor="#38BDF8"
+                           FontSize="11"
+                           FontAttributes="Bold"
+                           CharacterSpacing="2"
+                           HorizontalOptions="Center"/>
+                    <Label Text="Aquí aparecerá tu anuncio"
+                           TextColor="#475569"
+                           FontSize="12"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- ZONA CONTENIDO — mismo padding y espaciado que las noticias -->
+            <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Grid.Column="0"
+                            BackgroundColor="#1E3A5A"
+                            StrokeShape="RoundRectangle 4"
+                            Padding="6,2"
+                            StrokeThickness="0">
+                        <Label Text="Anuncio"
+                               TextColor="#38BDF8"
+                               FontSize="10"
+                               FontAttributes="Bold"/>
+                    </Border>
+                    <Label Grid.Column="1"
+                           Text="Contenido patrocinado"
+                           TextColor="#475569"
+                           FontSize="12"
+                           VerticalOptions="Center"
+                           Margin="8,0,0,0"/>
+                </Grid>
+                
+                <Label Text="Tu anuncio aparecerá aquí"
+                       FontAttributes="Bold"
+                       FontSize="19"
+                       TextColor="#F8FAFC"
+                       LineBreakMode="WordWrap"
+                       Opacity="0.3"/>
+                       
+                <Label Text="Descripción del anuncio..."
+                       FontSize="14"
+                       TextColor="#94A3B8"
+                       LineBreakMode="TailTruncation"
+                       MaxLines="3"
+                       Opacity="0.3"/>
+            </VerticalStackLayout>
+        </Grid>
+    </Border>
+</DataTemplate>
+
+            <!-- SELECTOR DE PLANTILLAS -->
+            <utils:NewsTemplateSelector x:Key="NewsTemplateSelector"
+                                        NewsTemplate="{StaticResource NewsTemplate}"
+                                        AdTemplate="{StaticResource AdTemplate}"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <Grid IgnoreSafeArea="True">
         <BoxView IsEnabled="False"
-                InputTransparent="True"
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
+                 InputTransparent="True"
+                 HorizontalOptions="Fill"
+                 VerticalOptions="Fill">
             <BoxView.Background>
                 <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
                     <GradientStop Color="#2638BDF8" Offset="0.1"/>
@@ -49,96 +203,14 @@
             <Grid Grid.Row="1">
                 <CollectionView x:Name="SourcesCollection"
                                 ItemsSource="{Binding NewsItems}"
+                                ItemTemplate="{StaticResource NewsTemplateSelector}"
                                 SelectionMode="None">
 
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
-                        </CollectionView.ItemsLayout>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
+                    </CollectionView.ItemsLayout>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:NewsItem">
-                                <Grid>
-                                <Border Stroke="#1E3A5A"
-                                        StrokeThickness="2"
-                                        StrokeShape="RoundRectangle 24"
-                                        Margin="10,10,10,10"
-                                        BackgroundColor="#1E293B">
-                                
-                                <Grid RowDefinitions="200, Auto">
-                                    <Grid Grid.Row="0">
-
-                                        <BoxView BackgroundColor="#1E3A5A" HorizontalOptions="Fill" VerticalOptions="Fill"/>
-
-                                        <Label Text="FeedHub"
-                                               TextColor="#4DA8E8"
-                                               FontSize="38"
-                                               FontAttributes="Bold"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"
-                                               Opacity="0.3"/>
-
-                                        <Image Source="{Binding ImageUrl}"
-                                               HeightRequest="200"
-                                               Aspect="AspectFill"
-                                               IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}"/>
-                                               
-                                            <BoxView VerticalOptions="End" HeightRequest="30">
-                                                <BoxView.Background>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Color="Transparent" Offset="0"/>
-                                                        <GradientStop Color="#1E293B" Offset="1"/>
-                                                    </LinearGradientBrush>
-                                                </BoxView.Background>
-                                            </BoxView>
-                                        </Grid>
-                                        <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
-                                            <Label Text="{Binding Title}"
-                                                    FontAttributes="Bold"
-                                                    FontSize="19"
-                                                    TextColor="#F8FAFC"
-                                                    LineBreakMode="WordWrap"/>
-                                            <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="6">
-                                                <Label Grid.Column="0"
-                                                        Text="{Binding Source}"
-                                                        FontSize="12"
-                                                        TextColor="#38BDF8"
-                                                        FontAttributes="Bold"/>
-                                                <Label Grid.Column="1"
-                                                        Text="•"
-                                                        TextColor="#94A3B8"/>
-                                                <Label Grid.Column="2"
-                                                        Text="{Binding PublishDate, StringFormat='{0:dd MMM, HH:mm}'}"
-                                                        FontSize="12"
-                                                        TextColor="#94A3B8"/>
-                                            </Grid>
-                                            <Label Text="{Binding Description}"
-                                                    FontSize="14"
-                                                    TextColor="#94A3B8"
-                                                    LineBreakMode="TailTruncation"
-                                                    MaxLines="3"
-                                                   IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
-                                            <Label Text="Leer noticia completa →"
-                                                    TextColor="#38BDF8"
-                                                    FontSize="13"
-                                                    FontAttributes="Bold"
-                                                    HorizontalOptions="End"
-                                                    Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Border>
-
-                                <!-- Botón transparente para capturar el toque -->
-                                <Button BackgroundColor="Transparent"
-                                        BorderWidth="0"
-                                        CornerRadius="24"
-                                        Clicked="OnNewsClicked"/>
-                        </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-
-                    <!-- FOOTER -->
                     <CollectionView.Footer>
-
                         <VerticalStackLayout Padding="35,10,35,50" Spacing="0">
                             <Grid HeightRequest="50">
                                 <Border IsVisible="{Binding CanLoadMore}"
@@ -149,18 +221,11 @@
                                         HeightRequest="40">
 
                                     <Border.Triggers>
-                                        <DataTrigger TargetType="Border"
-                                                Binding="{Binding IsLoading}"
-                                                Value="True">
-                                            <Setter Property="IsVisible"
-                                                    Value="False"/>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsLoading}" Value="True">
+                                            <Setter Property="IsVisible" Value="False"/>
                                         </DataTrigger>
-
-                                        <DataTrigger TargetType="Border"
-                                                Binding="{Binding IsLoadingMore}"
-                                                Value="True">
-                                            <Setter Property="IsVisible"
-                                                    Value="False"/>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsLoadingMore}" Value="True">
+                                            <Setter Property="IsVisible" Value="False"/>
                                         </DataTrigger>
                                     </Border.Triggers>
 
@@ -168,17 +233,15 @@
                                         <TapGestureRecognizer Command="{Binding LoadMoreCommand}"/>
                                     </Border.GestureRecognizers>
 
-                                    <HorizontalStackLayout HorizontalOptions="Center"
-                                            VerticalOptions="Center"
-                                            Spacing="10">
+                                    <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
                                         <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#38BDF8, Size=16}"
-                                                VerticalOptions="Center"/>
+                                               VerticalOptions="Center"/>
                                         <Label Text="Cargar más noticias"
-                                                TextColor="#F8FAFC"
-                                                FontAttributes="Bold"
-                                                VerticalOptions="Center"/>
+                                               TextColor="#F8FAFC"
+                                               FontAttributes="Bold"
+                                               VerticalOptions="Center"/>
                                         <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#38BDF8, Size=16}"
-                                                VerticalOptions="Center"/>
+                                               VerticalOptions="Center"/>
                                     </HorizontalStackLayout>
                                 </Border>
 
@@ -189,13 +252,9 @@
                                                    VerticalOptions="Center"
                                                    HeightRequest="30"
                                                    WidthRequest="30"/>
-
                             </Grid>
                         </VerticalStackLayout>
-
                     </CollectionView.Footer>
-
-
                 </CollectionView>
 
                 <!-- Spinner de carga inicial -->
@@ -217,39 +276,37 @@
                 <!-- Sin resultados -->
                 <VerticalStackLayout IsVisible="{Binding NoResultsFound}"
                                      VerticalOptions="Center"
-                        Spacing="15"
-                        Margin="0,0,0,100">
-                    <Label Text="🔎"
-                            FontSize="50"
-                            HorizontalTextAlignment="Center"/>
+                                     Spacing="15"
+                                     Margin="0,0,0,100">
+                    <Label Text="🔎" FontSize="50" HorizontalTextAlignment="Center"/>
                     <Label Text="No se han encontrado noticias"
-                            TextColor="White"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            HorizontalTextAlignment="Center"/>
+                           TextColor="White"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"/>
                     <Label Text="Prueba a refrescar en unos minutos"
-                            TextColor="#94A3B8"
-                            HorizontalTextAlignment="Center"/>
+                           TextColor="#94A3B8"
+                           HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
 
                 <!-- Sin contenido por filtros -->
                 <Grid IsVisible="{Binding IsContentEmpty}"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Center"
-                    TranslationY="-60">
+                      VerticalOptions="Center"
+                      HorizontalOptions="Center"
+                      TranslationY="-60">
                     <VerticalStackLayout Spacing="15" Padding="40"
-                                        HorizontalOptions="Center"
-                                        VerticalOptions="Center">
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
                         <Label Text="⚙️" FontSize="50" HorizontalTextAlignment="Center"/>
                         <Label Text="No hay contenido disponible"
-                            TextColor="White"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            HorizontalTextAlignment="Center"/>
+                               TextColor="White"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"/>
                         <Label Text="Has filtrado todo el contenido. Ve a Ajustes para activar alguna categoría o fuente."
-                            TextColor="#94A3B8"
-                            FontSize="14"
-                            HorizontalTextAlignment="Center"/>
+                               TextColor="#94A3B8"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"/>
                         <Button Text="Ir a Ajustes"
                                 Command="{Binding GoToSettingsCommand}"
                                 BackgroundColor="#1E3A5A"

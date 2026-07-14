@@ -72,6 +72,7 @@ MainThread.BeginInvokeOnMainThread(() =>
             builder.Services.AddSingleton<IPreferencesService, MauiPreferencesService>();
             builder.Services.AddSingleton<FilterPreferencesService>();
             builder.Services.AddSingleton<QuickArticleCacheService>();
+            builder.Services.AddSingleton<AdInterleaveService>();
             
             
             // --- VIEWMODELS ---
