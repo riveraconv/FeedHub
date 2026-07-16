@@ -206,11 +206,60 @@
                     </VerticalStackLayout>
                 </Grid>
 
+                <!--Error de conexion -->
+
+                <!-- Error de conexión -->
+                <Grid IsVisible="{Binding HasError}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    TranslationY="-80">
+
+                    <VerticalStackLayout
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Spacing="15"
+                        Padding="40">
+
+                        <Label Text="📡"
+                            FontSize="50"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Sin conexión"
+                            TextColor="White"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label Text="{Binding ErrorMessage}"
+                            TextColor="#94A3B8"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Button Text="Reintentar"
+                                Command="{Binding LoadNewsCommand}"
+                                BackgroundColor="#1E3A5A"
+                                TextColor="#38BDF8"
+                                CornerRadius="20"
+                                Margin="0,10,0,0"/>
+
+                    </VerticalStackLayout>
+
+                </Grid>
+
                 <!-- Sin contenido por filtros -->
                 <Grid IsVisible="{Binding IsContentEmpty}"
                       VerticalOptions="Center"
                       HorizontalOptions="Center"
                       TranslationY="-80">
+                    <Grid.Triggers>
+                        <DataTrigger TargetType="Grid"
+                                     Binding="{Binding HasError}"
+                                     Value ="true">
+                                     <Setter Property="IsVisible"
+                                        Value="False"/>
+                        </DataTrigger>
+                    </Grid.Triggers>
+                    
                     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="15" Padding="40">
                         <Label Text="⚙️" FontSize="50" HorizontalTextAlignment="Center"/>
                         <Label Text="No hay contenido disponible" TextColor="White" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center"/>

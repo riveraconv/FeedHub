@@ -5,6 +5,7 @@ using FeedHub_Core.Services;
 using System.Collections.ObjectModel;
 using FeedHub_Core.Utilities;
 using FeedHub_App.Views.Settings;
+using Microsoft.Maui.Networking;
 
 
 namespace FeedHub_App.ViewModels.News
@@ -24,6 +25,11 @@ namespace FeedHub_App.ViewModels.News
         private bool isLoadingMore;
 
         [ObservableProperty]
+        private string errorMessage = string.Empty;
+        [ObservableProperty]
+        private bool hasError;
+
+        [ObservableProperty]
         private bool isInitialLoadComplete = false;
         private int _currentOffset = 0;
         private const int PageSize = 20;
@@ -31,6 +37,12 @@ namespace FeedHub_App.ViewModels.News
         private bool canLoadMore = false;
         [ObservableProperty]
         private bool isContentEmpty = false;
+
+        public bool HasContent =>
+            !IsLoading &&
+            !HasError &&
+            !IsContentEmpty;
+
         private readonly AdInterleaveService _adService;
         public LatestNewsViewModel(INewsAggregatorService aggregatorService, ILogger logger, AdInterleaveService adService)
         {
@@ -52,7 +64,17 @@ namespace FeedHub_App.ViewModels.News
                 // Si la lista está vacía, es carga inicial -> Usamos IsLoading (Spinner central)
                 // Si el usuario hizo "pull", IsRefreshing ya será true -> No entramos aquí
                 if (News.Count == 0) IsLoading = true;
+
+                HasError = false;
+                ErrorMessage = string.Empty;
                 IsContentEmpty = false;
+
+                if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+                {
+                    HasError = true;
+                    ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
+                    return;
+                }
 
                 _currentOffset = 0;
                 var selected = await _aggregatorService.GetLatestMixedAsync(PageSize);
@@ -71,8 +93,12 @@ namespace FeedHub_App.ViewModels.News
                     IsContentEmpty = News.Count == 0;
                 });
             }
-            catch (Exception) 
+            catch (Exception ex) 
             {
+                _logger?.Error($"Error cargando noticias: {ex.Message}");
+                HasError = true;
+                ErrorMessage = "No se pudieron cargar las noticias. Comprueba tu conexión e inténtalo de nuevo.";
+                IsContentEmpty = false;
             }
             finally
             {
@@ -145,6 +171,20 @@ namespace FeedHub_App.ViewModels.News
         public async Task GoToSettings()
         {
             await Shell.Current.GoToAsync(nameof(SettingsPage));
+        }
+
+        //notificamos cuando cambia HasContent
+        partial void OnIsLoadingChanged(bool value)
+        {
+            OnPropertyChanged(nameof(HasContent));
+        }
+        partial void OnHasErrorChanged(bool value)
+        {
+            OnPropertyChanged(nameof(HasContent));
+        }
+        partial void OnIsContentEmptyChanged(bool value)
+        {
+            OnPropertyChanged(nameof(HasContent));
         }
     }
 }

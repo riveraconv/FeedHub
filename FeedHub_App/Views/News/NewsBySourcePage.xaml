@@ -257,21 +257,34 @@
                     </CollectionView.Footer>
                 </CollectionView>
 
-                <!-- Spinner de carga inicial -->
-                <VerticalStackLayout IsVisible="{Binding IsLoading}"
-                                     VerticalOptions="Center"
-                                     HorizontalOptions="Fill"
-                                     Padding="0,0,0,80"
-                                     Spacing="20">
-                    <ActivityIndicator IsRunning="{Binding IsLoading}"
-                                       Color="#38BDF8"
-                                       Scale="1.3"
-                                       HorizontalOptions="Center"/>
-                    <Label Text="Conectando con la fuente..."
-                           HorizontalTextAlignment="Center"
-                           TextColor="#94A3B8"
-                           FontSize="16"/>
-                </VerticalStackLayout>
+                <!-- LOADING -->
+                <Grid IsVisible="{Binding IsLoading}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    TranslationY="-120">
+
+                    <VerticalStackLayout
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        Padding="0,100,0,0"
+                        Spacing="15">
+
+                        <ActivityIndicator
+                            IsRunning="{Binding IsLoading}"
+                            Color="#38BDF8"
+                            HorizontalOptions="Center"
+                            HeightRequest="50"
+                            WidthRequest="50"/>
+
+                        <Label
+                            Text="Preparando noticias..."
+                            HorizontalTextAlignment="Center"
+                            TextColor="#94A3B8"
+                            FontSize="16"/>
+
+                    </VerticalStackLayout>
+
+                </Grid>
 
                 <!-- Sin resultados -->
                 <VerticalStackLayout IsVisible="{Binding NoResultsFound}"
@@ -288,6 +301,48 @@
                            TextColor="#94A3B8"
                            HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
+
+                <!-- Error de conexión -->
+                <Grid IsVisible="{Binding HasError}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    TranslationY="-80">
+
+                    <VerticalStackLayout
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Spacing="15"
+                        Padding="40">
+
+                        <Label
+                            Text="📡"
+                            FontSize="50"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label
+                            Text="No se pudieron cargar las noticias"
+                            TextColor="White"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label
+                            Text="{Binding ErrorMessage}"
+                            TextColor="#94A3B8"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Button
+                            Text="Reintentar"
+                            Command="{Binding LoadNewsCommand}"
+                            BackgroundColor="#1E3A5A"
+                            TextColor="#38BDF8"
+                            CornerRadius="20"
+                            Margin="0,10,0,0"/>
+
+                    </VerticalStackLayout>
+
+                </Grid>
 
                 <!-- Sin contenido por filtros -->
                 <Grid IsVisible="{Binding IsContentEmpty}"

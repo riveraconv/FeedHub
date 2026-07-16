@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Utilities;
 using FeedHub_App.Views.Settings;
+using Microsoft.Maui.Networking;
 
 namespace FeedHub_App.ViewModels.News
 {
@@ -78,6 +79,11 @@ namespace FeedHub_App.ViewModels.News
         private List<NewsItem> _fullListCache = new();
         [ObservableProperty]
         private bool isContentEmpty;
+        [ObservableProperty]
+        private bool hasError;
+        [ObservableProperty]
+        private string errorMessage = string.Empty;
+
         private readonly AdInterleaveService _adService;
 
         public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger, AdInterleaveService adService)
@@ -191,6 +197,16 @@ namespace FeedHub_App.ViewModels.News
                 IsLoadingMore = false;
                 NoResultsFound = false;
                 ViewState = CategoryViewState.Loading;
+                HasError = false;
+                ErrorMessage = string.Empty;
+
+                if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+                {
+                    HasError = true;
+                    ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
+                    IsContentEmpty = false;
+                    return;
+                }
 
                 var items = await _aggregator.GetByCategoryAsync(Category, 100);
 
@@ -227,7 +243,9 @@ namespace FeedHub_App.ViewModels.News
             catch (Exception ex) 
             { 
                 _logger.Error(ex.Message); 
-                ViewState = CategoryViewState.Empty; // O un estado de Error si lo tienes
+                HasError = true;
+                ErrorMessage = "No se pudieron cargar las noticias. Comprueba tu conexión e inténtalo de nuevo.";
+                IsContentEmpty = false;
             }
             finally
             {

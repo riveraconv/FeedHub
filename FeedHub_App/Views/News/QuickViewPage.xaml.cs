@@ -2,6 +2,7 @@
 using FeedHub_Core.Utilities;
 using FeedHub_App.ViewModels.News;
 using System.Net;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace FeedHub_App.Views.News
 {
@@ -19,6 +20,7 @@ namespace FeedHub_App.Views.News
         private bool _articleLoaded = false;
         private bool _quickViewAvailable = false;
         private bool _fullWebAvailable = false;
+
 
         public QuickViewPage(ILogger logger, QuickViewViewModel viewModel, QuickArticleCacheService cacheService)
         {
@@ -79,6 +81,17 @@ namespace FeedHub_App.Views.News
 
         private async Task LoadArticleAsync()
         {
+            NoConnectionPanel.IsVisible = false;
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ShowNoConnection();
+                });
+
+                return;
+            }
+
             if (_cacheService.TryGet(Link, out var cached))
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
@@ -224,6 +237,11 @@ namespace FeedHub_App.Views.News
                 });
             }
         }
+        private async void OnRetryClicked(object sender, EventArgs e)
+        {
+            NoConnectionPanel.IsVisible = false;
+            await LoadArticleAsync();
+        }
 
         private void ShowQuickView()
         {
@@ -262,6 +280,12 @@ namespace FeedHub_App.Views.News
         }
         private void OnToggleViewClicked(object sender, EventArgs e)
         {
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                ShowNoConnection();
+                return;
+            }
+
             if (QuickViewContainer.IsVisible)
             {
                 ShowFullWeb();
@@ -275,6 +299,12 @@ namespace FeedHub_App.Views.News
         }
         private void OnSourceClicked(object sender, EventArgs e)
         {
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                ShowNoConnection();
+                return;
+            }
+            
             if (BindingContext is QuickViewViewModel vm)
             {
                 vm.StopSpeaking();
@@ -347,6 +377,13 @@ namespace FeedHub_App.Views.News
                 Application.Current.RequestedThemeChanged += OnThemeChanged;
             }
             UpdateSystemBars();
+        }
+        private void ShowNoConnection()
+        {
+            QuickViewContainer.IsVisible = false;
+            FullWebView.IsVisible = false;
+            InfoBanner.IsVisible = false;
+            NoConnectionPanel.IsVisible = true;
         }
 
         public string ArticleHtmlContent(string ArticleContent)

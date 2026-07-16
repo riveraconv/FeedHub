@@ -147,13 +147,14 @@
             
             <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
                 <Label Text="FEEDHUB" TextColor="#38BDF8" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
-                <Label Text="Últimas noticias" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
+                <Label Text="Ponte al día" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
                 <BoxView HeightRequest="3" BackgroundColor="#38BDF8" WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
             </VerticalStackLayout>
 
             <Grid Grid.Row="1">
 
                 <CollectionView ItemsSource="{Binding News}"
+                                IsVisible="{Binding HasContent}"
                                 SelectionMode="Single"
                                 x:Name="NewsCollection"
                                 SelectionChanged="OnSelectionChanged"
@@ -163,14 +164,6 @@
                         <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
                     </CollectionView.ItemsLayout>
 
-                    <CollectionView.EmptyView>
-                        <VerticalStackLayout Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
-                            <Label Text="No hay noticias disponibles" 
-                                   IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
-                                   TextColor="#94A3B8" 
-                                   HorizontalTextAlignment="Center"/>
-                        </VerticalStackLayout>
-                    </CollectionView.EmptyView>
 
                     <CollectionView.Footer>
                         <VerticalStackLayout Padding="35,10,35,50" Spacing="0">
@@ -198,6 +191,44 @@
                         </VerticalStackLayout>
                     </CollectionView.Footer>
                 </CollectionView>
+
+                <!-- Error de conexión -->
+                <Grid IsVisible="{Binding HasError}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    TranslationY="-80">
+
+                    <VerticalStackLayout
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Spacing="15"
+                        Padding="40">
+
+                        <Label Text="📡"
+                            FontSize="50"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Sin conexión"
+                            TextColor="White"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label Text="{Binding ErrorMessage}"
+                            TextColor="#94A3B8"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Button Text="Reintentar"
+                                Command="{Binding LoadNewsCommand}"
+                                BackgroundColor="#1E3A5A"
+                                TextColor="#38BDF8"
+                                CornerRadius="20"
+                                Margin="0,10,0,0"/>
+
+                    </VerticalStackLayout>
+
+                </Grid>
 
                 <Grid IsVisible="{Binding IsLoading}"
                       VerticalOptions="Center"

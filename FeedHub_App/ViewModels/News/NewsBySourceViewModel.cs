@@ -36,6 +36,11 @@ public partial class NewsBySourceViewModel : ObservableObject
     private bool canLoadMore;
     [ObservableProperty]
     private bool isContentEmpty;
+
+    [ObservableProperty]
+    private bool hasError;
+    [ObservableProperty]
+    private string errorMessage = string.Empty;
     
     public ObservableCollection<object> NewsItems{get; set;} = new();
 
@@ -67,12 +72,26 @@ public partial class NewsBySourceViewModel : ObservableObject
     {
         if (IsLoading) return;
 
+        //limpiamos siempre estados visuales anteriores
+
+        HasError = false;
+        ErrorMessage = string.Empty;
+        IsContentEmpty = false;
+        NoResultsFound = false;
+
+
+        if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+        {
+            HasError = true;
+            ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
+            return;
+        }
+
         try
         {
-            if (!IsRefreshing) IsLoading = true;
+            if (!IsRefreshing) 
+                IsLoading = true;
             
-            NoResultsFound = false;
-            IsContentEmpty = false;
             _currentOffset = 0;
 
             // Obtenemos los datos
@@ -98,8 +117,15 @@ public partial class NewsBySourceViewModel : ObservableObject
                 NoResultsFound = !IsContentEmpty && pagedItems.Count == 0;
             });
         }
-        catch (Exception) 
-        { 
+        catch (Exception ex)
+        {
+            _logger?.Error($"Error cargando noticias por fuente: {ex.Message}");
+
+            HasError = true;
+            ErrorMessage = "No se pudieron cargar las noticias. Comprueba tu conexión e inténtalo de nuevo.";
+
+            IsContentEmpty = false;
+            NoResultsFound = false;
         }
         finally
         {

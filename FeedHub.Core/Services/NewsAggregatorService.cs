@@ -152,6 +152,7 @@ namespace FeedHub_Core.Services;
         {
             var tempList = new ConcurrentBag<NewsItem>();
             var options = new ParallelOptions { MaxDegreeOfParallelism = 3 };
+            int successfulFeeds = 0;
 
             var filteredFeeds = _feeds.Where(kvp =>
             
@@ -170,9 +171,12 @@ namespace FeedHub_Core.Services;
                 {
                     // Timeout individual de 10 seg por feed
                     using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-                    cts.CancelAfter(TimeSpan.FromSeconds(10));
+                    cts.CancelAfter(TimeSpan.FromSeconds(3));
 
                     var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
+
+                    Interlocked.Increment(ref successfulFeeds);
+
                     var latest = items.OrderByDescending(i => i.PublishDate).Take(perFeed);
 
                     foreach (var item in latest)
@@ -181,6 +185,8 @@ namespace FeedHub_Core.Services;
                         item.Source = SourceNameSolver.Resolve(item.Link);
                         tempList.Add(item);
                     }
+
+                    
                 }
                 catch (Exception ex)
                 {
@@ -188,6 +194,11 @@ namespace FeedHub_Core.Services;
                 }
             });
 
+            if(successfulFeeds == 0)
+                    {
+                        throw new HttpRequestException("No se pudo acceder a ningún feed RSS");
+                    }
+                    
             var result = tempList.OrderByDescending(x => x.PublishDate)
                        .Take(limit)
                        .ToList();

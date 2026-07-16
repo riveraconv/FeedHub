@@ -101,6 +101,43 @@
                 </ScrollView>
                 </Grid>
 
+                <Grid x:Name="NoConnectionPanel"
+                    IsVisible="False"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    TranslationY="-80">
+
+                    <VerticalStackLayout
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Spacing="15"
+                        Padding="40">
+
+                        <Label Text="📡"
+                            FontSize="50"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Sin conexión"
+                            TextColor="White"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label Text="No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo."
+                            TextColor="#94A3B8"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Button Text="Reintentar"
+                                Clicked="OnRetryClicked"
+                                BackgroundColor="#1E3A5A"
+                                TextColor="#38BDF8"
+                                CornerRadius="20"
+                                Margin="0,10,0,0"/>
+
+                    </VerticalStackLayout>
+                </Grid>
+
                 <WebView x:Name="FullWebView"
                      IsVisible="False"
                      VerticalOptions="Fill"

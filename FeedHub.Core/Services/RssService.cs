@@ -20,6 +20,7 @@ public class RssService : IRssService
 
     public async Task<List<NewsItem>> GetNewsAsync(string feedUrl, string categoryFromDict, CancellationToken ct = default)
     {
+
         var news = new List<NewsItem>();
         if (string.IsNullOrEmpty(feedUrl)) return news;
 
@@ -92,9 +93,20 @@ public class RssService : IRssService
             }
         }
 
+        catch (OperationCanceledException)
+        {
+            _logger.Warn($"Timeout o cancelación en {feedUrl}");
+            throw;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.Error($"Error HTTP en {feedUrl}: {ex.Message}");
+            throw;
+        }
         catch (Exception ex)
         {
             _logger.Error($"Error en {feedUrl}: {ex.Message}");
+            throw;
         }
 
         return news;
