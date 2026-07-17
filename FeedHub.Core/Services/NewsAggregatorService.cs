@@ -177,7 +177,7 @@ namespace FeedHub_Core.Services;
                 {
                     // Timeout individual de 10 seg por feed
                     using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-                    cts.CancelAfter(TimeSpan.FromSeconds(3));
+                    cts.CancelAfter(TimeSpan.FromSeconds(8));
 
                     var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
 
@@ -209,13 +209,16 @@ namespace FeedHub_Core.Services;
                        .Take(limit)
                        .ToList();
 
+            _logger?.Info($"Feeds OK: {successfulFeeds}/{filteredFeeds.Count}| Noticias obtenidas: {result.Count}");
             return result;
+            
         }
     
 
         public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
         {
             var allItems = new ConcurrentBag<NewsItem>();
+            int successfulFeeds = 0;
             DateTime cutOffDate = category == "ciencia" || category == "cultura" || category == "entretenimiento"
                                 ? DateTime.Now.AddDays(-2)
                                 : DateTime.Now.AddDays(-7);
@@ -233,22 +236,29 @@ namespace FeedHub_Core.Services;
                     using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
                     var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
 
-                    foreach (var item in items)
+                    Interlocked.Increment(ref successfulFeeds);
+
+                    foreach (var item in items.Where(i=> i.PublishDate >= cutOffDate))
                     {
-                        if (item.PublishDate >= cutOffDate)
-                        {
                             item.Category = kvp.Value;
                             item.Source = SourceNameSolver.Resolve(item.Link);
                             allItems.Add(item);
-                        }
-
                     }
                 }
-                catch { /* Ignorar errores de red */}
+                catch(Exception ex)
+                {
+                    _logger?.Warn($"Error en feed de categoría {kvp.Key}: {ex.Message}");
+                }
             });
+            if (successfulFeeds == 0)
+            {
+                throw new HttpRequestException("No se pudo cargar ningún feed RSS");
+            }
 
-            var result = allItems.OrderByDescending(x => x.PublishDate).Take(limit).ToList();
-            return result;
+            var result = allItems
+                .OrderByDescending(x => x.PublishDate)
+                .Take(limit).ToList();
+                return result;
         }
 
         public async Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit = 40)
@@ -256,6 +266,7 @@ namespace FeedHub_Core.Services;
             if (string.IsNullOrWhiteSpace(query)) return Enumerable.Empty<NewsItem>();
 
             var allResults = new ConcurrentBag<NewsItem>();
+            int successfulFeeds = 0;
 
             // Buscamos en todos los feeds en paralelo para encontrar la palabra clave
             await Parallel.ForEachAsync(_feeds, new ParallelOptions { MaxDegreeOfParallelism = 20 }, async (kvp, ct) =>
@@ -267,20 +278,36 @@ namespace FeedHub_Core.Services;
                         (n.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
                         (n.Description?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
 
+                    Interlocked.Increment(ref successfulFeeds);
+
                     foreach (var item in filtered)
                     {
                         item.Source = SourceNameSolver.Resolve(item.Link);
                         allResults.Add(item);
                     }
                 }
-                catch { /* fail silently */ }
+                catch (Exception ex)
+                {
+                    _logger.Warn($"Fallo en la búsqueda {kvp.Key}: {ex.Message}");
+                }
             });
 
-            return allResults.OrderByDescending(n => n.PublishDate).Take(limit);
+            if(successfulFeeds == 0)
+                throw new HttpRequestException("No se pudo acceder a ningún feed RSS");
+            
+            var result = allResults
+                   .OrderByDescending(n => n.PublishDate)
+                   .Take(limit)
+                   .ToList();
+
+                   _logger.Info($"Búsqueda '{query}' - Feeds OK: {successfulFeeds}/{_feeds.Count} | Resultados: {result.Count}");
+
+                   return result;
         }
         public async Task<List<NewsItem>> GetBySourceAsync(string sourceId, int limit = 20)
         {
             var allItems = new ConcurrentBag<NewsItem>();
+            int successfulFeeds = 0;
             var cleanSourceId = sourceId.ToLower().Replace(".", "");
 
             var sourceFeeds = _feeds.Where(kvp =>
@@ -294,19 +321,31 @@ namespace FeedHub_Core.Services;
                 {
                     var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
 
+                    Interlocked.Increment(ref successfulFeeds);
+
                     foreach (var item in items)
                     {
                         item.Source = SourceNameSolver.Resolve(item.Link);
                         allItems.Add(item);
                     }
                 }
-                catch { /* Silencio */ }
+                catch (Exception ex)
+                {
+                    _logger?.Warn($"Fallo en feed de fuente {kvp.Key}: {ex.Message}");
+                }
             });
 
-            return allItems
+            if (successfulFeeds == 0)
+            throw new HttpRequestException("No se pudo acceder a ningún feed RSS");
+
+            var result = allItems
                 .OrderByDescending(x => x.PublishDate)
                 .Take(limit)
                 .ToList();
+
+                _logger?.Info($"Fuente '{sourceId}' - Feeds OK: {successfulFeeds} / {sourceFeeds.Count} | Noticias: {result.Count}");
+
+                return result;
         }
     }
 

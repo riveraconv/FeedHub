@@ -138,12 +138,22 @@ namespace FeedHub_App.ViewModels.News
         }
         private async void PerformSearch(string queryText)
         {
+            HasError = false;
+            ErrorMessage = string.Empty;
             IsSearchMode = true;
             CanLoadMore = false;
             IsLoading = true;
             NoResultsFound = false;
             IsContentEmpty = false;
             _currentOffset = 0;
+
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                HasError = true;
+                ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
+                IsLoading = false;
+                return;
+            }
 
             try
             {
@@ -173,7 +183,11 @@ namespace FeedHub_App.ViewModels.News
             catch (Exception ex) 
             { 
                 _logger.Error(ex.Message); 
-                ViewState = CategoryViewState.Empty;
+                HasError = true;
+                ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
+
+                NoResultsFound = false;
+                IsContentEmpty = false;
             }
             finally
             {
@@ -339,6 +353,24 @@ namespace FeedHub_App.ViewModels.News
         {
             await Shell.Current.GoToAsync(nameof(SettingsPage));
         }
+        [RelayCommand]
+        public void RetrySearch()
+        {
+            if (IsSearchMode)
+            {
+                if (!string.IsNullOrWhiteSpace(_initialQuery))
+                {
+                    PerformSearch(_initialQuery);
+                }
+                else
+                {
+                    LoadNewsCommand.Execute(null);
+                }
+            }
+        }
     }
 }
+
+
+    
 

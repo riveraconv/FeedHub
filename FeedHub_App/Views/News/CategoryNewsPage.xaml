@@ -235,8 +235,8 @@
                             FontSize="14"
                             HorizontalTextAlignment="Center"/>
 
-                        <Button Text="Reintentar"
-                                Command="{Binding LoadNewsCommand}"
+                        <Button Text="Reintentar búsqueda"
+                                Command="{Binding RetrySearchCommand}"
                                 BackgroundColor="#1E3A5A"
                                 TextColor="#38BDF8"
                                 CornerRadius="20"
