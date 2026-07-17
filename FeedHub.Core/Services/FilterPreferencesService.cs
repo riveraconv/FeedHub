@@ -1,4 +1,3 @@
-using System.IO.Pipelines;
 using System.Text.Json;
 using FeedHub_Core.Interfaces;
 
@@ -18,15 +17,20 @@ public class FilterPreferencesService
     private HashSet<string> GetDisabledSources()
     {
         var json = _prefs.Get(DisabledSourcesKey, string.Empty);
-        if (string.IsNullOrWhiteSpace(json)) return new HashSet<string>();
-        return JsonSerializer.Deserialize<HashSet<string>>(json) ?? new HashSet<string>();
+
+        return string.IsNullOrWhiteSpace(json)
+        ? new() 
+        : JsonSerializer.Deserialize<HashSet<string>>(json) ?? new();
+
     }
 
     private HashSet<string> GetDisabledCategories()
     {
         var json = _prefs.Get(DisabledCategoriesKey, string.Empty);
-        if (string.IsNullOrWhiteSpace(json)) return new HashSet<string>();
-        return JsonSerializer.Deserialize<HashSet<string>>(json) ?? new HashSet<string>();
+        
+        return string.IsNullOrWhiteSpace(json)
+        ? new()
+        : JsonSerializer.Deserialize<HashSet<string>>(json) ?? new();
     }
 
     public void SetSourceActive(string sourceId, bool active)
@@ -36,7 +40,7 @@ public class FilterPreferencesService
         else disabled.Remove(sourceId);
 
         var json =  JsonSerializer.Serialize(disabled);
-        _prefs.Set(DisabledSourcesKey, JsonSerializer.Serialize(disabled));
+        _prefs.Set(DisabledSourcesKey, json);
     }
 
     public void SetCategoryActive(string category, bool active)
@@ -46,22 +50,16 @@ public class FilterPreferencesService
         else disabled.Remove(category);
 
         var json = JsonSerializer.Serialize(disabled);
-        _prefs.Set(DisabledCategoriesKey, JsonSerializer.Serialize(disabled));
+        _prefs.Set(DisabledCategoriesKey, json);
     }
 
     public bool IsSourceActive(string sourceId)
     {
-        var disabled = GetDisabledSources();
-        var result = !disabled.Contains(sourceId);
-
-        return result;
+        return !GetDisabledSources().Contains(sourceId);
     }
 
     public bool IsCategoryActive(string category)
-    {
-        var disabled = GetDisabledCategories();
-        var result = !disabled.Contains(category);
-        
-        return result;
+    {   
+        return !GetDisabledCategories().Contains(category);
     }
 }

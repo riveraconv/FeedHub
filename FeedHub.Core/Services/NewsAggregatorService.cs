@@ -161,6 +161,12 @@ namespace FeedHub_Core.Services;
 
             ).ToList();
 
+            //el usuario ha filtrado todas las fuentes o categorías
+            if(filteredFeeds.Count == 0)
+            {
+                return new List<NewsItem>();
+            }
+
             int perFeed = filteredFeeds.Count > 0
                 ? Math.Max(2, (int)Math.Ceiling((double)limit / filteredFeeds.Count))
                 : 2;
