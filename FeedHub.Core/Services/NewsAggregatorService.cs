@@ -236,13 +236,19 @@ namespace FeedHub_Core.Services;
                     using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
                     var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
 
+                    var validItems = items
+                        .Where(i => i.PublishDate >= cutOffDate)
+                        .ToList();
+
+                    _logger.Info($"{SourceNameSolver.Resolve(kvp.Key)} -> {validItems.Count} noticias válidas");
+
                     Interlocked.Increment(ref successfulFeeds);
 
-                    foreach (var item in items.Where(i=> i.PublishDate >= cutOffDate))
+                    foreach (var item in validItems)
                     {
-                            item.Category = kvp.Value;
-                            item.Source = SourceNameSolver.Resolve(item.Link);
-                            allItems.Add(item);
+                        item.Category = kvp.Value;
+                        item.Source = SourceNameSolver.Resolve(item.Link);
+                        allItems.Add(item);
                     }
                 }
                 catch(Exception ex)
@@ -257,7 +263,12 @@ namespace FeedHub_Core.Services;
 
             var result = allItems
                 .OrderByDescending(x => x.PublishDate)
-                .Take(limit).ToList();
+                .Take(limit)
+                .ToList();
+
+                _logger?.Info(
+                $"Categoría '{category}' - Feeds OK: {successfulFeeds}/{filteredFeeds.Count} | Noticias: {result.Count}");
+
                 return result;
         }
 
@@ -269,11 +280,14 @@ namespace FeedHub_Core.Services;
             int successfulFeeds = 0;
 
             // Buscamos en todos los feeds en paralelo para encontrar la palabra clave
-            await Parallel.ForEachAsync(_feeds, new ParallelOptions { MaxDegreeOfParallelism = 20 }, async (kvp, ct) =>
+            await Parallel.ForEachAsync(_feeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) =>
             {
                 try
                 {
-                    var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
+                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    cts.CancelAfter(TimeSpan.FromSeconds(8));
+
+                    var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
                     var filtered = items.Where(n =>
                         (n.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
                         (n.Description?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
@@ -315,11 +329,14 @@ namespace FeedHub_Core.Services;
                 _filterService.IsCategoryActive(kvp.Value)
             ).ToList();
 
-            await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (kvp, ct) =>
+            await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) =>
             {
                 try
                 {
-                    var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, ct);
+                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    cts.CancelAfter(TimeSpan.FromSeconds(8));
+
+                    var items = await _rssService.GetNewsAsync(kvp.Key, kvp.Value, cts.Token);
 
                     Interlocked.Increment(ref successfulFeeds);
 

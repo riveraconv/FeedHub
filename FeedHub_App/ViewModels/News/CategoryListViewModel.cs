@@ -356,17 +356,13 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         public void RetrySearch()
         {
-            if (IsSearchMode)
+            if (IsSearchMode && !string.IsNullOrWhiteSpace(_initialQuery))
             {
-                if (!string.IsNullOrWhiteSpace(_initialQuery))
-                {
-                    PerformSearch(_initialQuery);
-                }
-                else
-                {
-                    LoadNewsCommand.Execute(null);
-                }
+                PerformSearch(_initialQuery);
+                return;
             }
+
+            LoadNewsCommand.Execute(null);
         }
     }
 }
