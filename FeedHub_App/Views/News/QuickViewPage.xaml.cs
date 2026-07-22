@@ -94,27 +94,35 @@ namespace FeedHub_App.Views.News
 
             if (_cacheService.TryGet(Link, out var cached))
             {
-                await MainThread.InvokeOnMainThreadAsync(() =>
+                try
                 {
-                    ShowQuickView();
-
-                    TitleLabel.Text = cached.Title;
-
-                    if (!string.IsNullOrEmpty(cached.ImageUrl))
-                        ArticleImage.Source = cached.ImageUrl;
-
-                    ArticleWebView.Source = new HtmlWebViewSource
+                    await MainThread.InvokeOnMainThreadAsync(() =>
                     {
-                        Html = ArticleHtmlContent(cached.Html)
-                    };
+                        ShowQuickView();
 
-                    if (BindingContext is QuickViewViewModel vm)
-                        vm.NewsContent = cached.Text;
-                });
+                        TitleLabel.Text = cached.Title;
 
-                return;
+                        if (!string.IsNullOrEmpty(cached.ImageUrl))
+                            ArticleImage.Source = cached.ImageUrl;
+
+                        ArticleWebView.Source = new HtmlWebViewSource
+                        {
+                            Html = ArticleHtmlContent(cached.Html)
+                        };
+
+                        if (BindingContext is QuickViewViewModel vm)
+                            vm.NewsContent = cached.Text;
+                    });
+                    _logger?.Info($"Artículo cargado desde caché: {Link}");
+
+                    return; 
+                }
+                catch(Exception ex)
+                {
+                    _logger?.Info($"Artículo obtenido desde caché_ '{Link}' {ex.Message}");
+                }
+                
             }
-
 
             if (string.IsNullOrEmpty(Link))
                 return;
@@ -214,8 +222,9 @@ namespace FeedHub_App.Views.News
 
                 });
             }
-            catch (TaskCanceledException)
+            catch (TaskCanceledException ex)
             {
+                _logger?.Warn($"Timeout cargando el artículo '{Link}': {ex.Message}");
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     ShowFullWeb();
@@ -225,8 +234,9 @@ namespace FeedHub_App.Views.News
                     FullWebView.Source = new UrlWebViewSource { Url = Link };
                 });
             }
-            catch (Exception)
+            catch (HttpRequestException ex)
             {
+                _logger?.Error($"Error HTTP cargando artículo '{Link}: {ex.Message}");
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     ShowFullWeb();
@@ -463,7 +473,10 @@ namespace FeedHub_App.Views.News
             removeOverlay();
         ";
                 try { await ArticleWebView.EvaluateJavaScriptAsync(js); }
-                catch { }
+                catch (Exception ex)
+                {
+                    _logger?.Info($"No se pudo ejecutar el JavaScript para '{Link}': {ex.Message}");
+                }
             }
         }
     }
