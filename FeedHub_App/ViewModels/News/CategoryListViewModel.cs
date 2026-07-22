@@ -167,8 +167,12 @@ namespace FeedHub_App.ViewModels.News
 
                     if (_fullListCache.Any())
                     {
-                        var firstBatch = _fullListCache.Take(PageSize).ToList();
+                        var firstBatch = _fullListCache
+                            .Take(PageSize)
+                            .ToList();
+
                         var mixed = _adService.Interleave(firstBatch);
+                        
                         foreach (var item in mixed)
                             Articles.Add(item);
 

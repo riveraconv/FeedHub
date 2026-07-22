@@ -44,6 +44,7 @@ namespace FeedHub_App.ViewModels.News
             !IsContentEmpty;
 
         private readonly AdInterleaveService _adService;
+        private List<NewsItem> _fullListCache = new();
         public LatestNewsViewModel(INewsAggregatorService aggregatorService, ILogger logger, AdInterleaveService adService)
         {
             _aggregatorService = aggregatorService;
@@ -56,7 +57,7 @@ namespace FeedHub_App.ViewModels.News
         public async Task LoadNewsAsync()
         {
             // Si ya estamos cargando (ya sea carga inicial o pull), abortamos
-            if (IsLoading || IsRefreshing) return;
+            if (IsLoading || IsRefreshing ) return;
 
             try
             {
@@ -77,20 +78,27 @@ namespace FeedHub_App.ViewModels.News
                 }
 
                 _currentOffset = 0;
-                var selected = await _aggregatorService.GetLatestMixedAsync(PageSize);
+                var selected = await _aggregatorService.GetLatestMixedAsync(100);
+                _fullListCache = selected;
 
+                var firstBatch = _fullListCache
+                    .Take(PageSize)
+                    .ToList();
+
+                var mixed = _adService.Interleave(firstBatch);
+                
                 MainThread.BeginInvokeOnMainThread(() => 
                 {
                     News.Clear();
-                    var mixed = _adService.Interleave(selected);
-                    System.Diagnostics.Debug.WriteLine($"DEBUG ADS: items={selected.Count}, mixed={mixed.Count}, ads={mixed.OfType<AdItem>().Count()}");
                     foreach(var item in mixed)
                     {
                         System.Diagnostics.Debug.WriteLine($"DEBUG ADDING: {item.GetType().Name}");
                         News.Add(item);
                     } 
-                    CanLoadMore = selected.Count >= PageSize;
+                    _currentOffset = firstBatch.Count;
+                    CanLoadMore = _fullListCache.Count > _currentOffset;
                     IsContentEmpty = News.Count == 0;
+
                 });
             }
             catch (Exception ex) 
@@ -124,35 +132,55 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         public async Task LoadMoreAsync()
         {
-            if (IsLoading || IsLoadingMore) return;
+            _logger?.Info("Entrando en LoadMoreAsync");
+
+            if (IsLoading || IsLoadingMore || !CanLoadMore) return;
+
+            if(Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                HasError = true;
+                ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
+                return;
+            }
             try
             {
+                HasError = false;
+                ErrorMessage = string.Empty;
                 IsLoadingMore = true;
+                
+                await Task.Delay(300);
                 _currentOffset += PageSize;
-                var more = await _aggregatorService.GetLatestMixedAsync(PageSize + _currentOffset);
 
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    var existing = News
+                var existing = News
                     .OfType<NewsItem>()  // ← filtra solo NewsItem, ignora AdItem
                     .Select(n => n.Link)
                     .ToHashSet();
 
-                    var newItems = more
+                    var nextItems = _fullListCache
                     .Skip(_currentOffset)
+                    .Take(PageSize)
                     .Where(n => !existing.Contains(n.Link))
                     .ToList();
 
-                    foreach (var item in newItems)
+                    _currentOffset += nextItems.Count;
+
+                    var mixed = _adService.Interleave(nextItems);
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    foreach (var item in mixed)
                     {
                         News.Add(item);
                     }
-                    CanLoadMore = newItems.Count >= PageSize;
+                    CanLoadMore = _fullListCache.Count > (_currentOffset + PageSize);
                 });
             }
             catch (Exception ex)
             {
-                _logger?.Error($"Error cargando más noticias: {ex.Message}");
+                _logger.Warn($"No se pudieron cargar mas noticias {ex.Message}");
+
+                HasError = true;
+                ErrorMessage = $"No se pudieron cargar mas noticias. Comprueba tu conexión e inténtalo de nuevo.";
             }
             finally
             {

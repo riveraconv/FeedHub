@@ -6,6 +6,7 @@ using FeedHub_Core.Utilities;
 using FeedHub_App.Views.News;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_App.Views.Settings;
+using Java.Util.Logging;
 
 
 namespace FeedHub_App.ViewModels.News;
@@ -43,12 +44,15 @@ public partial class NewsBySourceViewModel : ObservableObject
     private string errorMessage = string.Empty;
     
     public ObservableCollection<object> NewsItems{get; set;} = new();
+    private List<NewsItem> _fullListCache = new();
 
-    public NewsBySourceViewModel(INewsAggregatorService newsService, FilterPreferencesService filterService, AdInterleaveService adInterleaveService)
+    public NewsBySourceViewModel(INewsAggregatorService newsService, FilterPreferencesService filterService, AdInterleaveService adInterleaveService,
+                                ILogger logger)
     {
         _newsService = newsService;
         _filterService = filterService;
         _adInterleaveService = adInterleaveService;
+        _logger = logger;
     }
     partial void OnSourceIdChanged(string value)
     {
@@ -67,9 +71,11 @@ public partial class NewsBySourceViewModel : ObservableObject
         }
     }
 
-[RelayCommand]
+    [RelayCommand]
     public async Task LoadNews()
     {
+        _logger?.Info(">>> Entrando en LoadNews");
+        
         if (IsLoading) return;
 
         //limpiamos siempre estados visuales anteriores
@@ -82,6 +88,7 @@ public partial class NewsBySourceViewModel : ObservableObject
 
         if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
         {
+            _logger?.Info("Sin conexión. Cancelando LoadMore.");
             HasError = true;
             ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
             return;
@@ -95,10 +102,10 @@ public partial class NewsBySourceViewModel : ObservableObject
             _currentOffset = 0;
 
             // Obtenemos los datos
-            var allItems = await _newsService.GetBySourceAsync(SourceId, 100); 
+            _fullListCache = await _newsService.GetBySourceAsync(SourceId, 100); 
             
             // Filtramos la primera página
-            var pagedItems = allItems.Take(PageSize).ToList();
+            var pagedItems = _fullListCache.Take(PageSize).ToList();
             var mixedItems = _adInterleaveService.Interleave(pagedItems);
 
             System.Diagnostics.Debug.WriteLine($"DEBUG NewsBySource Items totales: {pagedItems.Count} | Tras mezcla: {mixedItems.Count}");
@@ -109,8 +116,8 @@ public partial class NewsBySourceViewModel : ObservableObject
                 {
                     NewsItems.Add(item);
                 }
-
-                CanLoadMore = allItems.Count > PageSize;
+                _currentOffset = pagedItems.Count;
+                CanLoadMore = _fullListCache.Count > _currentOffset;
                 IsContentEmpty = NewsItems.Count == 0;
                 
                 // Si no hay nada tras filtrar, marcamos resultados no encontrados
@@ -137,17 +144,24 @@ public partial class NewsBySourceViewModel : ObservableObject
     [RelayCommand]
     private async Task LoadMore()
     {
+        _logger?.Info("Entrando en LoadMore");
+
         // Si ya está cargando o no hay más, salimos
         if (IsLoading || IsLoadingMore || !CanLoadMore) return;
 
+        if(Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+        {
+            HasError = true;
+            ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
+            return;
+        }
         try
         {
+            HasError = false;
+            ErrorMessage = string.Empty;
             IsLoadingMore = true; // Activamos estado específico para el footer
-            _currentOffset += PageSize;
 
-            var allItems = await _newsService.GetBySourceAsync(SourceId, 100); 
-            
-            // Simular un pequeño delay para que la transición no sea brusca (opcional)
+            _logger?.Info(">>> Voy a llamar a GetBySourceAsync");         
             await Task.Delay(300);
 
             var existingLinks = NewsItems
@@ -155,7 +169,7 @@ public partial class NewsBySourceViewModel : ObservableObject
                 .Select(n => n.Link)
                 .ToHashSet();
 
-            var newItems = allItems
+            var newItems = _fullListCache
                 .Skip(_currentOffset)
                 .Take(PageSize)
                 .Where(n => !existingLinks.Contains(n.Link))
@@ -171,7 +185,7 @@ public partial class NewsBySourceViewModel : ObservableObject
                     {
                         NewsItems.Add(item);
                     }
-                    CanLoadMore = allItems.Count > NewsItems.OfType<NewsItem>().Count();
+                    CanLoadMore = _fullListCache.Count > _currentOffset;
                 });
             }
             else
@@ -179,8 +193,13 @@ public partial class NewsBySourceViewModel : ObservableObject
                 CanLoadMore = false;
             }
         }
-        catch (Exception) 
-        { 
+        catch (Exception ex)
+        {
+            _logger?.Info(">>> Sin internet. Return.");
+            _logger.Warn($"No se pudieron cargar mas noticias de '{SourceId}': {ex.Message}");
+
+            HasError = true;
+            ErrorMessage = "No se pudieron cargar más noticias. Comprueba tu conexión e inténtalo de nuevo.";
         }
         finally 
         { 

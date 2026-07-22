@@ -4,6 +4,7 @@ namespace FeedHub_Core.Helpers;
 
 public static class SourceNameSolver
 {
+
     private static readonly Dictionary<string, string> _domainMap = new()
     {
         { "elpais.com", "El País" },

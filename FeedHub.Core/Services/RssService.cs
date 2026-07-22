@@ -143,7 +143,14 @@ private string? ExtractImageUrl(SyndicationItem item)
         // En lugar de filtrar por la URL del Namespace (que puede fallar), buscamos por nombre local
         var mediaElement = item.ElementExtensions
             .Where(e => e.OuterName == "content" || e.OuterName == "thumbnail" || e.OuterName == "group")
-            .Select(e => { try { return e.GetObject<XElement>(); } catch { return null; } })
+            .Select(e => { 
+                try {
+                     return e.GetObject<XElement>();
+                    } catch (Exception ex) 
+                    { 
+                        _logger?.Error($"Error extrayendo la imagen del RSS: {ex.Message}");
+                        return null; 
+                    }})
             .FirstOrDefault(x => x != null && (x.Attribute("url") != null || x.Descendants().Any(d => d.Attribute("url") != null)));
 
         if (mediaElement != null)
@@ -194,12 +201,16 @@ private string? ExtractImageUrl(SyndicationItem item)
                 if (fallbackMatch.Success && !fallbackMatch.Value.Contains("favicon"))
                     return fallbackMatch.Value;
             }
-            catch { continue; }
+            catch(Exception ex)
+            {
+                _logger?.Warn($"Error leyendo extension XML: {ex.Message}");
+                continue;       
+            }
         }
     }
     catch (Exception ex)
     {
-
+        _logger?.Warn($"Error extrayendo imagen del RSS: {ex.Message}");
     }
 
     return null;

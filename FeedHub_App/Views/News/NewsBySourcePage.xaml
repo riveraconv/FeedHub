@@ -307,6 +307,7 @@
                     VerticalOptions="Center"
                     HorizontalOptions="Center"
                     TranslationY="-80">
+                    <BoxView BackgroundColor = "#CC0F172A"/>
 
                     <VerticalStackLayout
                         VerticalOptions="Center"
