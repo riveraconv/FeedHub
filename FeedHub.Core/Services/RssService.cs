@@ -61,7 +61,7 @@ public class RssService : IRssService
                     var link = item.Links.FirstOrDefault()?.Uri.ToString() ?? item.Id;
                     if (string.IsNullOrEmpty(link)) continue;
 
-                    if (categoryFromDict == "technology" && feedUrl.Contains("hipertextual.com"))
+                    if (categoryFromDict == "tecnologia" && feedUrl.Contains("hipertextual.com"))
                     {
                         string titleLower = item.Title?.Text.ToLower() ?? "";
 

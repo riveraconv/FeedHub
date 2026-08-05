@@ -56,7 +56,7 @@ public partial class CategoriesBySourceViewModel : ObservableObject
             new NewsSource { Id = "3djuegos", Name = "3DJUEGOS", Description = "Análisis y noticias de juegos", Domain = "3djuegos.com", Category = "ENTRETENIMIENTO" },
             new NewsSource { Id = "hobbyconsolas", Name = "HOBBYCONSOLAS", Description = "Videojuegos y entretenimiento", Domain = "hobbyconsolas.com", Category = "ENTRETENIMIENTO" },
             new NewsSource { Id = "ign", Name = "IGN ESPAÑA", Description = "Videojuegos, cine y series", Domain = "ign.com", Category = "ENTRETENIMIENTO" },
-
+            new NewsSource { Id = "espinof", Name ="Espinof", Description = "Series y cine", Domain = "espinof.com", Category = "ENTRETENIMIENTO"  },
             // --- CIENCIA Y NATURALEZA ---
             new NewsSource { Id = "eltiempo", Name = "ELTIEMPO.ES", Description = "Previsión meteorológica", Domain = "eltiempo.es", Category = "CIENCIA" },
             new NewsSource { Id = "efeverde", Name = "EFE VERDE", Description = "Periodismo ambiental", Domain = "efeverde.com", Category = "CIENCIA" },

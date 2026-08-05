@@ -106,13 +106,11 @@ namespace FeedHub_Core.Services;
         //HyperTextual
         {"https://hipertextual.com/feed","tecnologia" },
 
-
         // VidaExtra 
         {"https://www.vidaextra.com/feedburner.xml", "entretenimiento" },
-        {"https://www.espinof.com/index.xml", "entretenimiento" },
 
-        //Eurogamer
-        {"https://www.eurogamer.es/feed/news", "entretenimiento" },
+        // Espinoff
+        {"https://www.espinof.com/index.xml", "entretenimiento" },
 
         // 3DJuegos 
         {"https://www.3djuegos.com/index.xml", "entretenimiento"},
