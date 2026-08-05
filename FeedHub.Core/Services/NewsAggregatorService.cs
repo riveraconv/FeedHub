@@ -4,6 +4,7 @@ using FeedHub_Core.Models;
 using FeedHub_Core.Utilities;
 using System.Collections.Concurrent;
 using FeedHub_Core.Helpers;
+using System.Globalization;
 
 namespace FeedHub_Core.Services;
 
@@ -223,12 +224,22 @@ namespace FeedHub_Core.Services;
                                 ? DateTime.Now.AddDays(-2)
                                 : DateTime.Now.AddDays(-7);
 
+            var compareInfo = CultureInfo.GetCultureInfo("es-ES").CompareInfo;
 
-            var filteredFeeds = _feeds.Where(kvp => 
-                kvp.Value.Equals(category, StringComparison.OrdinalIgnoreCase) && 
+            var filteredFeeds = _feeds.Where(kvp => compareInfo.Compare(
+                kvp.Value,
+                category,
+                CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) == 0 && 
                 _filterService.IsSourceActive(SourceNameSolver.Resolve(kvp.Key))
             ).ToList();
 
+            var sourceNames = string.Join(", ", filteredFeeds
+                .Select(feed => SourceNameSolver.Resolve(feed.Key))
+                .Distinct());
+
+            System.Diagnostics.Debug.WriteLine(
+                $"DEBUG Categoría recibida: '{category}' | Feeds encontrados: {filteredFeeds.Count} | Fuentes: {sourceNames}");
+            
             await Parallel.ForEachAsync(filteredFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) => //number of HTTP conections
             {
                 try

@@ -230,7 +230,7 @@ namespace FeedHub_App.ViewModels.News
 
                 var processed = items
                     .GroupBy(i => i.Source)
-                    .SelectMany(g => g.Take(4))
+                    .SelectMany(g => g.Take(8))
                     .OrderByDescending(i => i.PublishDate)
                     .ToList() ?? new List<NewsItem>();
 
