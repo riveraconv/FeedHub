@@ -1,10 +1,10 @@
 using System;
+using FeedHub_Core.Utilities;
 
 namespace FeedHub_Core.Helpers;
 
 public static class SourceNameSolver
 {
-
     private static readonly Dictionary<string, string> _domainMap = new()
     {
         { "elpais.com", "El País" },
@@ -36,21 +36,18 @@ public static class SourceNameSolver
     public static string Resolve(string? url)
     {
         if (string.IsNullOrEmpty(url)) return "Desconocida";
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        return "Desconocida";
 
-        try
-        {
-            var host = new Uri(url).Host.Replace("www.", "");
-            foreach (var kvp in _domainMap)
-                if (host.Contains(kvp.Key))
-                    return kvp.Value;
+        var host = uri.Host.Replace("www.", "");
 
-            // Si no está en el mapa, devuelve el dominio limpio
-            return host.Split('.')[0].ToUpperInvariant();
-        }
-        catch
+        foreach (var kvp in _domainMap)
         {
-            return "Desconocida";
+            if (host.Contains(kvp.Key, StringComparison.OrdinalIgnoreCase))
+                return kvp.Value;
         }
+
+        return host.Split('.')[0].ToUpperInvariant();
     }
 }
 

@@ -6,7 +6,6 @@ using FeedHub_Core.Utilities;
 using FeedHub_App.Views.News;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_App.Views.Settings;
-using Java.Util.Logging;
 
 
 namespace FeedHub_App.ViewModels.News;
@@ -175,9 +174,22 @@ public partial class NewsBySourceViewModel : ObservableObject
                 .Where(n => !existingLinks.Contains(n.Link))
                 .ToList();
 
+                var offsetBefore = _currentOffset;
+
+            System.Diagnostics.Debug.WriteLine(
+                $"DEBUG LoadMoreBySource: encontradas={newItems.Count}, " +
+                $"offsetAntes={offsetBefore}");
+
             if (newItems.Any())
             {
+                _currentOffset += newItems.Count;
+
                 var mixedNewItems = _adInterleaveService.Interleave(newItems);
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"DEBUG LoadMoreBySource: añadiendo={newItems.Count} noticias, " +
+                    $"elementosTotales={mixedNewItems.Count}, " +
+                    $"offsetDespues={_currentOffset}");
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -190,6 +202,8 @@ public partial class NewsBySourceViewModel : ObservableObject
             }
             else
             {
+                System.Diagnostics.Debug.WriteLine(
+                   "DEBUG LoadMoreBySource: no hay noticias nuevas; se desactiva la paginación.");
                 CanLoadMore = false;
             }
         }

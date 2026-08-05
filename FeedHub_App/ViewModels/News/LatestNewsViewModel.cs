@@ -149,7 +149,6 @@ namespace FeedHub_App.ViewModels.News
                 IsLoadingMore = true;
                 
                 await Task.Delay(300);
-                _currentOffset += PageSize;
 
                 var existing = News
                     .OfType<NewsItem>()  // ← filtra solo NewsItem, ignora AdItem
@@ -166,13 +165,16 @@ namespace FeedHub_App.ViewModels.News
 
                     var mixed = _adService.Interleave(nextItems);
 
+                    System.Diagnostics.Debug.WriteLine(
+                        $"DEBUG LoadMore: añadiendo {nextItems.Count} noticias ({mixed.Count} elementos incluyendo anuncios). Offset actual: {_currentOffset}");
+
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     foreach (var item in mixed)
                     {
                         News.Add(item);
                     }
-                    CanLoadMore = _fullListCache.Count > (_currentOffset + PageSize);
+                    CanLoadMore = _fullListCache.Count > _currentOffset;
                 });
             }
             catch (Exception ex)
