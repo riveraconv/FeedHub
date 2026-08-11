@@ -48,10 +48,12 @@
                         </Grid>
                         <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
                             <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="19" TextColor="#F8FAFC" LineBreakMode="WordWrap"/>
-                            <Grid ColumnDefinitions="Auto, Auto, *" ColumnSpacing="6">
+                            <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *" ColumnSpacing="6">
                                 <Label Grid.Column="0" Text="{Binding Source}" FontSize="12" TextColor="#38BDF8" FontAttributes="Bold"/>
                                 <Label Grid.Column="1" Text="•" TextColor="#475569"/>
                                 <Label Grid.Column="2" Text="{Binding PublishDate, StringFormat='{0:dd MMM, HH:mm}'}" FontSize="12" TextColor="#94A3B8"/>
+                                <Label Grid.Column="3" Text="•" TextColor="#475569"/>
+                                <Label Grid.Column="4" Text="{Binding Category}" FontSize="12" TextColor="#94A3B8" FontAttributes="Bold"/>
                             </Grid>
                             <Label Text="{Binding Description}" FontSize="14" TextColor="#94A3B8" LineBreakMode="TailTruncation" MaxLines="3"
                                    IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
