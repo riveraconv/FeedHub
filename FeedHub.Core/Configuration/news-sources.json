@@ -1,0 +1,447 @@
+[
+    {
+        "id": "elpais",
+        "name": "El País",
+        "description": "Noticias de España y el mundo",
+        "domain": "elpais.com",
+        "group": "Prensa general",
+        "feeds": [
+            {
+                "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada",
+                "category": "sociedad"
+            },
+            {
+                "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada",
+                "category": "internacional"
+            },
+            {
+                "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada" ,
+                "category": "economia"
+            },
+            {
+                "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada",
+                "category": "ciencia"
+            },
+            {
+                "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada",
+                "category": "tecnologia"
+            },
+            {
+                "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/cultura/portada",
+                "category": "cultura"
+            },
+            {
+                "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada",
+                "category": "deportes"
+            },
+            {
+                "url": "https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente",
+                "category": "ciencia"
+            },
+            {
+                "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada",
+                "category": "politica"
+            }
+        ]
+    },
+    {
+        "id": "elmundo",
+        "name": "El Mundo",
+        "description": "Líder de información en español",
+        "domain": "elmundo.es",
+        "group": "Prensa general",
+        "feeds": [
+            {
+                "url": "https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml",
+                "category": "internacional"
+            },
+            {
+                "url": "https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml",
+                "category": "economia"
+            },
+            {
+                "url": "https://e00-elmundo.uecdn.es/elmundo/rss/cultura.xml",
+                "category": "cultura"
+            },
+            {
+                "url": "https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml",
+                "category": "deportes"
+            },
+            {
+                "url": "https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml",
+                "category": "politica"
+            }
+        ]
+    },
+    {
+        "id": "lavanguardia",
+        "name": "La Vanguardia",
+        "description": "Noticias de última hora",
+        "domain": "lavanguardia.com",
+        "group": "Prensa general",
+        "feeds":[
+            {
+                "url": "https://www.lavanguardia.com/rss/internacional.xml",
+                "category": "internacional"
+            },
+            {
+                "url": "https://www.lavanguardia.com/rss/politica.xml",
+                "category": "politica"
+            },
+            {
+                "url": "https://www.lavanguardia.com/rss/deportes.xml",
+                "category": "deportes"
+            },
+            {
+                "url": "https://www.lavanguardia.com/rss/economia.xml",
+                "category": "economia"
+            },
+            {
+                "url": "https://www.lavanguardia.com/rss/cultura.xml",
+                "category": "cultura"
+            },
+            {
+                "url": "https://www.lavanguardia.com/rss/natural.xml",
+                "category": "ciencia"
+            }
+        ]
+    },
+    {
+        "id": "elperiodico",
+        "name": "El Periodico",
+        "description": "Información y análisis",
+        "domain": "elperiodico.com",
+        "group": "Prensa general",
+        "feeds":[
+            {
+                "url": "https://www.elperiodico.com/es/rss/internacional/rss.xml",
+                "category": "internacional"
+            },
+            {
+                "url": "https://www.elperiodico.com/es/rss/politica/rss.xml",
+                "category": "politica"
+            },
+            {
+                "url": "https://www.elperiodico.com/es/rss/economia/rss.xml",
+                "category": "economia"
+            },
+            {
+                "url": "https://www.elperiodico.com/es/rss/tecnologia/rss.xml",
+                "category": "tecnologia"
+            },
+            {
+                "url": "https://www.elperiodico.com/es/rss/sociedad/rss.xml",
+                "category": "sociedad"
+            },
+            {
+                "url": "https://www.elperiodico.com/es/rss/ciencia/rss.xml",
+                "category": "ciencia"
+            },
+            {
+                "url": "https://www.elperiodico.com/es/rss/deportes/rss.xml",
+                "category": "deportes"
+            },
+            {
+                "url": "https://www.elperiodico.com/es/rss/ocio-y-cultura/rss.xml",
+                "category": "cultura"
+            }
+        ]
+    },
+    {
+        "id": "20minutos",
+        "name": "20 Minutos",
+        "description": "Actualidad rápida y directa",
+        "domain": "20minutos.es",
+        "group":"Prensa general",
+        "feeds":[
+            {
+                "url": "https://www.20minutos.es/rss/internacional/",
+                "category": "internacional"
+            },
+            {
+                "url": "https://www.20minutos.es/rss/deportes/",
+                "category": "deportes"
+            },
+            {
+                "url": "https://www.20minutos.es/rss/economia",
+                "category": "economia"
+            },
+            {
+                "url": "https://www.20minutos.es/rss/tecnologia/",
+                "category": "tecnologia"
+            },
+            {
+                "url": "https://www.20minutos.es/rss/salud/",
+                "category": "ciencia"
+            },
+            {
+                "url": "https://www.20minutos.es/rss/videojuegos/",
+                "category": "entretenimiento"
+            },
+            {
+                "url": "https://www.20minutos.es/rss/cultura/",
+                "category": "cultura"
+            }
+        ]
+    },
+    {
+        "id": "elconfidencial",
+        "name": "El Confidencial",
+        "description": "Diario de lectores influyentes",
+        "domain": "elconfidencial.com",
+        "group": "Prensa general",
+        "feeds":[
+            {
+                "url": "https://rss.elconfidencial.com/espana/",
+                "category": "sociedad"
+            },
+            {
+                "url": "https://rss.elconfidencial.com/mundo/",
+                "category": "internacional"
+            },
+            {
+                "url": "https://rss.elconfidencial.com/economia/",
+                "category": "economia"
+            },
+            {
+                "url": "https://rss.elconfidencial.com/deportes/",
+                "category": "deportes"
+            },
+            {
+                "url": "https://rss.elconfidencial.com/cultura/",
+                "category": "cultura"
+            },
+            {
+                "url": "https://rss.elconfidencial.com/tecnologia/",
+                "category": "tecnologia"
+            }
+        ]
+    },
+    {
+        "id": "eldiarioes",
+        "name": "El Diario.es",
+        "group":"Prensa general",
+        "description": "Periodismo independiente",
+        "domain": "eldiario.es",
+        "feeds":[
+            {
+                "url": "https://www.eldiario.es/rss/politica/",
+                "category": "politica"
+            },
+            {
+                "url": "https://www.eldiario.es/rss/economia/",
+                "category": "economia"
+            },
+            {
+                "url": "https://www.eldiario.es/rss/cultura/",
+                "category": "cultura"
+            },
+            {
+                "url": "https://www.eldiario.es/rss/internacional/",
+                "category": "internacional"
+            },
+            {
+                "url": "https://www.eldiario.es/rss/focos/crisis-climatica/",
+                "category": "ciencia"
+            },
+            {
+                "url": "https://www.eldiario.es/rss/tecnologia/",
+                "category": "tecnologia"
+            }
+        ]
+    },
+    {
+        "id": "bbcmundo",
+        "name": "BBC Mundo",
+        "description": "Noticias internacionales en español",
+        "domain": "bbc.com",
+        "group":"Prensa general",
+        "feeds":[
+            {
+                "url": "https://feeds.bbci.co.uk/mundo/temas/ciencia/rss.xml",
+                "category": "internacional"
+            }
+        ]
+    },
+    {
+        "id": "xataka",
+        "name": "Xataka",
+        "description": "Gadgets y tecnología",
+        "domain": "xataka.com",
+        "group": "Tecnologia",
+        "feeds":[
+            {
+                "url": "https://www.xataka.com/index.xml",
+                "category": "tecnologia"
+            }
+        ]
+    },
+    {
+        "id": "applesfera",
+        "name": "Applesfera",
+        "description": "Todo sobre el mundo Apple",
+        "domain": "applesfera.com",
+        "group": "Tecnologia",
+        "feeds": [
+            {
+                "url": "https://www.applesfera.com/index.xml",
+                "category": "tecnologia"
+            }
+        ]
+    },
+    {
+        "id": "microsiervos",
+        "name": "Microsiervos",
+        "description": "Ciencia, tecnología y curiosidades",
+        "domain": "microsiervos.com",
+        "group": "Tecnologia",
+        "feeds":[
+            {
+                "url": "https://www.microsiervos.com/index.xml",
+                "category": "tecnologia"
+            }
+        ]
+    },
+    {
+        "id": "hipertextual",
+        "name": "Hipertextual",
+        "description": "Cultura digital y tecnología",
+        "domain": "hipertextual.com",
+        "group": "Tecnologia",
+        "feeds":[
+            {
+                "url": "https://hipertextual.com/feed",
+                "category": "tecnologia"
+            }
+        ]
+    },
+    {
+        "id": "vidaextra",
+        "name": "VidaExtra",
+        "description": "Mundo de los videojuegos",
+        "domain": "vidaextra.com",
+        "group": "Entretenimiento",
+        "feeds":[
+            {
+                "url": "https://www.vidaextra.com/feedburner.xml",
+                "category": "entretenimiento"
+            }
+        ]
+    },
+    {
+        "id": "espinoff",
+        "name": "Espinoff",
+        "description": "Series y cine",
+        "domain": "espinof.com",
+        "group": "Entretenimiento",
+        "feeds":[
+            {
+                "url": "https://www.espinof.com/index.xml",
+                "category": "entretenimiento"
+            }
+        ]
+    },
+    {
+        "id": "3djuegos",
+        "name": "3D Juegos",
+        "description": "Análisis y noticias de videojuegos",
+        "domain": "3djuegos.com",
+        "group": "Entretenimiento",
+        "feeds":[
+            {
+                "url": "https://www.3djuegos.com/index.xml",
+                "category": "entretenimiento"
+            }
+        ]
+    },
+    {
+        "id": "hobbyconsolas",
+        "name": "HobbyConsolas",
+        "description": "Videojuegos y entretenimiento",
+        "domain": "hobbyconsolas.com",
+        "group": "Entretenimiento",
+        "feeds":[
+            {
+                "url": "https://www.hobbyconsolas.com/rss",
+                "category": "entretenimiento"
+            }
+        ]
+    },
+    {
+        "id": "ign",
+        "name": "IGN España",
+        "description": "Videojuegos, cine y series",
+        "domain":"es.ign.com",
+        "group": "Entretenimiento",
+        "feeds":[
+            {
+                "url": "https://es.ign.com/playstation-5.xml",
+                "category": "entretenimiento"
+            },
+            {
+                "url": "https://es.ign.com/nintendo.xml",
+                "category": "entretenimiento"
+            },
+            {
+                "url": "https://es.ign.com/xbox.xml",
+                "category": "entretenimiento"
+            },
+            {
+                "url": "https://es.ign.com/pc.xml",
+                "category": "entretenimiento"
+            }
+        ]
+    },
+    {
+        "id": "eltiempoes",
+        "name": "ElTiempo.ES",
+        "description": "Previsión meteorológica",
+        "domain": "eltiempo.es",
+        "group": "Ciencia",
+        "feeds":[
+            {
+                "url": "https://www.eltiempo.es/noticias/feed",
+                "category": "ciencia"
+            }
+        ]
+    },
+    {
+        "id": "efeverde",
+        "name": "EFE VERDE",
+        "description": "Periodismo ambiental",
+        "domain": "efeverde.com",
+        "group": "Ciencia",
+        "feeds":[
+            {
+                "url": "https://efeverde.com/feed/",
+                "category": "ciencia"
+            }
+        ]
+    },
+    {
+        "id": "ecoticias",
+        "name": "ECOticias",
+        "description": "Información ecológica",
+        "domain": "ecoticias.com",
+        "group": "Ciencia",
+        "feeds":[
+            {
+                "url": "https://www.ecoticias.com/feed/",
+                "category": "ciencia"
+            }
+        ]
+    },
+    {
+        "id": "esa",
+        "name": "ESA",
+        "description": "Agencia Espacial Europea",
+        "domain": "esa.int",
+        "group": "Ciencia",
+        "feeds":[
+            {
+                "url": "https://www.esa.int/rssfeed/Spain",
+                "category": "ciencia"
+            }
+        ]
+    }
+]

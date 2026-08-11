@@ -7,7 +7,6 @@ using FeedHub_App.Views.News;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_App.Views.Settings;
 
-
 namespace FeedHub_App.ViewModels.News;
 
 [QueryProperty(nameof(SourceId), "source")]
@@ -17,6 +16,7 @@ public partial class NewsBySourceViewModel : ObservableObject
     private readonly INewsAggregatorService _newsService;
     private readonly ILogger _logger;
     private readonly AdInterleaveService _adInterleaveService;
+    private readonly SourceCatalogService _sourceCatalog;
 
     [ObservableProperty]
     string sourceId;
@@ -46,22 +46,25 @@ public partial class NewsBySourceViewModel : ObservableObject
     private List<NewsItem> _fullListCache = new();
 
     public NewsBySourceViewModel(INewsAggregatorService newsService, FilterPreferencesService filterService, AdInterleaveService adInterleaveService,
-                                ILogger logger)
+                                ILogger logger, SourceCatalogService sourceCatalog)
     {
         _newsService = newsService;
         _filterService = filterService;
         _adInterleaveService = adInterleaveService;
         _logger = logger;
+        _sourceCatalog = sourceCatalog;
+        
     }
     partial void OnSourceIdChanged(string value)
     {
         if (!string.IsNullOrEmpty(value))
         {
-            SourceTitle = GetFriendlyName(value); 
+            SourceTitle = _sourceCatalog.GetSourceName(value);
 
-            MainThread.BeginInvokeOnMainThread(async () => 
+            MainThread.BeginInvokeOnMainThread(async () =>
             {
-                await Task.Delay(250); 
+                await Task.Delay(250);
+
                 if (LoadNewsCommand.CanExecute(null))
                 {
                     await LoadNewsCommand.ExecuteAsync(null);
@@ -221,37 +224,6 @@ public partial class NewsBySourceViewModel : ObservableObject
         }
     }
 
-    private string GetFriendlyName(string id)
-    {
-        return id.ToLower() switch
-        {
-            "elpais" => "EL País",
-            "elmundo" => "El Mundo",
-            "lavanguardia" => "La Vanguardia",
-            "elperiodico" => "El Periódico",
-            "20minutos" => "20 Minutos",
-            "elconfidencial" => "El Confidencial",
-            "eldiarioes" => "ElDiario.es",
-            "bbci" or "bbc" => "BBC Mundo",
-            "xataka" => "Xataka",
-            "applesfera" => "Applesfera",
-            "microsiervos" => "Microsiervos",
-            "hipertextual" => "Hipertextual",
-            "vidaextra" => "VidaExtra",
-            "espinof" => "Espinof",
-            "3djuegos" => "3DJuegos",
-            "hobbyconsolas" => "Hobby Consolas",
-            "ign" => "IGN España",
-            "eltiempo" or "eltiempoes" => "El Tiempo.es",
-            "efeverde" => "EFE VERDE",
-            "esa" => "ESA",
-            "ecoticias" => "Ecoticias",
-            "astroaficion" => "Astroafición",
-            "fronteraespacial" => "Frontera Espacial",
-            "eurogamer" => "Eurogamer",
-            _ => "No se encuentra la fuente.."
-        };
-    }
     [RelayCommand]
     private async Task SelectNews(NewsItem item)
     {

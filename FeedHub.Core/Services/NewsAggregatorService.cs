@@ -14,137 +14,36 @@ namespace FeedHub_Core.Services;
         private readonly IRssService _rssService;
         private readonly FilterPreferencesService _filterService;
         private readonly ILogger _logger;
+        private readonly IReadOnlyList<FeedSourceConfig> _catalogSources;
+        private readonly List<KeyValuePair<string, string>> _feeds;
+
         public List<string> GetAvailableCategories() => 
-                            _feeds.Values.Distinct().OrderBy(x => x).ToList();
+                            _feeds
+                                .Select(feed => feed.Value)
+                                .Distinct()
+                                .OrderBy(category => category)
+                                .ToList();
 
         public List<string> GetAvailableSources() => 
-                            _feeds.Keys.Select(url => SourceNameSolver.Resolve(url))
-                            .Distinct()
-                            .OrderBy(x => x)
-                            .ToList();
-                            
-
-        private readonly Dictionary<string, string> _feeds = new()
-    {
-        //El Pais 
-
-        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/sociedad/portada", "sociedad" },
-        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada", "internacional" },
-        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada" ,"economia"},
-        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada", "ciencia" },
-        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada", "tecnologia"},
-        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/cultura/portada", "cultura" },
-        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada", "deportes" },
-        {"https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/clima-y-medio-ambiente", "ciencia" },
-        {"https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada", "politica" },
-
-
-        //El Mundo
-        {"https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml", "internacional"},
-        {"https://e00-elmundo.uecdn.es/elmundo/rss/economia.xml", "economia"},
-        {"https://e00-elmundo.uecdn.es/elmundo/rss/cultura.xml", "cultura" },
-        {"https://e00-elmundo.uecdn.es/elmundodeporte/rss/portada.xml", "deportes" },
-        {"https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml", "politica" },
-
-
-        //La Vanguardia
-        {"https://www.lavanguardia.com/rss/internacional.xml", "internacional"},
-        {"https://www.lavanguardia.com/rss/politica.xml", "politica" },
-        {"https://www.lavanguardia.com/rss/deportes.xml", "deportes" },
-        {"https://www.lavanguardia.com/rss/economia.xml", "economia" },
-        {"https://www.lavanguardia.com/rss/cultura.xml", "cultura" },
-        {"https://www.lavanguardia.com/rss/natural.xml", "ciencia" },
-
-
-        //El Periodico
-        {"https://www.elperiodico.com/es/rss/internacional/rss.xml", "internacional" },
-        {"https://www.elperiodico.com/es/rss/politica/rss.xml", "politica" },
-        {"https://www.elperiodico.com/es/rss/economia/rss.xml", "economia" },
-        {"https://www.elperiodico.com/es/rss/tecnologia/rss.xml", "tecnologia" },
-        {"https://www.elperiodico.com/es/rss/sociedad/rss.xml", "sociedad" },
-        {"https://www.elperiodico.com/es/rss/ciencia/rss.xml", "ciencia" },
-        {"https://www.elperiodico.com/es/rss/deportes/rss.xml", "deportes" },
-        {"https://www.elperiodico.com/es/rss/ocio-y-cultura/rss.xml", "cultura" },
-
-        //20 Minutos
-        {"https://www.20minutos.es/rss/internacional/", "internacional" },
-        {"https://www.20minutos.es/rss/deportes/", "deportes" },
-        {"https://www.20minutos.es/rss/economia", "economia" },
-        {"https://www.20minutos.es/rss/tecnologia/", "tecnologia" },
-        {"https://www.20minutos.es/rss/salud/", "ciencia" },
-        {"https://www.20minutos.es/rss/videojuegos/", "entretenimiento" },
-        {"https://www.20minutos.es/rss/cultura/", "cultura" },
-
-        //El Confidencial
-        {"https://rss.elconfidencial.com/espana/", "sociedad" },
-        {"https://rss.elconfidencial.com/mundo/", "internacional" },
-        {"https://rss.elconfidencial.com/economia/", "economia" },
-        {"https://rss.elconfidencial.com/deportes/", "deportes" },
-        {"https://rss.elconfidencial.com/cultura/", "cultura" },
-        {"https://rss.elconfidencial.com/tecnologia/", "tecnologia" },
-
-        //eldiario.es
-        {"https://www.eldiario.es/rss/politica/", "sociedad" },
-        {"https://www.eldiario.es/rss/economia/", "economia" },
-        {"https://www.eldiario.es/rss/cultura/", "cultura" },
-        {"https://www.eldiario.es/rss/internacional/", "internacional"},
-        {"https://www.eldiario.es/rss/focos/crisis-climatica/", "ciencia" },
-        {"https://www.eldiario.es/rss/tecnologia/", "tecnologia" },
-
-        //BBC Mundo
-        {"https://feeds.bbci.co.uk/mundo/temas/ciencia/rss.xml", "internacional" },
-
-        //Xataka
-        {"https://www.xataka.com/index.xml", "tecnologia" },
-
-        //Applesfera
-        {"https://www.applesfera.com/index.xml", "tecnologia" },
-
-        //Microsiervos
-        {"https://www.microsiervos.com/index.xml", "tecnologia" },
-
-        //HyperTextual
-        {"https://hipertextual.com/feed","tecnologia" },
-
-        // VidaExtra 
-        {"https://www.vidaextra.com/feedburner.xml", "entretenimiento" },
-
-        // Espinoff
-        {"https://www.espinof.com/index.xml", "entretenimiento" },
-
-        // 3DJuegos 
-        {"https://www.3djuegos.com/index.xml", "entretenimiento"},
-
-        // HobbyConsolas 
-        {"https://www.hobbyconsolas.com/rss", "entretenimiento"},
-
-        //IGN España
-        {"https://es.ign.com/playstation-5.xml", "entretenimiento" },
-        {"https://es.ign.com/nintendo.xml", "entretenimiento" },
-        {"https://es.ign.com/xbox.xml", "entretenimiento" },
-        {"https://es.ign.com/pc.xml", "entretenimiento" },
-
-        
-        //ElTiempo.es
-        {"https://www.eltiempo.es/noticias/feed", "ciencia" },
-
-        //EFE Verde
-        {"https://efeverde.com/feed/", "ciencia" },
-
-        //Econoticias
-        {"https://www.ecoticias.com/feed/", "ciencia" },
-
-        //Astronomia
-        {"https://www.esa.int/rssfeed/Spain", "ciencia"},
-        {"https://astroaficion.com/feed/", "ciencia" },
-        {"https://fronteraespacial.com/feed/", "ciencia" },
-    };
-
-        public NewsAggregatorService(IRssService rssService, ILogger logger, FilterPreferencesService filterService)
+                            _feeds
+                                .Select(feed => SourceNameSolver.Resolve(feed.Key))
+                                .Distinct()
+                                .OrderBy(source => source)
+                                .ToList();
+        public NewsAggregatorService(IRssService rssService, ILogger logger, FilterPreferencesService filterService,
+        SourceCatalogService sourceCatalog)
         {
             _rssService = rssService;
             _logger = logger;
             _filterService = filterService;
+            _catalogSources = sourceCatalog.GetSources();
+
+            _feeds = _catalogSources
+                .SelectMany(source => source.Feeds)
+                .Select(feed => new KeyValuePair<string, string>(
+                    feed.Url,
+                    feed.Category))
+                .ToList();
         }
 
         public async Task<List<NewsItem>> GetLatestMixedAsync(int limit)
@@ -331,12 +230,24 @@ namespace FeedHub_Core.Services;
         {
             var allItems = new ConcurrentBag<NewsItem>();
             int successfulFeeds = 0;
-            var cleanSourceId = sourceId.ToLower().Replace(".", "");
+            var source = _catalogSources.FirstOrDefault(source =>
+                string.Equals(
+                    source.Id,
+                    sourceId,
+                    StringComparison.OrdinalIgnoreCase));
+                
+                if (source is null)
+                {
+                    throw new ArgumentException($"No existe una fuente configurada con el ID '{sourceId}'.",
+                    nameof(sourceId));
+                }
 
-            var sourceFeeds = _feeds.Where(kvp =>
-                kvp.Key.ToLower().Replace(".", "").Contains(cleanSourceId) &&
-                _filterService.IsCategoryActive(kvp.Value)
-            ).ToList();
+                var sourceFeeds = source.Feeds
+                    .Where(feed => _filterService.IsCategoryActive(feed.Category))
+                    .Select(feed => new KeyValuePair<string, string>(
+                        feed.Url,
+                        feed.Category))
+                    .ToList();
 
             await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (kvp, ct) =>
             {
@@ -351,7 +262,7 @@ namespace FeedHub_Core.Services;
 
                     foreach (var item in items)
                     {
-                        item.Source = SourceNameSolver.Resolve(item.Link);
+                        item.Source = source.Name;
                         allItems.Add(item);
                     }
                 }

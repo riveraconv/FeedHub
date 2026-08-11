@@ -68,6 +68,7 @@ MainThread.BeginInvokeOnMainThread(() =>
             builder.Services.AddSingleton<IArticleReaderService, ArticleReaderService>();
             builder.Services.AddSingleton<QuickArticleResult>();
             builder.Services.AddSingleton<FeedHub_Core.Utilities.ILogger, PlatformLogger>();
+            builder.Services.AddSingleton<SourceCatalogService>();
             builder.Services.AddSingleton<INewsAggregatorService, NewsAggregatorService>();
             builder.Services.AddSingleton<IPreferencesService, MauiPreferencesService>();
             builder.Services.AddSingleton<FilterPreferencesService>();

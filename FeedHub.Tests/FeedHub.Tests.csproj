@@ -23,5 +23,8 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+  <ItemGroup>
+  <ProjectReference Include="..\FeedHub.Core\FeedHub_Core.csproj" />
+</ItemGroup>
 
 </Project>

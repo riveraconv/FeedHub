@@ -15,5 +15,10 @@
   <ItemGroup>
     <Folder Include="Helpers\" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\news-sources.json"
+                      LogicalName="FeedHub_Core.Configuration.news-sources.json"/>
+  </ItemGroup>
 
 </Project>
