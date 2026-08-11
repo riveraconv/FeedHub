@@ -95,7 +95,7 @@
                             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                 <Label Text="FUENTES" TextColor="#38BDF8" FontSize="10" FontAttributes="Bold"/>
                                 <Label Text="Noticias por fuente" TextColor="#F8FAFC" FontSize="18" FontAttributes="Bold"/>
-                                <Label Text="El País, El Mundo, ABC y más" TextColor="#94A3B8" FontSize="13"/>
+                                <Label Text="Lee tus diarios favoritos" TextColor="#94A3B8" FontSize="13"/>
                             </VerticalStackLayout>
                             <Button Grid.ColumnSpan="2" BackgroundColor="Transparent" Command="{Binding GoToCategoriesBySourceCommand}"/>
                         </Grid>
