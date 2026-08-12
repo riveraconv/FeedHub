@@ -131,7 +131,11 @@ namespace FeedHub_Core.Services
             "Please enable JavaScript to view the comments powered by Disqus.", "RRSS WhatsApp", "RRSS Twitter", "RRSS email",
             "¿Por qué confiar en nosotros?", "¿Quieres ayudarnos?", "con amig@s, colegas... que puedan estar interesad@s.",
             "Y si aún no lo recibes, te puedes sumar a nuestra lista de correo aquí", "Hacemos EFEVerde", "Y recuerda que puedes recibir",
-            "notificaciones en nuestra app. Descarga la última versión y actívalas."
+            "notificaciones en nuestra app. Descarga la última versión y actívalas.", "añade el mundo en google",
+            "haz que nuestras noticias aparezcan en tus búsquedas.", "márcanos como medio preferente",
+            "añádenos en google.", "elígenos como tu fuente preferida en google.", "información del artículo",
+            "autor", "tenemos una nueva app", "añade eltiempo.es a tus medios preferidos en google.",
+            "el audio de esta noticia está generado por inteligencia artificial."
             };
 
             var cleanParagraphs = new List<string>();
