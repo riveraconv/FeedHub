@@ -142,6 +142,7 @@
                      IsVisible="False"
                      VerticalOptions="Fill"
                      HorizontalOptions="Fill"
+                     Margin="0,30,0,110"
                      BackgroundColor="White"/>
 
             <Border VerticalOptions="End"
