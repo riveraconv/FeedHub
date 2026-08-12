@@ -59,6 +59,11 @@ public class RssService : IRssService
                     ct.ThrowIfCancellationRequested();
 
                     var link = item.Links.FirstOrDefault()?.Uri.ToString() ?? item.Id;
+                    if (link.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+                    {
+                        link = "https://" + link["http://".Length..];
+                    }
+                    
                     if (string.IsNullOrEmpty(link)) continue;
 
                     if (categoryFromDict == "tecnologia" && feedUrl.Contains("hipertextual.com"))
