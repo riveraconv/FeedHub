@@ -81,6 +81,8 @@ namespace FeedHub_App.Views.News
 
         private async Task LoadArticleAsync()
         {
+            ShowLoading();
+
             NoConnectionPanel.IsVisible = false;
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
@@ -185,22 +187,24 @@ namespace FeedHub_App.Views.News
 
                 // ⚙️ 4. PARSEO Y GUARDADO EN CACHE
                 var result = await Task.Run(() => _articleService.Extract(html));
-                _cacheService.Save(Link, result);
 
                 // 🧪 5. DETECTAR HTML INÚTIL
                 bool htmlIsWeak = string.IsNullOrWhiteSpace(result.Html)
                                   || result.Html.Length < 400
                                   || !result.Html.Contains("<p");
 
+                if (!htmlIsWeak)
+                {
+                    _cacheService.Save(Link, result);
+                }
+
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     // 🔴 6. FALLBACK A WEB
                     if (htmlIsWeak)
                     {
-                        ShowFullWeb();
-                        InfoBanner.IsVisible = true;
-                        InfoBanner.Text = "No se pudo generar vista rápida. Mostrando web original.";
-                        FullWebView.Source = new UrlWebViewSource { Url = Link };
+                        _logger?.Warn($"QuickView no disponible para '{Link}'. HTML insuficiente");
+                        ShowQuickViewUnavailable();
                         return;
                     }
 
@@ -247,6 +251,67 @@ namespace FeedHub_App.Views.News
                 });
             }
         }
+        private void ShowLoading()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                QuickViewContainer.IsVisible = true;
+                FullWebView.IsVisible = false;
+
+                ShareButton.IsVisible = false;
+                SpeakButton.IsVisible = false;
+                ToggleViewButton.IsVisible = false;
+
+                ArticleImage.IsVisible = false;
+
+                TitleLabel.Text = "Cargando artículo...";
+
+                ArticleWebView.Source = new HtmlWebViewSource
+                {
+                    Html = ArticleHtmlContent(@"
+                        <div style='text-align:center; padding:40px 20px;'>
+                            <p>Cargando contenido...</p>
+                        </div>")
+                };
+            });
+        }
+        private void ShowQuickViewUnavailable()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                _quickViewAvailable = false;
+                QuickViewContainer.IsVisible = true;
+                FullWebView.IsVisible = false;
+
+                ShareButton.IsVisible = true;
+                SpeakButton.IsVisible = false;
+
+                ToggleViewButton.IsVisible = true;
+                ToggleViewButton.Text = "🌐";
+
+                TitleLabel.Text = "Vista rápida no disponible";
+
+                ArticleImage.IsVisible = false;
+
+                ArticleWebView.Source = new HtmlWebViewSource
+                {
+                    Html = ArticleHtmlContent(@"
+                        <div style='text-align:center; padding:40px 20px;'>
+                            <h2>No se puede mostrar la vista rápida</h2>
+                            <p>
+                                Este medio no permite obtener el contenido del artículo
+                                directamente.
+                            </p>
+                            <p>
+                                Puedes abrir la web original para leerlo.
+                            </p>
+                        </div>")
+                };
+
+                InfoBanner.IsVisible = true;
+                InfoBanner.Text = "Abriendo el artículo original...";
+            });
+        }
         private async void OnRetryClicked(object sender, EventArgs e)
         {
             NoConnectionPanel.IsVisible = false;
@@ -259,6 +324,7 @@ namespace FeedHub_App.Views.News
             {
                 if (QuickViewContainer == null) return;
                 QuickViewContainer.IsVisible = true;
+                ArticleImage.IsVisible = true;
                 FullWebView.IsVisible = false;
 
                 ShareButton.IsVisible = true;
@@ -304,7 +370,14 @@ namespace FeedHub_App.Views.News
             }
             else
             {
-                ShowQuickView();
+                if (_quickViewAvailable)
+                {
+                    ShowQuickView();
+                }
+                else
+                {
+                    ShowQuickViewUnavailable();
+                }
             }
         }
         private void OnSourceClicked(object sender, EventArgs e)
