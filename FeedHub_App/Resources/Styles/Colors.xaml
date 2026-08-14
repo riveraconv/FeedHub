@@ -42,4 +42,56 @@
     <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
     <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
     <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
+
+    <!-- FeedHub Design System -->
+
+<!-- ========================= -->
+<!-- LIGHT PALETTE              -->
+<!-- ========================= -->
+
+<Color x:Key="FeedHubLightBackground">#F4F8FC</Color>
+<Color x:Key="FeedHubLightSurface">#FFFFFF</Color>
+<Color x:Key="FeedHubLightSurfaceSecondary">#EAF3FB</Color>
+
+<Color x:Key="FeedHubLightMainBlue">#2563EB</Color>
+<Color x:Key="FeedHubLightBlue">#DCEEFF</Color>
+<Color x:Key="FeedHubLightHighlight">#EEF6FF</Color>
+
+<Color x:Key="FeedHubLightTextPrimary">#172033</Color> <!-- título -->
+<Color x:Key="FeedHubLightTextSecondary">#5B687A</Color> <!-- subtitulo -->
+
+<Color x:Key="FeedHubLightBorder">#D8E3EF</Color>
+<Color x:Key="FeedHubLightSeparator">#E6EDF5</Color>
+
+<Color x:Key="FeedHubLightCard">#FFFFFF</Color>
+<Color x:Key="FeedHubLightCard2">#ECF2FA</Color>
+<Color x:Key="FeedHubLightCardBorder">#D8E7F5</Color>
+
+<Color x:Key="FeedHubLightAccent">#2563EB</Color>
+<Color x:Key="FeedHubLightAccentSoft">#DCEEFF</Color>
+
+<!-- ========================= -->
+<!-- DARK PALETTE               -->
+<!-- ========================= -->
+
+<Color x:Key="FeedHubDarkBackground">#141414</Color>
+<Color x:Key="FeedHubDarkSurface">#1F1F1F</Color>
+<Color x:Key="FeedHubDarkSurfaceSecondary">#0D253F</Color>
+
+<Color x:Key="FeedHubDarkMainBlue">#3B82F6</Color>
+<Color x:Key="FeedHubDarkBlue">#1E3A5F</Color>
+<Color x:Key="FeedHubDarkHighlight">#243B53</Color>
+
+<Color x:Key="FeedHubDarkTextPrimary">#F8FAFC</Color> <!-- título -->
+<Color x:Key="FeedHubDarkTextSecondary">#94A3B8</Color> <!-- subtitulo -->
+
+<Color x:Key="FeedHubDarkBorder">#343A40</Color>
+<Color x:Key="FeedHubDarkSeparator">#2A2A2A</Color>
+
+<Color x:Key="FeedHubDarkCard">#1E293B</Color>
+<Color x:Key="FeedHubDarkCardBorder">#1E3A5A</Color>
+
+<Color x:Key="FeedHubDarkAccent">#38BDF8</Color>
+<Color x:Key="FeedHubDarkAccentSoft">#334155</Color>
+
 </ResourceDictionary>
