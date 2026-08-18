@@ -6,46 +6,82 @@
              x:Class="FeedHub_App.Views.Settings.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="#0F172A">
+             BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
-    <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="LightContent" />
-    </ContentPage.Behaviors>
+        <ContentPage.Behaviors>
+            <toolkit:StatusBarBehavior StatusBarColor="Transparent" 
+                                   StatusBarStyle="{AppThemeBinding Light=DarkContent,Dark=LightContent}" />
+        </ContentPage.Behaviors>
 
     <Grid IgnoreSafeArea="True">
-        <BoxView IsEnabled="False" 
-                 InputTransparent="True"
-                 HorizontalOptions="Fill"
-                 VerticalOptions="Fill">
-            <BoxView.Background>
-                <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
-                    <GradientStop Color="#2638BDF8" Offset="0.1" />
-                    <GradientStop Color="#000F172A" Offset="0.8" />
-                </RadialGradientBrush>
-            </BoxView.Background>
-        </BoxView>
+                    <!-- GRADIENTE LIGHT -->
+                <BoxView
+                    IsEnabled="False"
+                    InputTransparent="True"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    IsVisible="{AppThemeBinding Light=True, Dark=False}">
+
+                    <BoxView.Background>
+                        <RadialGradientBrush Center="0.82,0.12" Radius="0.85">
+                            <GradientStop Color="#BFE3FF" Offset="0.0" />
+                            <GradientStop Color="#EAF5FF" Offset="0.35" />
+                            <GradientStop Color="#F4F8FC" Offset="1.0" />
+                        </RadialGradientBrush>
+                    </BoxView.Background>
+                </BoxView>
+
+
+                <!-- GRADIENTE DARK -->
+                <BoxView
+                    IsEnabled="False"
+                    InputTransparent="True"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    IsVisible="{AppThemeBinding Light=False, Dark=True}">
+
+                    <BoxView.Background>
+                        <RadialGradientBrush Center="0.8,0.2" Radius="0.8">
+                            <GradientStop Color="#2638BDF8" Offset="0.1" />
+                            <GradientStop Color="#101E32" Offset="0.45" />
+                            <GradientStop Color="#141414" Offset="1.0" />
+                        </RadialGradientBrush>
+                    </BoxView.Background>
+            </BoxView>
 
         <Grid RowDefinitions="Auto, *" Padding="0,45,0,0">
             
             <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
-                <Label Text="AJUSTES" TextColor="#38BDF8" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
-                <Label Text="Configuración" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
-                <BoxView HeightRequest="3" BackgroundColor="#38BDF8" WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
+                <Label  Text="AJUSTES"
+                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightMainBlue}, Dark={StaticResource FeedHubDarkAccent}}"
+                        FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+                <Label  Text="Configuración"
+                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
+                        FontSize="32" FontAttributes="Bold"/>
+                <BoxView HeightRequest="3"
+                         BackgroundColor= "{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
+                         WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
             </VerticalStackLayout>
 
             <Grid Grid.Row="1" RowDefinitions="*, Auto" Padding="25,10,25,20">
                 <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never">
                 <VerticalStackLayout Grid.Row="0" Spacing="15">
                     
-                    <Border Stroke="#1E3A5A"
-                            StrokeThickness="1"
+                    <Border StrokeThickness="1"
                             StrokeShape="RoundRectangle 24"
-                            BackgroundColor="#1E293B"
+                            Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
+                                        Dark={StaticResource FeedHubDarkCardBorder}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
+                                    Dark={StaticResource FeedHubDarkCard}}"
                             Padding="20">
                         <Grid ColumnDefinitions="*, Auto">
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                                <Label Text="Modo oscuro" FontSize="18" FontAttributes="Bold" TextColor="White"/>
-                                <Label Text="Forzar tema oscuro para la vista rápida" FontSize="13" TextColor="#94A3B8" />
+                                <Label Text="Modo oscuro" FontSize="18" FontAttributes="Bold" 
+                                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
+                                                    Dark={StaticResource FeedHubDarkTextPrimary}}"/>
+                                <Label Text="Forzar tema oscuro para la vista rápida" FontSize="13" 
+                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                                            Dark={StaticResource FeedHubDarkTextSecondary}}"/>
                             </VerticalStackLayout>
                             <Switch Grid.Column="1" 
                                     IsToggled="{Binding IsDarkMode}"
@@ -54,15 +90,21 @@
                         </Grid>
                     </Border>
 
-                    <Border Stroke="#1E3A5A"
-                            StrokeThickness="1"
+                    <Border StrokeThickness="1"
                             StrokeShape="RoundRectangle 24"
-                            BackgroundColor="#1E293B"
+                            Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
+                                        Dark={StaticResource FeedHubDarkCardBorder}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
+                                        Dark={StaticResource FeedHubDarkCard}}"
                             Padding="20">
                         <Grid ColumnDefinitions="*, Auto">
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                                <Label Text="Limpiar Caché" FontSize="18" FontAttributes="Bold" TextColor="White" />
-                                <Label Text="Borra temporalmente los datos locales" FontSize="13" TextColor="#94A3B8" />
+                                <Label Text="Limpiar Caché" FontSize="18" FontAttributes="Bold" 
+                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
+                                                    Dark={StaticResource FeedHubDarkTextPrimary}}" />
+                                <Label Text="Borra temporalmente los datos locales" FontSize="13"
+                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                                            Dark={StaticResource FeedHubDarkTextSecondary}}"/>
                             </VerticalStackLayout>
                             <Button Grid.Column="1" 
                                     Command="{Binding ClearCacheCommand}"
@@ -72,15 +114,19 @@
                                     HeightRequest="40"
                                     WidthRequest="100"
                                     CornerRadius="20"
-                                    BackgroundColor="#0F172A"
-                                    TextColor="#38BDF8"/>
+                                    Background="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft},
+                                            Dark={StaticResource FeedHubDarkAccentSoft}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},
+                                                Dark={StaticResource FeedHubDarkAccent}}"/>
                         </Grid>
                     </Border>
 
-                    <Border Stroke="#1E3A5A"
-                            StrokeThickness="1"
+                    <Border StrokeThickness="1"
                             StrokeShape="RoundRectangle 24"
-                            BackgroundColor="#1E293B"
+                            Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
+                                        Dark={StaticResource FeedHubDarkCardBorder}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
+                                        Dark={StaticResource FeedHubDarkCard}}"
                             Padding="20">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding GoToFiltersCommand}" />
@@ -88,8 +134,12 @@
 
                         <Grid ColumnDefinitions="*, Auto">
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                                <Label Text="Personalizar contenido" FontSize="18" FontAttributes="Bold" TextColor="White"/>
-                                <Label Text="Filtra tus categorías o medios preferidos" FontSize="13" TextColor="#94A3B8"/>
+                                <Label Text="Personalizar contenido" FontSize="18" FontAttributes="Bold" 
+                                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
+                                                    Dark={StaticResource FeedHubDarkTextPrimary}}"/>
+                                <Label Text="Filtra tus categorías o medios preferidos" FontSize="13"
+                                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                                            Dark={StaticResource FeedHubDarkTextSecondary}}"/>
                             </VerticalStackLayout>
                             
                             <Label Grid.Column="1" 
@@ -106,7 +156,7 @@
                 <Label Grid.Row="1" 
                         Text="{Binding AppVersion}" 
                         TextColor="#475569" 
-                        FontSize="11" 
+                        FontSize="12" 
                         HorizontalOptions="Start"
                         VerticalOptions="End"
                         Margin="0,0,0,30"/>
