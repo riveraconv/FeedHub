@@ -61,7 +61,7 @@
 <Color x:Key="FeedHubLightTextSecondary">#5B687A</Color> <!-- subtitulo -->
 
 <Color x:Key="FeedHubLightBorder">#D8E3EF</Color>
-<Color x:Key="FeedHubLightSeparator">#E6EDF5</Color>
+<Color x:Key="FeedHubLightSeparator">#CBD8E6</Color>
 
 <Color x:Key="FeedHubLightCard">#FFFFFF</Color>
 <Color x:Key="FeedHubLightCard2">#ECF2FA</Color>
@@ -69,6 +69,7 @@
 
 <Color x:Key="FeedHubLightAccent">#2563EB</Color>
 <Color x:Key="FeedHubLightAccentSoft">#DCEEFF</Color>
+<Color x:Key="FeedHubLightTextAccent">#38BDF8</Color>
 
 <!-- ========================= -->
 <!-- DARK PALETTE               -->
@@ -93,5 +94,6 @@
 
 <Color x:Key="FeedHubDarkAccent">#38BDF8</Color>
 <Color x:Key="FeedHubDarkAccentSoft">#334155</Color>
+<Color x:Key="FeedHubDarkTextAccent">#38BDF8</Color>
 
 </ResourceDictionary>
