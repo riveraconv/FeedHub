@@ -82,26 +82,16 @@
                 <DataTrigger TargetType="Button"
                              Binding="{Binding ShowCategories}"
                              Value="True">
-                    <Setter Property="BackgroundColor"
-                            Value="{AppThemeBinding
-                                Light={StaticResource FeedHubLightAccent},
-                                Dark={StaticResource FeedHubDarkAccent}}" />
-                    <Setter Property="TextColor"
-                            Value="{AppThemeBinding
-                                Light={StaticResource FeedHubLightSurface},
-                                Dark={StaticResource FeedHubDarkTextPrimary}}" />
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" />
+                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource FeedHubLightSurface},Dark={StaticResource FeedHubDarkTextPrimary}}" />
                 </DataTrigger>
 
                 <!-- NO SELECCIONADA -->
                 <DataTrigger TargetType="Button"
                              Binding="{Binding ShowCategories}"
                              Value="False">
-                    <Setter Property="BackgroundColor"
-                            Value="Transparent" />
-                    <Setter Property="TextColor"
-                            Value="{AppThemeBinding
-                                Light={StaticResource FeedHubLightTextSecondary},
-                                Dark={StaticResource FeedHubDarkTextSecondary}}" />
+                    <Setter Property="BackgroundColor" Value="Transparent" />
+                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},Dark={StaticResource FeedHubDarkTextSecondary}}" />
                 </DataTrigger>
 
             </Button.Triggers>
@@ -123,13 +113,9 @@
                              Binding="{Binding ShowCategories}"
                              Value="False">
                     <Setter Property="BackgroundColor"
-                            Value="{AppThemeBinding
-                                Light={StaticResource FeedHubLightAccent},
-                                Dark={StaticResource FeedHubDarkAccent}}" />
+                            Value="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" />
                     <Setter Property="TextColor"
-                            Value="{AppThemeBinding
-                                Light={StaticResource FeedHubLightSurface},
-                                Dark={StaticResource FeedHubDarkTextPrimary}}" />
+                            Value="{AppThemeBinding Light={StaticResource FeedHubLightSurface},Dark={StaticResource FeedHubDarkTextPrimary}}" />
                 </DataTrigger>
 
                 <!-- NO SELECCIONADA -->
@@ -139,9 +125,7 @@
                     <Setter Property="BackgroundColor"
                             Value="Transparent" />
                     <Setter Property="TextColor"
-                            Value="{AppThemeBinding
-                                Light={StaticResource FeedHubLightTextSecondary},
-                                Dark={StaticResource FeedHubDarkTextSecondary}}" />
+                            Value="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}" />
                 </DataTrigger>
 
             </Button.Triggers>
@@ -159,15 +143,12 @@
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:FilterItem">
                                 <Border Margin="0,0,0,10" Padding="20,0"
-                                        Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
-                                            Dark={StaticResource FeedHubDarkCardBorder}}"
-                                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
-                                        Dark={StaticResource FeedHubDarkCard}}"
+                                        Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},Dark={StaticResource FeedHubDarkCardBorder}}"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},Dark={StaticResource FeedHubDarkCard}}"
                                      StrokeShape="RoundRectangle 24" StrokeThickness="2">
                                     <Grid ColumnDefinitions="*, Auto">
                                         <Label Text="{Binding Title}"
-                                                TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
-                                                            Dark={StaticResource FeedHubDarkTextPrimary}}"
+                                                TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},Dark={StaticResource FeedHubDarkTextPrimary}}"
                                                 VerticalOptions="Center" FontSize="16" FontAttributes="Bold"/>
                                         <Switch Grid.Column="1" 
                                                 IsToggled="{Binding IsActive}"
@@ -186,15 +167,12 @@
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:FilterItem">
                                 <Border Margin="0,0,0,10" Padding="20,0"
-                                        Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
-                                                Dark={StaticResource FeedHubDarkCardBorder}}"
-                                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
-                                        Dark={StaticResource FeedHubDarkCard}}"
+                                        Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},Dark={StaticResource FeedHubDarkCardBorder}}"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},Dark={StaticResource FeedHubDarkCard}}"
                                         StrokeShape="RoundRectangle 24" StrokeThickness="2">
                                     <Grid ColumnDefinitions="*, Auto">
                                         <Label Text="{Binding Title}"
-                                                TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
-                                                    Dark={StaticResource FeedHubDarkTextPrimary}}"
+                                                TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},Dark={StaticResource FeedHubDarkTextPrimary}}"
                                                 VerticalOptions="Center" FontSize="16" FontAttributes="Bold"/>
                                         <Switch Grid.Column="1" 
                                                 IsToggled="{Binding IsActive}"
