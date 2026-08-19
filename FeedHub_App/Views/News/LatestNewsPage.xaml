@@ -5,7 +5,6 @@
              xmlns:models="clr-namespace:FeedHub_Core.Models;assembly=FeedHub_Core"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:utils="clr-namespace:FeedHub_App.Utilities"
-
              x:Class="FeedHub_App.Views.News.LatestNewsPage"
              x:Name="Page"
              Shell.NavBarIsVisible="False"
@@ -23,9 +22,10 @@
             <DataTemplate x:Key="NewsTemplate">
                 <Border StrokeThickness="2" 
                         Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder}, Dark={StaticResource FeedHubDarkCardBorder}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkCard}}"
                         StrokeShape="RoundRectangle 24"
-                        Margin="10,10,10,10"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkCard}}">
+                        Margin="10,10,10,10">
+                        
                     <Grid RowDefinitions="200, Auto">
                         <Grid Grid.Row="0">
                             <BoxView HorizontalOptions="Fill" VerticalOptions="Fill">
@@ -103,9 +103,9 @@
             <DataTemplate x:Key="AdTemplate">
                 <Border StrokeThickness="2" 
                         Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder}, Dark={StaticResource FeedHubDarkCardBorder}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkCard}}"
                         StrokeShape="RoundRectangle 24"
-                        Margin="10,10,10,10"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkCard}}">
+                        Margin="10,10,10,10">
                     <Grid RowDefinitions="200, Auto">
 
                         <!-- ZONA IMAGEN — mismo tamaño que las noticias -->
@@ -235,10 +235,10 @@
                                 <Border IsVisible="{Binding CanLoadMore}"
                                         BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft},
                                                         Dark={StaticResource FeedHubDarkAccentSoft}}" 
-                                        StrokeShape="RoundRectangle 25" 
-                                        StrokeThickness="1" 
                                         Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
-                                                Dark={StaticResource FeedHubDarkCardBorder}}" 
+                                                Dark={StaticResource FeedHubDarkCardBorder}}"
+                                        StrokeShape="RoundRectangle 25" 
+                                        StrokeThickness="1"  
                                         HorizontalOptions="Fill" WidthRequest="200" HeightRequest="40">
                                     <Border.Triggers>
                                         <DataTrigger TargetType="Border" Binding="{Binding IsLoading}" Value="True">

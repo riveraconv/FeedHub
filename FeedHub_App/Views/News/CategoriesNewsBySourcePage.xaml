@@ -7,28 +7,56 @@
              x:DataType="viewmodels:CategoriesBySourceViewModel"
              x:Name="PageRoot"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="#0F172A">
+             BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="LightContent"/>
+        <toolkit:StatusBarBehavior StatusBarColor="Transparent" 
+                                   StatusBarStyle="{AppThemeBinding Light=DarkContent,Dark=LightContent}" />
     </ContentPage.Behaviors>
 
     <Grid IgnoreSafeArea="True">
-        <BoxView InputTransparent="True">
-            <BoxView.Background>
-                <RadialGradientBrush Center="0.8,0.2" Radius="0.7">
-                    <GradientStop Color="#2638BDF8" Offset="0.1"/>
-                    <GradientStop Color="#000F172A" Offset="0.8"/>
-                </RadialGradientBrush>
-            </BoxView.Background>
-        </BoxView>
+                    <!-- GRADIENTE LIGHT -->
+                <BoxView
+                    IsEnabled="False"
+                    InputTransparent="True"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    IsVisible="{AppThemeBinding Light=True, Dark=False}">
+
+                    <BoxView.Background>
+                        <RadialGradientBrush Center="0.82,0.12" Radius="0.85">
+                            <GradientStop Color="#BFE3FF" Offset="0.0" />
+                            <GradientStop Color="#EAF5FF" Offset="0.35" />
+                            <GradientStop Color="#F4F8FC" Offset="1.0" />
+                        </RadialGradientBrush>
+                    </BoxView.Background>
+                </BoxView>
+
+
+                <!-- GRADIENTE DARK -->
+                <BoxView
+                    IsEnabled="False"
+                    InputTransparent="True"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    IsVisible="{AppThemeBinding Light=False, Dark=True}">
+
+                    <BoxView.Background>
+                        <RadialGradientBrush Center="0.8,0.2" Radius="0.8">
+                            <GradientStop Color="#2638BDF8" Offset="0.1" />
+                            <GradientStop Color="#101E32" Offset="0.45" />
+                            <GradientStop Color="#141414" Offset="1.0" />
+                        </RadialGradientBrush>
+                    </BoxView.Background>
+            </BoxView>
 
         <Grid RowDefinitions="Auto,*" Padding="0,45,0,0">
 
             <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,15">
-                <Label Text="FEEDHUB" TextColor="#38BDF8" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
-                <Label Text="Noticias por fuente" TextColor="#F8FAFC" FontSize="32" FontAttributes="Bold"/>
-                <BoxView HeightRequest="3" WidthRequest="40" BackgroundColor="#38BDF8" Margin="0,8,0,0" HorizontalOptions="Start"/>
+                <Label Text="FEEDHUB" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightMainBlue}, Dark={StaticResource FeedHubDarkAccent}}" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+                <Label Text="Noticias por fuente" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" FontSize="32" FontAttributes="Bold"/>
+                <BoxView HeightRequest="3" WidthRequest="40" BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
+                         Margin="0,8,0,0" HorizontalOptions="Start"/>
             </VerticalStackLayout>
 
             <CollectionView Grid.Row="1"
@@ -40,7 +68,7 @@
                 <CollectionView.GroupHeaderTemplate>
                     <DataTemplate x:DataType="viewmodels:SourceGroup">
                         <Label Text="{Binding CategoryTitle}"
-                               TextColor="#38BDF8"
+                               TextColor="{AppThemeBinding Light={StaticResource FeedHubLightMainBlue}, Dark={StaticResource FeedHubDarkAccent}}"
                                FontSize="11"
                                FontAttributes="Bold"
                                CharacterSpacing="2"
@@ -54,14 +82,17 @@
                         <Grid Padding="20,5">
 
                             <Border StrokeShape="RoundRectangle 24"
-                                    BackgroundColor="#10FFFFFF"
-                                    Stroke="#2638BDF8"
+                                    Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
+                                        Dark={StaticResource FeedHubDarkCardBorder}}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
+                                        Dark={StaticResource FeedHubDarkCard}}"
                                     StrokeThickness="2">
                                 <Grid ColumnDefinitions="Auto,*,Auto" Padding="15,12">
                                     <Border Grid.Column="0"
                                             WidthRequest="42" HeightRequest="42"
                                             StrokeShape="RoundRectangle 12"
-                                            BackgroundColor="#1E293B"
+                                            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
+                                        Dark={StaticResource FeedHubDarkCard}}"
                                             StrokeThickness="0">
                                         <Image Source="{Binding Domain, StringFormat='https://www.google.com/s2/favicons?domain={0}&amp;sz=64'}"
                                                WidthRequest="26" HeightRequest="26"
@@ -69,8 +100,10 @@
                                     </Border>
 
                                     <VerticalStackLayout Grid.Column="1" Spacing="1" Margin="15,0,0,0" VerticalOptions="Center">
-                                        <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold" TextColor="#F8FAFC"/>
-                                        <Label Text="{Binding Description}" FontSize="11" TextColor="#94A3B8" LineBreakMode="TailTruncation"/>
+                                        <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
+                                                      Dark={StaticResource FeedHubDarkTextPrimary}}"/>
+                                        <Label Text="{Binding Description}" FontSize="11" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                Dark={StaticResource FeedHubDarkTextSecondary}}" LineBreakMode="TailTruncation"/>
                                     </VerticalStackLayout>
 
                                     <Label Grid.Column="2" Text="→" FontSize="22" TextColor="#38BDF8" VerticalOptions="Center"/>
@@ -87,7 +120,7 @@
                 </CollectionView.ItemTemplate>
 
                 <CollectionView.Footer>
-                    <BoxView HeightRequest="50" Color="#0F172A"/>
+                    <BoxView HeightRequest="50" Color="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}"/>
                 </CollectionView.Footer>
 
             </CollectionView>

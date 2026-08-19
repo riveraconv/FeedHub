@@ -57,9 +57,7 @@
                         FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
 
                 <Label  Text="Noticias por categoría"
-                        TextColor="{AppThemeBinding
-                        Light={StaticResource FeedHubLightTextPrimary},
-                        Dark={StaticResource FeedHubDarkTextPrimary}}"  
+                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},Dark={StaticResource FeedHubDarkTextPrimary}}"  
                         FontSize="32" FontAttributes="Bold"/>
                 <BoxView HeightRequest="3" 
                          BackgroundColor= "{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
