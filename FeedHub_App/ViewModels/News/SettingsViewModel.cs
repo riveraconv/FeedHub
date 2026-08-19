@@ -9,14 +9,14 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private bool _isDarkMode;
     [ObservableProperty]
-    string appVersion;
+    string _appVersion;
 
     public SettingsViewModel()
     {
         // Al arrancar, leemos de Preferences. 
         // Si no existe, usamos el tema actual del sistema.
         IsDarkMode = Preferences.Default.Get("DarkMode", Application.Current.RequestedTheme == AppTheme.Dark);
-        appVersion = $"V.{AppInfo.Current.VersionString} (Build {AppInfo.Current.BuildString})";
+        _appVersion = $"V.{AppInfo.Current.VersionString} (Build {AppInfo.Current.BuildString})";
     }
 
     // Este m�todo se ejecuta AUTOM�TICAMENTE cuando cambias el Switch
@@ -33,11 +33,11 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task ClearCache()
     {
-        bool confirm = await Shell.Current.DisplayAlert("Clear Cache", "Are you sure you want to delete temporary data?", "Yes", "No");
+        bool confirm = await Shell.Current.DisplayAlert("Limpiar Cache", "Confirma para borrar la caché temporal.", "Si", "No");
         if (confirm)
         {
             await Task.Delay(1000); // Simulaci�n
-            await Shell.Current.DisplayAlert("Done", "News Cache was cleared", "OK");
+            await Shell.Current.DisplayAlert("Listo", "Caché de noticias borrado", "OK");
         }
     }
 
