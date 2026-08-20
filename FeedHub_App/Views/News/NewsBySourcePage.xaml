@@ -9,10 +9,11 @@
              x:DataType="viewmodels:NewsBySourceViewModel"
              x:Name="thisPage"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="#0F172A">
+             BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="Transparent" StatusBarStyle="LightContent"/>
+        <toolkit:StatusBarBehavior StatusBarColor="Transparent" 
+                                   StatusBarStyle="{AppThemeBinding Light=DarkContent,Dark=LightContent}" />
     </ContentPage.Behaviors>
 
     <ContentPage.Resources>
@@ -20,17 +21,29 @@
             <!-- PLANTILLA PARA NOTICIAS -->
             <DataTemplate x:Key="NewsTemplate" x:DataType="models:NewsItem">
                 <Grid>
-                    <Border Stroke="#1E3A5A"
-                            StrokeThickness="2"
+                    <Border StrokeThickness="2"
                             StrokeShape="RoundRectangle 24"
                             Margin="10,10,10,10"
-                            BackgroundColor="#1E293B">
+                            Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder}, Dark={StaticResource FeedHubDarkCardBorder}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkCard}}" >
                                 
                         <Grid RowDefinitions="200, Auto">
                             <Grid Grid.Row="0">
-                                <BoxView BackgroundColor="#1E3A5A" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                                <BoxView HorizontalOptions="Fill" VerticalOptions="Fill">
+                                <BoxView.Background>
+                                    <RadialGradientBrush Center="0.8,0.15"
+                                                        Radius="0.9">
+                                        <GradientStop
+                                            Color="{AppThemeBinding Light=#BFDFFF, Dark=#2638BDF8}"
+                                            Offset="0.0"/>
+                                        <GradientStop
+                                            Color="{AppThemeBinding Light=#EAF3FB, Dark =#0D253F}"
+                                            Offset="0.75"/>
+                                    </RadialGradientBrush>
+                                </BoxView.Background>
+                            </BoxView>
                                 <Label Text="FeedHub"
-                                       TextColor="#4DA8E8"
+                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightMainBlue}, Dark={StaticResource FeedHubDarkAccent}}"
                                        FontSize="38"
                                        FontAttributes="Bold"
                                        HorizontalOptions="Center"
@@ -41,46 +54,56 @@
                                        Aspect="AspectFill"
                                        IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}"/>
                                                
-                                <BoxView VerticalOptions="End" HeightRequest="30">
-                                    <BoxView.Background>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                            <GradientStop Color="Transparent" Offset="0"/>
-                                            <GradientStop Color="#1E293B" Offset="1"/>
-                                        </LinearGradientBrush>
-                                    </BoxView.Background>
-                                </BoxView>
+                                <BoxView VerticalOptions="End" HeightRequest="30" InputTransparent="True">
+                                <BoxView.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="Transparent" Offset="0"/>
+                                        <GradientStop Color="{AppThemeBinding Light=#ECF2FA, Dark=#1E293B}"
+                                                      Offset="1"/>
+                                    </LinearGradientBrush>
+                                </BoxView.Background>
+                            </BoxView>
                             </Grid>
 
                             <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
                                 <Label Text="{Binding Title}"
                                        FontAttributes="Bold"
                                        FontSize="19"
-                                       TextColor="#F8FAFC"
+                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
+                                                Dark={StaticResource FeedHubDarkTextPrimary}}" 
                                        LineBreakMode="WordWrap"/>
                                 <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *" ColumnSpacing="6">
                                     <Label Grid.Column="0"
                                            Text="{Binding Source}"
                                            FontSize="12"
-                                           TextColor="#38BDF8"
+                                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},
+                                                    Dark={StaticResource FeedHubDarkAccent}}"
                                            FontAttributes="Bold"/>
                                     <Label Grid.Column="1"
                                            Text="•"
-                                           TextColor="#94A3B8"/>
+                                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                                            Dark={StaticResource FeedHubDarkTextSecondary}}"/>
                                     <Label Grid.Column="2"
                                            Text="{Binding PublishDate, StringFormat='{0:dd MMM, HH:mm}'}"
                                            FontSize="12"
-                                           TextColor="#94A3B8"/>
-                                    <Label Grid.Column="3" Text="•" TextColor="#475569"/>
-                                    <Label Grid.Column="4" Text="{Binding Category}" FontSize="12" TextColor="#94A3B8" FontAttributes="Bold"/>
+                                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                        Dark={StaticResource FeedHubDarkTextSecondary}}"/>
+                                    <Label Grid.Column="3" Text="•" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                                            Dark={StaticResource FeedHubDarkTextSecondary}}"/>
+                                    <Label Grid.Column="4" Text="{Binding Category}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                Dark={StaticResource FeedHubDarkTextSecondary}}"
+                                            FontAttributes="Bold"/>
                                 </Grid>
                                 <Label Text="{Binding Description}"
                                        FontSize="14"
-                                       TextColor="#94A3B8"
+                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                                Dark={StaticResource FeedHubDarkTextSecondary}}"
                                        LineBreakMode="TailTruncation"
                                        MaxLines="3"
                                        IsVisible="{Binding Description, Converter={StaticResource NullToBoolConverter}}"/>
                                 <Label Text="Leer noticia completa →"
-                                       TextColor="#38BDF8"
+                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},
+                                            Dark={StaticResource FeedHubDarkAccent}}"
                                        FontSize="13"
                                        FontAttributes="Bold"
                                        HorizontalOptions="End"
@@ -99,26 +122,27 @@
 
             <!-- PLANTILLA PARA PUBLICIDAD (Opcional) -->
 <DataTemplate x:Key="AdTemplate">
-    <Border StrokeThickness="2" Stroke="#1E3A5A"
+    <Border StrokeThickness="2"
             StrokeShape="RoundRectangle 24"
             Margin="10,10,10,10"
-            BackgroundColor="#1E293B">
+            Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder}, Dark={StaticResource FeedHubDarkCardBorder}}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkCard}}">
         <Grid RowDefinitions="200, Auto">
 
             <!-- ZONA IMAGEN — mismo tamaño que las noticias -->
-            <Grid Grid.Row="0" BackgroundColor="#0F172A">
+            <Grid Grid.Row="0" BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkSurfaceSecondary}}">
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
                     <Label Text="📢"
                            FontSize="48"
                            HorizontalOptions="Center"/>
                     <Label Text="ESPACIO PUBLICITARIO"
-                           TextColor="#38BDF8"
+                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
                            FontSize="11"
                            FontAttributes="Bold"
                            CharacterSpacing="2"
                            HorizontalOptions="Center"/>
                     <Label Text="Aquí aparecerá tu anuncio"
-                           TextColor="#475569"
+                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
                            FontSize="12"
                            HorizontalOptions="Center"/>
                 </VerticalStackLayout>
@@ -128,18 +152,18 @@
             <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
                 <Grid ColumnDefinitions="Auto, *">
                     <Border Grid.Column="0"
-                            BackgroundColor="#1E3A5A"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft}, Dark={StaticResource FeedHubDarkAccentSoft}}"
                             StrokeShape="RoundRectangle 4"
                             Padding="6,2"
                             StrokeThickness="0">
                         <Label Text="Anuncio"
-                               TextColor="#38BDF8"
+                               TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
                                FontSize="10"
                                FontAttributes="Bold"/>
                     </Border>
                     <Label Grid.Column="1"
                            Text="Contenido patrocinado"
-                           TextColor="#475569"
+                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
                            FontSize="12"
                            VerticalOptions="Center"
                            Margin="8,0,0,0"/>
@@ -148,13 +172,13 @@
                 <Label Text="Tu anuncio aparecerá aquí"
                        FontAttributes="Bold"
                        FontSize="19"
-                       TextColor="#F8FAFC"
+                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
                        LineBreakMode="WordWrap"
                        Opacity="0.3"/>
                        
                 <Label Text="Descripción del anuncio..."
                        FontSize="14"
-                       TextColor="#94A3B8"
+                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
                        LineBreakMode="TailTruncation"
                        MaxLines="3"
                        Opacity="0.3"/>
@@ -176,27 +200,39 @@
                  HorizontalOptions="Fill"
                  VerticalOptions="Fill">
             <BoxView.Background>
-                <RadialGradientBrush Center="0.8, 0.2" Radius="0.7">
-                    <GradientStop Color="#2638BDF8" Offset="0.1"/>
-                    <GradientStop Color="#000F172A" Offset="0.8"/>
-                </RadialGradientBrush>
-            </BoxView.Background>
+        <RadialGradientBrush Center="0.8,0.2"
+                             Radius="0.7">
+
+            <GradientStop
+                Color="{AppThemeBinding
+                    Light=#B8DFFF,
+                    Dark=#2638BDF8}"
+                Offset="0.1" />
+
+            <GradientStop
+                Color="{AppThemeBinding
+                    Light=#00F4F8FC,
+                    Dark=#000F172A}"
+                Offset="0.8" />
+
+        </RadialGradientBrush>
+    </BoxView.Background>
         </BoxView>
 
         <Grid RowDefinitions="Auto,*" Padding="0,45,0,0">
 
             <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
                 <Label Text="NOTICIAS POR FUENTE"
-                        TextColor="#38BDF8"
+                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
                         FontSize="12"
                         FontAttributes="Bold"
                         CharacterSpacing="2"/>
                 <Label Text="{Binding SourceTitle}"
-                        TextColor="#F8FAFC"
+                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
                         FontSize="32"
                         FontAttributes="Bold"/>
                 <BoxView HeightRequest="3"
-                        BackgroundColor="#38BDF8"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
                         WidthRequest="40"
                         HorizontalOptions="Start"
                         Margin="0,8,0,0"/>
@@ -216,8 +252,10 @@
                         <VerticalStackLayout Padding="35,10,35,50" Spacing="0">
                             <Grid HeightRequest="50">
                                 <Border IsVisible="{Binding CanLoadMore}"
-                                        BackgroundColor="#334155"
-                                        Stroke="#1E3A5A"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft},
+                                                        Dark={StaticResource FeedHubDarkAccentSoft}}" 
+                                        Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
+                                                Dark={StaticResource FeedHubDarkCardBorder}}"
                                         StrokeShape="RoundRectangle 20"
                                         WidthRequest="200"
                                         HeightRequest="40">
@@ -239,7 +277,8 @@
                                         <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#38BDF8, Size=16}"
                                                VerticalOptions="Center"/>
                                         <Label Text="Cargar más noticias"
-                                               TextColor="#F8FAFC"
+                                               TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextAccent},
+                                                          Dark={StaticResource FeedHubDarkTextAccent}}"
                                                FontAttributes="Bold"
                                                VerticalOptions="Center"/>
                                         <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#38BDF8, Size=16}"
@@ -249,7 +288,8 @@
 
                                 <ActivityIndicator IsVisible="{Binding IsLoadingMore}"
                                                    IsRunning="{Binding IsLoadingMore}"
-                                                   Color="#38BDF8"
+                                                   Color="{AppThemeBinding Light={StaticResource FeedHubLightAccent},
+                                                        Dark={StaticResource FeedHubDarkAccent}}"
                                                    HorizontalOptions="Center"
                                                    VerticalOptions="Center"
                                                    HeightRequest="30"
@@ -273,7 +313,7 @@
 
                         <ActivityIndicator
                             IsRunning="{Binding IsLoading}"
-                            Color="#38BDF8"
+                            Color="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}" 
                             HorizontalOptions="Center"
                             HeightRequest="50"
                             WidthRequest="50"/>
@@ -281,7 +321,7 @@
                         <Label
                             Text="Preparando noticias..."
                             HorizontalTextAlignment="Center"
-                            TextColor="#94A3B8"
+                            TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}" 
                             FontSize="16"/>
 
                     </VerticalStackLayout>
@@ -295,12 +335,12 @@
                                      Margin="0,0,0,100">
                     <Label Text="🔎" FontSize="50" HorizontalTextAlignment="Center"/>
                     <Label Text="No se han encontrado noticias"
-                           TextColor="White"
+                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
                            FontSize="18"
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"/>
                     <Label Text="Prueba a refrescar en unos minutos"
-                           TextColor="#94A3B8"
+                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
                            HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
 
@@ -309,7 +349,7 @@
                     VerticalOptions="Center"
                     HorizontalOptions="Center"
                     TranslationY="-80">
-                    <BoxView BackgroundColor = "#CC0F172A"/>
+                    <BoxView BackgroundColor="{AppThemeBinding Light=#CCFFFFFF, Dark=#CC0F172A}"/>
 
                     <VerticalStackLayout
                         VerticalOptions="Center"
@@ -323,23 +363,23 @@
                             HorizontalTextAlignment="Center"/>
 
                         <Label
-                            Text="No se pudieron cargar las noticias"
-                            TextColor="White"
+                            Text="Sin conexión"
+                            TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
                             FontSize="18"
                             FontAttributes="Bold"
                             HorizontalTextAlignment="Center"/>
 
                         <Label
                             Text="{Binding ErrorMessage}"
-                            TextColor="#94A3B8"
+                            TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
                             FontSize="14"
                             HorizontalTextAlignment="Center"/>
 
                         <Button
                             Text="Reintentar"
                             Command="{Binding LoadNewsCommand}"
-                            BackgroundColor="#1E3A5A"
-                            TextColor="#38BDF8"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft}, Dark={StaticResource FeedHubDarkAccentSoft}}"
+                            TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
                             CornerRadius="20"
                             Margin="0,10,0,0"/>
 
@@ -357,18 +397,19 @@
                                          VerticalOptions="Center">
                         <Label Text="⚙️" FontSize="50" HorizontalTextAlignment="Center"/>
                         <Label Text="No hay contenido disponible"
-                               TextColor="White"
+                               TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
                                FontSize="18"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"/>
                         <Label Text="Has filtrado todo el contenido. Ve a Ajustes para activar alguna categoría o fuente."
-                               TextColor="#94A3B8"
+                               TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
                                FontSize="14"
                                HorizontalTextAlignment="Center"/>
                         <Button Text="Ir a Ajustes"
                                 Command="{Binding GoToSettingsCommand}"
-                                BackgroundColor="#1E3A5A"
-                                TextColor="#38BDF8"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightSeparator}, Dark={StaticResource FeedHubDarkSeparator}}"
+                                TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                            Dark={StaticResource FeedHubDarkTextSecondary}}"
                                 CornerRadius="20"
                                 Margin="0,10,0,0"/>
                     </VerticalStackLayout>

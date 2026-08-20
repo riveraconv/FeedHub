@@ -279,7 +279,7 @@
                             FontSize="14"
                             HorizontalTextAlignment="Center"/>
 
-                        <Button Text="Reintentar búsqueda"
+                        <Button Text="Reintentar"
                                 Command="{Binding RetrySearchCommand}"
                                 BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft}, Dark={StaticResource FeedHubDarkAccentSoft}}"
                                 TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
