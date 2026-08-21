@@ -96,4 +96,20 @@
 <Color x:Key="FeedHubDarkAccentSoft">#334155</Color>
 <Color x:Key="FeedHubDarkTextAccent">#38BDF8</Color>
 
+<!-- ========================= -->
+<!-- QUICKVIEW FADE - LIGHT    -->
+<!-- ========================= -->
+
+<Color x:Key="FeedHubLightFadeStart">#00F4F8FC</Color>
+<Color x:Key="FeedHubLightFadeMiddle">#A6F4F8FC</Color>
+<Color x:Key="FeedHubLightFadeEnd">#E6F4F8FC</Color>
+
+<!-- ========================= -->
+<!-- QUICKVIEW FADE - DARK     -->
+<!-- ========================= -->
+
+<Color x:Key="FeedHubDarkFadeStart">#00141414</Color>
+<Color x:Key="FeedHubDarkFadeMiddle">#99141414</Color>
+<Color x:Key="FeedHubDarkFadeEnd">#E6141414</Color>
+
 </ResourceDictionary>
