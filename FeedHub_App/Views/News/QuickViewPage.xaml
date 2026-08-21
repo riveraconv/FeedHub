@@ -207,7 +207,7 @@
                               Offset="0.0"/>
 
                 <GradientStop Color="#D9F8FAFC"
-                              Offset="0.55"/>
+                              Offset="0.60"/>
 
                 <GradientStop Color="#FFF1F5F9"
                               Offset="1.0"/>
@@ -236,7 +236,7 @@
                               Offset="0.0"/>
 
                 <GradientStop Color="#D91E293B"
-                              Offset="0.55"/>
+                              Offset="0.60"/>
 
                 <GradientStop Color="#FF0F172A"
                               Offset="1.0"/>
