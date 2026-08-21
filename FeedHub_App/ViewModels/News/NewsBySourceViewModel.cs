@@ -87,27 +87,54 @@ public partial class NewsBySourceViewModel : ObservableObject
         IsContentEmpty = false;
         NoResultsFound = false;
 
-
-        if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
-        {
-            _logger?.Info("Sin conexión. Cancelando LoadMore.");
-            HasError = true;
-            ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
-            return;
-        }
-
         try
         {
             if (!IsRefreshing) 
                 IsLoading = true;
             
             _currentOffset = 0;
+            CanLoadMore = false;
 
-            // Obtenemos los datos
-            _fullListCache = await _newsService.GetBySourceAsync(SourceId, 100); 
-            
-            // Filtramos la primera página
-            var pagedItems = _fullListCache.Take(PageSize).ToList();
+            var activeCategories = _newsService
+            .GetAvailableCategories()
+            .Where(category => _filterService.IsCategoryActive(category))
+            .ToHashSet();
+
+            // Si no queda ninguna categoría activa,
+            // no tiene sentido consultar la fuente.
+            if (activeCategories.Count == 0)
+            {
+                _fullListCache.Clear();
+                NewsItems.Clear();
+
+                IsContentEmpty = true;
+                NoResultsFound = false;
+                CanLoadMore = false;
+
+                return;
+            }
+
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                _logger?.Info("Sin conexión. Cancelando LoadMore.");
+                HasError = true;
+                ErrorMessage = "No hay conexión a Internet. Comprueba tu conexión e inténtalo de nuevo.";
+                return;
+            }
+
+            // Obtenemos los datos de la fuente
+            var sourceItems = await _newsService.GetBySourceAsync(SourceId, 100);
+
+            // Aplicamos las categorías activas
+            _fullListCache = sourceItems
+                .Where(item => _filterService.IsCategoryActive(item.Category))
+                .ToList();
+
+            // Primera página
+            var pagedItems = _fullListCache
+                .Take(PageSize)
+                .ToList();
+
             var mixedItems = _adInterleaveService.Interleave(pagedItems);
 
             System.Diagnostics.Debug.WriteLine($"DEBUG NewsBySource Items totales: {pagedItems.Count} | Tras mezcla: {mixedItems.Count}");
@@ -136,6 +163,7 @@ public partial class NewsBySourceViewModel : ObservableObject
             IsContentEmpty = false;
             NoResultsFound = false;
         }
+        
         finally
         {
             IsLoading = false;

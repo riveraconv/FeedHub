@@ -11,6 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <ResourceDictionary Source="/Resources/Styles/StatusMessageStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <conv:NullToBoolConverter x:Key="NullToBoolConverter" />

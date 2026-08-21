@@ -14,6 +14,7 @@ namespace FeedHub_App.ViewModels.News
     {
         private readonly INewsAggregatorService _aggregator;
         private readonly ILogger _logger;
+        private readonly FilterPreferencesService _filterService;
 
         public ObservableCollection<object> Articles { get; } = new();
 
@@ -86,11 +87,14 @@ namespace FeedHub_App.ViewModels.News
 
         private readonly AdInterleaveService _adService;
 
-        public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger, AdInterleaveService adService)
+        public CategoryListViewModel(INewsAggregatorService aggregator, ILogger logger, AdInterleaveService adService,
+            FilterPreferencesService filterService)
         {
             _aggregator = aggregator;
             _logger = logger;
             _adService = adService;
+            _filterService = filterService;
+
             StartPlaceholderAnimation();
         }
         public void StartPlaceholderAnimation()
@@ -208,6 +212,23 @@ namespace FeedHub_App.ViewModels.News
             if (string.IsNullOrWhiteSpace(Category))
                 return;
 
+            var availableSources = _aggregator.GetAvailableSources();
+
+            var activeSources = _aggregator
+                .GetAvailableSources()
+                .Where(source => _filterService.IsSourceActive(source))
+                .ToHashSet();
+
+            if (activeSources.Count == 0)
+            {
+                Articles.Clear();
+                _fullListCache.Clear();
+                CanLoadMore = false;
+                NoResultsFound = false;
+                IsContentEmpty = true;
+                ViewState = CategoryViewState.Empty;
+                return;
+            }
             try
             {
                 IsLoading = true;
@@ -229,10 +250,11 @@ namespace FeedHub_App.ViewModels.News
                 var items = await _aggregator.GetByCategoryAsync(Category, 100);
 
                 var processed = items
+                    .Where(i => activeSources.Contains(i.Source))
                     .GroupBy(i => i.Source)
                     .SelectMany(g => g.Take(8))
                     .OrderByDescending(i => i.PublishDate)
-                    .ToList() ?? new List<NewsItem>();
+                    .ToList();
 
                     _fullListCache = processed;
 

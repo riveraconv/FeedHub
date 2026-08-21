@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="FeedHub_App.Controls.StatusMessageView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+        <VerticalStackLayout
+            Spacing="14"
+            VerticalOptions="Center"
+            HorizontalOptions="Center">
+
+            <!-- Icono -->
+            <Label
+                x:Name="IconLabel"
+                Style="{StaticResource StatusMessageIconStyle}" />
+
+            <!-- Título -->
+            <Label
+                x:Name="TitleLabel"
+                Style="{StaticResource StatusMessageTitleStyle}" />
+
+            <!-- Descripción -->
+            <Label
+                x:Name="MessageLabel"
+                Style="{StaticResource StatusMessageDescriptionStyle}" />
+
+            <!-- Acción -->
+            <Button
+                x:Name="ActionButton"
+                Style="{StaticResource StatusMessageButtonStyle}" />
+
+        </VerticalStackLayout>
+
+</ContentView>

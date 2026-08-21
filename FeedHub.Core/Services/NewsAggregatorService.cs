@@ -284,7 +284,14 @@ namespace FeedHub_Core.Services;
                 var sourceFeeds = source.Feeds
                     .Where(feed => _filterService.IsCategoryActive(feed.Category))
                     .ToList();
+            if (sourceFeeds.Count == 0)
+            {
+                _logger?.Info(
+                    $"Fuente '{sourceId}' sin feeds correspondientes a las categorías activas.");
 
+                return new List<NewsItem>();
+            }
+            
             await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (feed, ct) =>
             {
                 try

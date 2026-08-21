@@ -5,6 +5,7 @@
              xmlns:models="clr-namespace:FeedHub_Core.Models;assembly=FeedHub_Core"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:utils="clr-namespace:FeedHub_App.Utilities"
+             xmlns:controls="clr-namespace:FeedHub_App.Controls"
              x:Class="FeedHub_App.Views.News.CategoryNewsPage"
              Shell.NavBarIsVisible="False"
              BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
@@ -256,35 +257,18 @@
                     HorizontalOptions="Center"
                     TranslationY="-80">
 
-                    <BoxView BackgroundColor = "{AppThemeBinding Light=#CCFFFFFF, Dark=#CC0F172A}"/>
-
                     <VerticalStackLayout
                         VerticalOptions="Center"
                         HorizontalOptions="Center"
                         Spacing="15"
                         Padding="40">
 
-                        <Label Text="📡"
-                            FontSize="50"
-                            HorizontalTextAlignment="Center"/>
-
-                        <Label Text="Sin conexión"
-                            TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            HorizontalTextAlignment="Center"/>
-
-                        <Label Text="{Binding ErrorMessage}"
-                            TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
-                            FontSize="14"
-                            HorizontalTextAlignment="Center"/>
-
-                        <Button Text="Reintentar"
-                                Command="{Binding RetrySearchCommand}"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft}, Dark={StaticResource FeedHubDarkAccentSoft}}"
-                                TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
-                                CornerRadius="20"
-                                Margin="0,10,0,0"/>
+                        <controls:StatusMessageView
+                            Icon="📡"
+                            Title="Sin conexión"
+                            Message="No se ha podido establecer la conexión con Internet."
+                            ButtonText="Reintentar"
+                            Command="{Binding LoadNewsCommand}"/>
 
                     </VerticalStackLayout>
 
@@ -295,27 +279,14 @@
                       VerticalOptions="Center"
                       HorizontalOptions="Center"
                       TranslationY="-80">
-                    <Grid.Triggers>
-                        <DataTrigger TargetType="Grid"
-                                     Binding="{Binding HasError}"
-                                     Value ="true">
-                                     <Setter Property="IsVisible"
-                                        Value="False"/>
-                        </DataTrigger>
-                    </Grid.Triggers>
-                    
+                
                     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="15" Padding="40">
-                        <Label Text="⚙️" FontSize="50" HorizontalTextAlignment="Center"/>
-                        <Label Text="No hay contenido disponible" 
-                               TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" 
-                               FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
-                        <Label Text="Has filtrado todo el contenido. Ve a Ajustes para activar alguna categoría o fuente de noticias." 
-                               TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
-                               FontSize="14" HorizontalTextAlignment="Center"/>
-                        <Button Text="Ir a Ajustes" Command="{Binding GoToSettingsCommand}" 
-                                BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightSeparator}, Dark={StaticResource FeedHubDarkSeparator}}" 
-                                TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
-                                            Dark={StaticResource FeedHubDarkTextSecondary}}" CornerRadius="20" Margin="0,10,0,0"/>
+                        <controls:StatusMessageView
+                            Icon="⚙️"
+                            Title="No hay contenido"
+                            Message="Has filtrado todo el contenido. Ve a Ajustes para activar alguna categoría o fuente de noticias."
+                            ButtonText="Ir a Ajustes"
+                            Command="{Binding GoToSettingsCommand}" />
                     </VerticalStackLayout>
                 </Grid>
 
