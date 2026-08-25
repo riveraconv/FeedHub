@@ -77,9 +77,14 @@ namespace FeedHub_App.ViewModels.News
 
         [ObservableProperty]
         private CategoryViewState viewState;
+        [ObservableProperty]
+        private NewsQueryStatus emptyStatus;
         private List<NewsItem> _fullListCache = new();
         [ObservableProperty]
         private bool isContentEmpty;
+        [ObservableProperty]
+        private bool isCategoryEmpty;
+
         [ObservableProperty]
         private bool hasError;
         [ObservableProperty]
@@ -208,27 +213,13 @@ namespace FeedHub_App.ViewModels.News
         public async Task LoadNewsAsync()
         {
             IsContentEmpty = false;
+            IsCategoryEmpty = false;
+            HasError = false;
+            ErrorMessage = string.Empty;
 
             if (string.IsNullOrWhiteSpace(Category))
                 return;
 
-            var availableSources = _aggregator.GetAvailableSources();
-
-            var activeSources = _aggregator
-                .GetAvailableSources()
-                .Where(source => _filterService.IsSourceActive(source))
-                .ToHashSet();
-
-            if (activeSources.Count == 0)
-            {
-                Articles.Clear();
-                _fullListCache.Clear();
-                CanLoadMore = false;
-                NoResultsFound = false;
-                IsContentEmpty = true;
-                ViewState = CategoryViewState.Empty;
-                return;
-            }
             try
             {
                 IsLoading = true;
@@ -247,21 +238,82 @@ namespace FeedHub_App.ViewModels.News
                     return;
                 }
 
-                var items = await _aggregator.GetByCategoryAsync(Category, 100);
+                var result = await _aggregator.GetByCategoryAsync(Category, 100);
 
-                var processed = items
-                    .Where(i => activeSources.Contains(i.Source))
+                // La categoría existe, pero todas las fuentes que la proporcionan
+                // están actualmente filtradas.
+                if (result.Status == NewsQueryStatus.FilteredOut)
+                {
+                    Articles.Clear();
+                    _fullListCache.Clear();
+
+                    CanLoadMore = false;
+                    NoResultsFound = false;
+                    IsContentEmpty = false;
+                    IsCategoryEmpty = true;
+
+                    EmptyStatus = NewsQueryStatus.FilteredOut;
+                    ViewState = CategoryViewState.Empty;
+
+                    _logger?.Info(
+                        $"Categoría '{Category}' sin contenido porque sus fuentes están filtradas.");
+
+                    return;
+                }
+
+                // La categoría no tiene ningún feed configurado en el catálogo.
+                if (result.Status == NewsQueryStatus.NoFeedsConfigured)
+                {
+                    Articles.Clear();
+                    _fullListCache.Clear();
+
+                    CanLoadMore = false;
+                    NoResultsFound = false;
+                    IsContentEmpty = false;
+                    IsCategoryEmpty = true;
+
+                    EmptyStatus = NewsQueryStatus.NoFeedsConfigured;
+                    ViewState = CategoryViewState.Empty;
+
+                    _logger?.Info(
+                        $"Categoría '{Category}' sin feeds configurados.");
+
+                    return;
+                };
+
+                if (result.Status == NewsQueryStatus.NoContent)
+                {
+                    Articles.Clear();
+                    _fullListCache.Clear();
+                    CanLoadMore = false;
+                    NoResultsFound = false;
+
+                    IsContentEmpty = false;
+                    IsCategoryEmpty = true;
+
+                    ViewState = CategoryViewState.Empty;
+                    return;
+                }
+
+                var processed = result.Items
                     .GroupBy(i => i.Source)
                     .SelectMany(g => g.Take(8))
                     .OrderByDescending(i => i.PublishDate)
                     .ToList();
 
-                    _fullListCache = processed;
+                _fullListCache = processed;
+
+                _logger.Info(
+                    $"[LoadNewsAsync] Categoría '{Category}' | " +
+                    $"Noticias procesadas: {_fullListCache.Count} | " +
+                    $"Fuentes activas: {processed.Count}");
 
                 Articles.Clear();
 
                 if (_fullListCache.Any())
                 {
+                    EmptyStatus = NewsQueryStatus.Success;
+
                     var firstBatch = _fullListCache.Take(PageSize).ToList();
                     var mixed = _adService.Interleave(firstBatch);
                     foreach (var item in mixed)
@@ -275,10 +327,15 @@ namespace FeedHub_App.ViewModels.News
                 else
                 {
                     NoResultsFound = false;
-                    IsContentEmpty = true;
+                    IsContentEmpty = false;
+                    IsCategoryEmpty = true;
+
+                     _logger.Info(
+        $"[LoadNewsAsync] ESTADO -> IsContentEmpty={IsContentEmpty}, " +
+        $"IsCategoryEmpty={IsCategoryEmpty}");
+
                     ViewState = CategoryViewState.Empty;
-                    
-                }    
+                }   
             }
             catch (Exception ex) 
             { 

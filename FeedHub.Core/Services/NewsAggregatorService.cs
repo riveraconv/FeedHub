@@ -132,18 +132,22 @@ namespace FeedHub_Core.Services;
             
         }
     
-
-        public async Task<List<NewsItem>> GetByCategoryAsync(string category, int limit)
+        public async Task<NewsQueryResult> GetByCategoryAsync(string category, int limit)
         {
             var allItems = new ConcurrentBag<NewsItem>();
             int successfulFeeds = 0;
-            DateTime cutOffDate = category == "ciencia" || category == "cultura" || category == "entretenimiento"
-                                ? DateTime.Now.AddDays(-2)
-                                : DateTime.Now.AddDays(-7);
+
+            DateTime cutOffDate =
+                category == "ciencia" ||
+                category == "cultura" ||
+                category == "entretenimiento"
+                    ? DateTime.Now.AddDays(-2)
+                    : DateTime.Now.AddDays(-7);
 
             var compareInfo = CultureInfo.GetCultureInfo("es-ES").CompareInfo;
 
-            var filteredFeeds = _catalogSources
+            // 1. Todos los feeds que realmente pertenecen a esta categoría
+            var categoryFeeds = _catalogSources
                 .SelectMany(source => source.Feeds.Select(feed => new
                 {
                     Source = source,
@@ -153,57 +157,99 @@ namespace FeedHub_Core.Services;
                     compareInfo.Compare(
                         x.Feed.Category,
                         category,
-                        CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) == 0 &&
-                        _filterService.IsSourceActive(x.Source.Id)
-                    )
-                    .ToList();
+                        CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) == 0)
+                .ToList();
 
-            var sourceNames = string.Join(", ", 
+            // No existe ningún feed configurado para esta categoría
+            if (categoryFeeds.Count == 0)
+            {
+                _logger?.Info(
+                    $"Categoría '{category}' sin feeds configurados.");
+
+                return new NewsQueryResult
+                {
+                    Status = NewsQueryStatus.NoFeedsConfigured
+                };
+            }
+
+            // 2. De esos feeds, nos quedamos únicamente con las fuentes activas
+            var filteredFeeds = categoryFeeds
+                .Where(x => _filterService.IsSourceActive(x.Source.Id))
+                .ToList();
+
+            // La categoría existe, pero todas sus fuentes están filtradas
+            if (filteredFeeds.Count == 0)
+            {
+                _logger?.Info(
+                    $"Categoría '{category}' tiene {categoryFeeds.Count} feeds, " +
+                    $"pero todos pertenecen a fuentes filtradas.");
+
+                return new NewsQueryResult
+                {
+                    Status = NewsQueryStatus.FilteredOut
+                };
+            }
+
+            var sourceNames = string.Join(
+                ", ",
                 filteredFeeds
                     .Select(x => x.Source.Name)
                     .Distinct());
 
-            System.Diagnostics.Debug.WriteLine(
-                $"DEBUG Categoría recibida: '{category}' | "+
-                $"Feeds encontrados: {filteredFeeds.Count} | "+
+            _logger?.Info(
+                $"Categoría '{category}' | " +
+                $"Feeds configurados: {categoryFeeds.Count} | " +
+                $"Feeds activos: {filteredFeeds.Count} | " +
                 $"Fuentes: {sourceNames}");
-            
+
+            // 3. Descargamos únicamente los feeds de fuentes activas
             await Parallel.ForEachAsync(
-                filteredFeeds, 
+                filteredFeeds,
                 new ParallelOptions { MaxDegreeOfParallelism = 15 },
-                async (x, ct) => //number of HTTP conections
-            {
-                try
+                async (x, ct) =>
                 {
-                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
-                    var items = await _rssService.GetNewsAsync(
-                        x.Feed.Url, 
-                        x.Feed.Category,
-                        cts.Token);
-
-                    var validItems = items
-                        .Where(i => i.PublishDate >= cutOffDate)
-                        .ToList();
-
-                    _logger.Info($"{x.Source.Name} -> {validItems.Count} noticias válidas");
-
-                    Interlocked.Increment(ref successfulFeeds);
-
-                    foreach (var item in validItems)
+                    try
                     {
-                        item.Category = x.Feed.Category;
-                        item.Source = x.Source.Name;
-                        allItems.Add(item);
+                        using var cts =
+                            CancellationTokenSource.CreateLinkedTokenSource(ct);
+
+                        cts.CancelAfter(TimeSpan.FromSeconds(8));
+
+                        var items = await _rssService.GetNewsAsync(
+                            x.Feed.Url,
+                            x.Feed.Category,
+                            cts.Token);
+
+                        var validItems = items
+                            .Where(i => i.PublishDate >= cutOffDate)
+                            .ToList();
+
+                        _logger?.Info(
+                            $"{x.Source.Name} -> {validItems.Count} noticias válidas");
+
+                        Interlocked.Increment(ref successfulFeeds);
+
+                        foreach (var item in validItems)
+                        {
+                            item.Category = x.Feed.Category;
+                            item.Source = x.Source.Name;
+
+                            allItems.Add(item);
+                        }
                     }
-                }
-                catch(Exception ex)
-                {
-                    _logger?.Warn($"Error en feed de categoría {x.Feed.Url}: {ex.Message}");
-                }
-            });
+                    catch (Exception ex)
+                    {
+                        _logger?.Warn(
+                            $"Error en feed de categoría {x.Feed.Url}: {ex.Message}");
+                    }
+                });
+
+            // 4. Los feeds existían y estaban activos,
+            // pero ninguno pudo devolver noticias correctamente
             if (successfulFeeds == 0)
             {
-                throw new HttpRequestException("No se pudo cargar ningún feed RSS");
+                throw new HttpRequestException(
+                    "No se pudo cargar ningún feed RSS");
             }
 
             var result = allItems
@@ -211,12 +257,29 @@ namespace FeedHub_Core.Services;
                 .Take(limit)
                 .ToList();
 
+            // 5. Los feeds funcionan, pero no hay noticias para esta categoría
+            if (result.Count == 0)
+            {
                 _logger?.Info(
+                    $"Categoría '{category}' sin noticias disponibles.");
+
+                return new NewsQueryResult
+                {
+                    Status = NewsQueryStatus.NoContent,
+                    Items = result
+                };
+            }
+
+            _logger?.Info(
                 $"Categoría '{category}' " +
-                $"- Feeds OK: {successfulFeeds}/{filteredFeeds.Count} | "+ 
+                $"- Feeds OK: {successfulFeeds}/{filteredFeeds.Count} | " +
                 $"- Noticias: {result.Count}");
 
-                return result;
+            return new NewsQueryResult
+            {
+                Status = NewsQueryStatus.Success,
+                Items = result
+            };
         }
 
         public async Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit = 40)
