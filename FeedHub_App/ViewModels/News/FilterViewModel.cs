@@ -16,14 +16,16 @@ public partial class FilterViewModel : ObservableObject
 
     private readonly FilterPreferencesService _filterService;
     private readonly INewsAggregatorService _aggregator;
+    private readonly SourceCatalogService _sourceCatalog;
 
     public ObservableCollection<FilterItem> Categories { get; } = new();
     public ObservableCollection<FilterItem> Sources { get; } = new();
 
-    public FilterViewModel(FilterPreferencesService filterService, INewsAggregatorService aggregator)
+    public FilterViewModel(FilterPreferencesService filterService, INewsAggregatorService aggregator, SourceCatalogService sourceCatalog)
     {
         _filterService = filterService;
         _aggregator = aggregator;
+        _sourceCatalog = sourceCatalog;
     }
 
     private async void LoadFilters()
@@ -42,14 +44,14 @@ public partial class FilterViewModel : ObservableObject
         }
 
         Sources.Clear();
-        foreach (var src in _aggregator.GetAvailableSources())
+        foreach (var src in _sourceCatalog.GetSources())
         {                    
-            var isActive = _filterService.IsSourceActive(src);
+            var isActive = _filterService.IsSourceActive(src.Id);
 
             Sources.Add(new FilterItem
             {
-                Title = src,
-                Code = src,
+                Title = src.Name,
+                Code = src.Id,
                 IsActive = isActive
             });
         }

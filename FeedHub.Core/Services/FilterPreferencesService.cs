@@ -1,5 +1,6 @@
 using System.Text.Json;
 using FeedHub_Core.Interfaces;
+using FeedHub_Core.Utilities;
 
 namespace FeedHub_Core.Services;
 
@@ -8,6 +9,7 @@ public class FilterPreferencesService
     private readonly IPreferencesService _prefs;
     private const string DisabledSourcesKey = "disabled_sources";
     private const string DisabledCategoriesKey = "disabled_categories";
+    private readonly ILogger _logger;
 
     public FilterPreferencesService(IPreferencesService prefs)
     {
@@ -36,6 +38,11 @@ public class FilterPreferencesService
     public void SetSourceActive(string sourceId, bool active)
     {
         var disabled = GetDisabledSources();
+
+        _logger?.Info(
+        $"SET SOURCE -> Id='{sourceId}' | Active={active} | " +
+        $"Antes=[{string.Join(", ", disabled)}]");
+
         if (!active) disabled.Add(sourceId);
         else disabled.Remove(sourceId);
 

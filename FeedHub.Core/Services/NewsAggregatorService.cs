@@ -56,7 +56,25 @@ namespace FeedHub_Core.Services;
                 _filterService.IsSourceActive(x.Source.Id) &&
                 _filterService.IsCategoryActive(x.Feed.Category))
                 .ToList();
-            
+
+                //DEBUG ------------------------------>
+
+                var activeSources = filteredFeeds
+                    .Select(x => x.Source.Name)
+                    .Distinct()
+                    .ToList();
+
+                _logger?.Info(
+                    $"FUENTES ACTIVAS EN LATEST NEWS: {string.Join(", ", activeSources)}");
+
+                foreach (var source in _catalogSources)
+                {
+                    _logger?.Info(
+                        $"FILTRO FUENTE -> {source.Name} ({source.Id}) = " +
+                        $"{_filterService.IsSourceActive(source.Id)}");
+                }
+
+                // <-------------------------------------
 
             //el usuario ha filtrado todas las fuentes o categorías
             if(filteredFeeds.Count == 0)
