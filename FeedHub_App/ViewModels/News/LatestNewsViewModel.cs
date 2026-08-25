@@ -37,6 +37,10 @@ namespace FeedHub_App.ViewModels.News
         private bool canLoadMore = false;
         [ObservableProperty]
         private bool isContentEmpty = false;
+        [ObservableProperty]
+        private bool isLatestEmpty = false;
+        [ObservableProperty]
+        private NewsQueryStatus emptyStatus = NewsQueryStatus.Success;
 
         public bool HasContent =>
             !IsLoading &&
@@ -69,6 +73,7 @@ namespace FeedHub_App.ViewModels.News
                 HasError = false;
                 ErrorMessage = string.Empty;
                 IsContentEmpty = false;
+                isLatestEmpty = false;
 
                 if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
                 {
@@ -78,8 +83,48 @@ namespace FeedHub_App.ViewModels.News
                 }
 
                 _currentOffset = 0;
-                var selected = await _aggregatorService.GetLatestMixedAsync(100);
-                _fullListCache = selected;
+
+                var result = await _aggregatorService.GetLatestMixedAsync(100);
+                
+                _logger?.Info(
+                    $"LATEST RESULT -> Status: {result.Status} | " +
+                    $"Items: {result.Items?.Count ?? 0}");
+
+                if (result.Status == NewsQueryStatus.FilteredOut)
+                {
+                    News.Clear();
+                    _fullListCache.Clear();
+
+                    CanLoadMore = false;
+                    IsContentEmpty = true;
+                    IsLatestEmpty = false;
+
+                    EmptyStatus = NewsQueryStatus.FilteredOut;
+
+                    _logger?.Info("Latest News: todo el contenido está filtrado.");
+
+                    return;
+                }
+                if (result.Status == NewsQueryStatus.NoContent)
+                {
+                    News.Clear();
+                    _fullListCache.Clear();
+
+                    CanLoadMore = false;
+                    IsContentEmpty = false;
+                    IsLatestEmpty = true;
+
+                    EmptyStatus = NewsQueryStatus.NoContent;
+
+                    _logger?.Info(
+                        "Latest News: las fuentes activas no tienen noticias disponibles.");
+
+                    return;
+                }
+
+                
+
+                _fullListCache = result.Items;
 
                 var firstBatch = _fullListCache
                     .Take(PageSize)

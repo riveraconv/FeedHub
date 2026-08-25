@@ -327,6 +327,30 @@
                     </VerticalStackLayout>
                 </Grid>
 
+                <!-- Sin contenido disponible -->
+
+                <Grid IsVisible="{Binding IsLatestEmpty}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    TranslationY="-80">
+
+                    <VerticalStackLayout
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Spacing="15"
+                        Padding="40">
+
+                        <controls:StatusMessageView
+                            Icon="📰"
+                            Title="No hay contenido disponible"
+                            Message="No hay noticias disponibles para esta categoría con las fuentes que tienes activadas."
+                            ButtonText="Ir a Ajustes"
+                            Command="{Binding GoToSettingsCommand}" />
+
+                    </VerticalStackLayout>
+
+                </Grid>
+
             </Grid>
         </Grid>
     </Grid>

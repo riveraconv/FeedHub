@@ -40,21 +40,29 @@ namespace FeedHub_Core.Services;
 
         }
 
-        public async Task<List<NewsItem>> GetLatestMixedAsync(int limit)
+        public async Task<NewsQueryResult> GetLatestMixedAsync(int limit)
         {
             var tempList = new ConcurrentBag<NewsItem>();
             var options = new ParallelOptions { MaxDegreeOfParallelism = 3 };
             int successfulFeeds = 0;
 
-            var filteredFeeds = _catalogSources
+            var allFeeds = _catalogSources
                 .SelectMany(source => source.Feeds.Select(feed => new
                 {
                     Source = source,
                     Feed = feed
                 }))
-                .Where(x =>
-                _filterService.IsSourceActive(x.Source.Id) &&
-                _filterService.IsCategoryActive(x.Feed.Category))
+                .ToList();
+
+            // Feeds cuya categoría está activa.
+            // Todavía no tenemos en cuenta el filtro de fuentes.
+            var categoryEnabledFeeds = allFeeds
+                .Where(x => _filterService.IsCategoryActive(x.Feed.Category))
+                .ToList();
+
+            // Feeds que además pertenecen a una fuente activa.
+            var filteredFeeds = categoryEnabledFeeds
+                .Where(x => _filterService.IsSourceActive(x.Source.Id))
                 .ToList();
 
                 //DEBUG ------------------------------>
@@ -77,9 +85,43 @@ namespace FeedHub_Core.Services;
                 // <-------------------------------------
 
             //el usuario ha filtrado todas las fuentes o categorías
-            if(filteredFeeds.Count == 0)
+            if (filteredFeeds.Count == 0)
             {
-                return new List<NewsItem>();
+                var activeSourceIds = _catalogSources
+                    .Where(source => _filterService.IsSourceActive(source.Id))
+                    .Select(source => source.Id)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                var feedsFromActiveSources = allFeeds
+                    .Where(x => activeSourceIds.Contains(x.Source.Id))
+                    .ToList();
+
+                // No existe ningún feed que combine una categoría activa
+                // con una fuente activa.
+                if (!feedsFromActiveSources.Any(x =>
+                        _filterService.IsCategoryActive(x.Feed.Category)))
+                {
+                    _logger?.Info(
+                        "Latest News: ninguna fuente activa dispone de feeds " +
+                        "para las categorías activas.");
+
+                    return new NewsQueryResult
+                    {
+                        Status = NewsQueryStatus.NoContent,
+                        Items = new List<NewsItem>()
+                    };
+                }
+
+                // Sí existe contenido potencial para la combinación de filtros,
+                // pero ha sido eliminado por los filtros.
+                _logger?.Info(
+                    "Latest News: el contenido disponible ha sido filtrado.");
+
+                return new NewsQueryResult
+                {
+                    Status = NewsQueryStatus.FilteredOut,
+                    Items = new List<NewsItem>()
+                };
             }
 
             int perFeed = filteredFeeds.Count > 0
@@ -123,13 +165,32 @@ namespace FeedHub_Core.Services;
                         throw new HttpRequestException("No se pudo acceder a ningún feed RSS");
                     }
                     
-            var result = tempList.OrderByDescending(x => x.PublishDate)
-                       .Take(limit)
-                       .ToList();
+           var result = tempList
+                .OrderByDescending(x => x.PublishDate)
+                .Take(limit)
+                .ToList();
 
-            _logger?.Info($"Feeds OK: {successfulFeeds}/{filteredFeeds.Count}| Noticias obtenidas: {result.Count}");
-            return result;
-            
+            _logger?.Info(
+                $"Feeds OK: {successfulFeeds}/{filteredFeeds.Count} | " +
+                $"Noticias obtenidas: {result.Count}");
+
+            if (result.Count == 0)
+            {
+                _logger?.Info(
+                    "Latest News: los feeds activos funcionan, pero no hay noticias disponibles.");
+
+                return new NewsQueryResult
+                {
+                    Status = NewsQueryStatus.NoContent,
+                    Items = result
+                };
+            }
+
+            return new NewsQueryResult
+            {
+                Status = NewsQueryStatus.Success,
+                Items = result
+            };     
         }
     
         public async Task<NewsQueryResult> GetByCategoryAsync(string category, int limit)
