@@ -8,7 +8,7 @@ namespace FeedHub_Core.Services
         Task<NewsQueryResult> GetLatestMixedAsync(int limit);
         Task<NewsQueryResult> GetByCategoryAsync(string category, int limit);
         Task<IEnumerable<NewsItem>> SearchByKeywordAsync(string query, int limit);
-        Task<List<NewsItem>> GetBySourceAsync(string sourceId, int limit = 20);
+        Task<NewsQueryResult> GetBySourceAsync(string sourceId, int limit = 20);
         List<string> GetAvailableCategories();
         List<string> GetAvailableSources();
     }

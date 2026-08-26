@@ -10,6 +10,15 @@ public partial class NewsBySourcePage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
 	}
+	protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is NewsBySourceViewModel viewModel)
+        {
+            await viewModel.OnAppearingAsync();
+        }
+    }
 	private async void OnNewsClicked(object sender, EventArgs e)
 	{
 		if (sender is Button btn && btn.BindingContext is NewsItem item)

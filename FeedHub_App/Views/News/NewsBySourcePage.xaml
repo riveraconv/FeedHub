@@ -329,21 +329,29 @@
 
                 </Grid>
 
-                <!-- Sin resultados -->
-                <VerticalStackLayout IsVisible="{Binding NoResultsFound}"
-                                     VerticalOptions="Center"
-                                     Spacing="15"
-                                     Margin="0,0,0,100">
-                    <Label Text="🔎" FontSize="50" HorizontalTextAlignment="Center"/>
-                    <Label Text="No se han encontrado noticias"
-                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           HorizontalTextAlignment="Center"/>
-                    <Label Text="Prueba a refrescar en unos minutos"
-                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
-                           HorizontalTextAlignment="Center"/>
-                </VerticalStackLayout>
+                <!-- Sin contenido para esta categoría -->
+                <Grid IsVisible="{Binding NoResultsFound}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    TranslationY="-80">
+
+                    <VerticalStackLayout
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Spacing="15"
+                        Padding="40">
+
+                        <controls:StatusMessageView
+                            Icon="📰"
+                            Title="No hay contenido disponible"
+                            Message="No hay noticias disponibles para esta fuente con las categorías que tienes activadas."
+                            ButtonText="Ir a Ajustes"
+                            Command="{Binding GoToSettingsCommand}" />
+
+                    </VerticalStackLayout>
+
+                </Grid>
+
 
                 <!-- Error de conexión -->
                 <Grid IsVisible="{Binding HasError}"

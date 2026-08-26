@@ -103,7 +103,7 @@ namespace FeedHub_Core.Services;
                     Items = new List<NewsItem>()
                 };
             }
-            
+
             //el usuario ha filtrado todas las fuentes o categorías
             if (filteredFeeds.Count == 0)
             {
@@ -255,8 +255,21 @@ namespace FeedHub_Core.Services;
 
             // 2. De esos feeds, nos quedamos únicamente con las fuentes activas
             var filteredFeeds = categoryFeeds
-                .Where(x => _filterService.IsSourceActive(x.Source.Id))
-                .ToList();
+    .Where(x => _filterService.IsSourceActive(x.Source.Id))
+    .ToList();
+
+_logger?.Info(
+    $"[DEBUG CATEGORY FILTER] Categoría '{category}'");
+
+foreach (var feed in categoryFeeds)
+{
+    _logger?.Info(
+        $"[DEBUG CATEGORY FILTER] " +
+        $"Fuente: {feed.Source.Name} | " +
+        $"Id: {feed.Source.Id} | " +
+        $"Activa: {_filterService.IsSourceActive(feed.Source.Id)} | " +
+        $"Feed: {feed.Feed.Url}");
+}
 
             // La categoría existe, pero todas sus fuentes están filtradas
             if (filteredFeeds.Count == 0)
@@ -426,7 +439,7 @@ namespace FeedHub_Core.Services;
 
                    return result;
         }
-        public async Task<List<NewsItem>> GetBySourceAsync(string sourceId, int limit = 20)
+        public async Task<NewsQueryResult> GetBySourceAsync(string sourceId, int limit = 20)
         {
             var allItems = new ConcurrentBag<NewsItem>();
             int successfulFeeds = 0;
@@ -446,12 +459,17 @@ namespace FeedHub_Core.Services;
                 var sourceFeeds = source.Feeds
                     .Where(feed => _filterService.IsCategoryActive(feed.Category))
                     .ToList();
+
             if (sourceFeeds.Count == 0)
             {
                 _logger?.Info(
                     $"Fuente '{sourceId}' sin feeds correspondientes a las categorías activas.");
 
-                return new List<NewsItem>();
+                return new NewsQueryResult
+            {
+                Status = NewsQueryStatus.NoContent,
+                Items = new List<NewsItem>()
+            };
             }
             
             await Parallel.ForEachAsync(sourceFeeds, new ParallelOptions { MaxDegreeOfParallelism = 15 }, async (feed, ct) =>
@@ -494,7 +512,11 @@ namespace FeedHub_Core.Services;
                 $" - Feeds OK: {successfulFeeds} / {sourceFeeds.Count} | "+
                 $" Noticias: {result.Count}");
 
-                return result;
+                return new NewsQueryResult
+                {
+                    Status = NewsQueryStatus.Success,
+                    Items = result
+                };
         }
     }
 

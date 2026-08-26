@@ -306,7 +306,7 @@ namespace FeedHub_App.ViewModels.News
                 _logger.Info(
                     $"[LoadNewsAsync] Categoría '{Category}' | " +
                     $"Noticias procesadas: {_fullListCache.Count} | " +
-                    $"Fuentes activas: {processed.Count}");
+                    $"Fuentes con noticias: {_fullListCache.Select(i => i.Source).Distinct().Count()}");
 
                 Articles.Clear();
 

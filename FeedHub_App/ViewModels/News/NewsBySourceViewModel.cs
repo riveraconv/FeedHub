@@ -60,16 +60,6 @@ public partial class NewsBySourceViewModel : ObservableObject
         if (!string.IsNullOrEmpty(value))
         {
             SourceTitle = _sourceCatalog.GetSourceName(value);
-
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                await Task.Delay(250);
-
-                if (LoadNewsCommand.CanExecute(null))
-                {
-                    await LoadNewsCommand.ExecuteAsync(null);
-                }
-            });
         }
     }
 
@@ -100,8 +90,8 @@ public partial class NewsBySourceViewModel : ObservableObject
             .Where(category => _filterService.IsCategoryActive(category))
             .ToHashSet();
 
-            // Si no queda ninguna categoría activa,
-            // no tiene sentido consultar la fuente.
+            // CASO 1:
+            // El usuario ha desactivado todas las categorías.
             if (activeCategories.Count == 0)
             {
                 _fullListCache.Clear();
@@ -110,6 +100,9 @@ public partial class NewsBySourceViewModel : ObservableObject
                 IsContentEmpty = true;
                 NoResultsFound = false;
                 CanLoadMore = false;
+
+                _logger?.Info(
+                    $"Fuente '{SourceId}': todas las categorías están filtradas.");
 
                 return;
             }
@@ -122,48 +115,93 @@ public partial class NewsBySourceViewModel : ObservableObject
                 return;
             }
 
-            // Obtenemos los datos de la fuente
-            var sourceItems = await _newsService.GetBySourceAsync(SourceId, 100);
+            // La fuente seleccionada se consulta independientemente
+            // de que esté activa o no en los filtros.
+            var result = await _newsService.GetBySourceAsync(SourceId, 100);
 
-            // Aplicamos las categorías activas
-            _fullListCache = sourceItems
-                .Where(item => _filterService.IsCategoryActive(item.Category))
-                .ToList();
+            // CASO 2:
+            // Hay categorías activas, pero la fuente no tiene contenido
+            // disponible para ellas.
+            if (result.Status == NewsQueryStatus.NoContent)
+            {
+                _fullListCache.Clear();
+                NewsItems.Clear();
 
-            // Primera página
+                CanLoadMore = false;
+                IsContentEmpty = false;
+                NoResultsFound = true;
+
+                _logger?.Info(
+                    $"Fuente '{SourceId}': no hay noticias disponibles " +
+                    "para las categorías activas.");
+
+                return;
+            }
+
+            // CASO 3:
+            // Se ha producido algún problema con los feeds.
+            // Normalmente GetBySourceAsync lanzará una excepción si
+            // ninguno de los feeds ha podido cargarse.
+            if (result.Status == NewsQueryStatus.FilteredOut)
+            {
+                // Este estado no debería producirse aquí porque
+                // comprobamos las categorías activas antes de llamar
+                // al servicio, pero lo dejamos cubierto.
+                _fullListCache.Clear();
+                NewsItems.Clear();
+
+                CanLoadMore = false;
+                IsContentEmpty = true;
+                NoResultsFound = false;
+
+                _logger?.Info(
+                    $"Fuente '{SourceId}': contenido filtrado.");
+
+                return;
+            }
+            /// CASO 4:
+            // Tenemos contenido.
+            _fullListCache = result.Items;
+
             var pagedItems = _fullListCache
                 .Take(PageSize)
                 .ToList();
 
             var mixedItems = _adInterleaveService.Interleave(pagedItems);
 
-            System.Diagnostics.Debug.WriteLine($"DEBUG NewsBySource Items totales: {pagedItems.Count} | Tras mezcla: {mixedItems.Count}");
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 NewsItems.Clear();
+
                 foreach (var item in mixedItems)
                 {
                     NewsItems.Add(item);
                 }
+
                 _currentOffset = pagedItems.Count;
                 CanLoadMore = _fullListCache.Count > _currentOffset;
-                IsContentEmpty = NewsItems.Count == 0;
-                
-                // Si no hay nada tras filtrar, marcamos resultados no encontrados
-                NoResultsFound = !IsContentEmpty && pagedItems.Count == 0;
+
+                IsContentEmpty = false;
+                NoResultsFound = false;
             });
+
+            _logger?.Info(
+                $"Fuente '{SourceId}' | " +
+                $"Noticias obtenidas: {_fullListCache.Count} | " +
+                $"Primera página: {pagedItems.Count}");
         }
         catch (Exception ex)
         {
-            _logger?.Error($"Error cargando noticias por fuente: {ex.Message}");
+            _logger?.Error(
+                $"Error cargando noticias por fuente: {ex.Message}");
 
             HasError = true;
-            ErrorMessage = "No se pudieron cargar las noticias. Comprueba tu conexión e inténtalo de nuevo.";
+            ErrorMessage =
+                "No se pudieron cargar las noticias. Comprueba tu conexión e inténtalo de nuevo.";
 
             IsContentEmpty = false;
             NoResultsFound = false;
         }
-        
         finally
         {
             IsLoading = false;
@@ -269,5 +307,12 @@ public partial class NewsBySourceViewModel : ObservableObject
     private async Task GoToSettings()
     {
         await Shell.Current.GoToAsync(nameof(SettingsPage));
+    }
+    public async Task OnAppearingAsync()
+    {
+        if (string.IsNullOrWhiteSpace(SourceId))
+            return;
+
+        await LoadNews();
     }
 }
