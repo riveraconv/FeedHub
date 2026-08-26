@@ -84,6 +84,26 @@ namespace FeedHub_Core.Services;
 
                 // <-------------------------------------
 
+            var hasActiveSources = _catalogSources
+                .Any(source => _filterService.IsSourceActive(source.Id));
+
+            var hasActiveCategories = allFeeds
+                .Any(x => _filterService.IsCategoryActive(x.Feed.Category));
+
+                // No hay ninguna fuente o categoría activa.
+            // El usuario ha filtrado todo el contenido.
+            if (!hasActiveSources || !hasActiveCategories)
+            {
+                _logger?.Info(
+                    "Latest News: el usuario ha filtrado todo el contenido.");
+
+                return new NewsQueryResult
+                {
+                    Status = NewsQueryStatus.FilteredOut,
+                    Items = new List<NewsItem>()
+                };
+            }
+            
             //el usuario ha filtrado todas las fuentes o categorías
             if (filteredFeeds.Count == 0)
             {

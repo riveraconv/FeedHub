@@ -73,7 +73,7 @@ namespace FeedHub_App.ViewModels.News
                 HasError = false;
                 ErrorMessage = string.Empty;
                 IsContentEmpty = false;
-                isLatestEmpty = false;
+                IsLatestEmpty = false;
 
                 if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
                 {
@@ -142,7 +142,10 @@ namespace FeedHub_App.ViewModels.News
                     } 
                     _currentOffset = firstBatch.Count;
                     CanLoadMore = _fullListCache.Count > _currentOffset;
-                    IsContentEmpty = News.Count == 0;
+
+                    IsContentEmpty = false;
+                    IsLatestEmpty = false;
+                    EmptyStatus = NewsQueryStatus.Success;
 
                 });
             }
