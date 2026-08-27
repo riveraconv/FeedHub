@@ -238,7 +238,36 @@
                         HorizontalOptions="Start"
                         Margin="0,8,0,0"/>
             </VerticalStackLayout>
-        
+
+            <!-- TRANSICIÓN DEL HEADER AL FEED -->
+            <Grid Grid.Row="0"
+                  VerticalOptions="End"
+                  HeightRequest="5"
+                  InputTransparent="True"
+                  ZIndex="10">
+
+                <BoxView>
+                    <BoxView.Background>
+                        <LinearGradientBrush StartPoint="0,0"
+                                             EndPoint="0,1">
+
+                            <GradientStop
+                                Color="{AppThemeBinding
+                        Light=#FFF4F8FC,
+                        Dark=#FF0F172A}"
+                                Offset="0.0"/>
+
+                            <GradientStop
+                                Color="{AppThemeBinding
+                        Light=#00F4F8FC,
+                        Dark=#000F172A}"
+                                Offset="1.0"/>
+
+                        </LinearGradientBrush>
+                    </BoxView.Background>
+                </BoxView>
+
+            </Grid>
             <Grid Grid.Row="1">
                 <CollectionView x:Name="SourcesCollection"
                                 ItemsSource="{Binding NewsItems}"
@@ -300,6 +329,35 @@
                     </CollectionView.Footer>
                 </CollectionView>
 
+                <!-- FADE SUPERIOR DEL FEED -->
+                <Grid HeightRequest="45"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Fill"
+                    InputTransparent="True"
+                    ZIndex="10">
+
+                    <BoxView>
+                        <BoxView.Background>
+                            <LinearGradientBrush StartPoint="0,0"
+                                                EndPoint="0,1">
+
+                                <GradientStop
+                                    Color="{AppThemeBinding
+                                        Light={StaticResource FeedHubLightBackground},
+                                        Dark={StaticResource FeedHubDarkBackground}}"
+                                    Offset="0.0"/>
+
+                                <GradientStop
+                                    Color="{AppThemeBinding
+                                        Light=#00F4F8FC,
+                                        Dark=#000F172A}"
+                                    Offset="1.0"/>
+
+                            </LinearGradientBrush>
+                        </BoxView.Background>
+                    </BoxView>
+
+                </Grid>
                 <!-- LOADING -->
                 <Grid IsVisible="{Binding IsLoading}"
                     VerticalOptions="Center"

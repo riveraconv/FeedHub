@@ -420,7 +420,6 @@ namespace FeedHub_App.Views.News
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            UpdateSystemBars();
         }
 
         protected override void OnDisappearing()
@@ -429,8 +428,6 @@ namespace FeedHub_App.Views.News
 
             ArticleWebView.Navigated -= OnArticleNavigated;
 
-            if (Application.Current != null)
-                Application.Current.RequestedThemeChanged -= OnThemeChanged;
 
             if (BindingContext is QuickViewViewModel vm)
                 vm.StopSpeaking();
@@ -440,32 +437,6 @@ namespace FeedHub_App.Views.News
         #endif
         }
 
-        private void UpdateSystemBars()
-        {
-        #if ANDROID
-            var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
-            var activity = Platform.CurrentActivity as AndroidX.AppCompat.App.AppCompatActivity;
-            var controller = AndroidX.Core.View.WindowCompat.GetInsetsController(
-                activity!.Window!, activity.Window!.DecorView);
-            controller.AppearanceLightNavigationBars = !isDark;
-            controller.AppearanceLightStatusBars = !isDark;
-        #endif
-        }
-
-        private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
-        {
-            MainThread.BeginInvokeOnMainThread(() => UpdateSystemBars());
-        }
-        protected override void OnHandlerChanged()
-        {
-            base.OnHandlerChanged();
-            if (Application.Current != null)
-            {
-                Application.Current.RequestedThemeChanged -= OnThemeChanged;
-                Application.Current.RequestedThemeChanged += OnThemeChanged;
-            }
-            UpdateSystemBars();
-        }
         private void ShowNoConnection()
         {
             QuickViewContainer.IsVisible = false;
