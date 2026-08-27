@@ -14,7 +14,7 @@ namespace FeedHub_App.Views.News
         private readonly QuickArticleService _articleService = new();
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
-
+        
         public string? Link { get; set; }
         public string Source { get; set; }
         private bool _articleLoaded = false;
@@ -31,6 +31,12 @@ namespace FeedHub_App.Views.News
 
             InitializeComponent();
             BindingContext = viewModel;
+
+            QuickViewUnavailableMessage.Command = new Command(() =>
+            OnSourceClicked(this, EventArgs.Empty));
+
+            NoConnectionMessage.Command = new Command(() =>
+            OnRetryClicked(this, EventArgs.Empty));
 
             ArticleWebView.Navigated += OnArticleNavigated;
             //header for not seem a bot
@@ -151,7 +157,7 @@ namespace FeedHub_App.Views.News
                         {
                             ShowFullWeb();
                             InfoBanner.IsVisible = true;
-                            InfoBanner.Text = "Este medio bloquea el acceso directo. Mostrando web original.";
+                            InfoBannerText.Text = "Acceso al medio bloqueado. Abriendo web original..";
                             FullWebView.Source = new UrlWebViewSource { Url = Link };
                         });
                         return;
@@ -234,7 +240,7 @@ namespace FeedHub_App.Views.News
                     ShowFullWeb();
                     await Task.Delay(50);
                     InfoBanner.IsVisible = true;
-                    InfoBanner.Text = "La carga tardó demasiado. Mostrando web original.";
+                    InfoBannerText.Text = "La carga tardó demasiado. Mostrando web original.";
                     FullWebView.Source = new UrlWebViewSource { Url = Link };
                 });
             }
@@ -246,7 +252,7 @@ namespace FeedHub_App.Views.News
                     ShowFullWeb();
                     await Task.Delay(50);
                     InfoBanner.IsVisible = true;
-                    InfoBanner.Text = "No se pudo procesar el artículo. Mostrando web original.";
+                    InfoBannerText.Text = "No se pudo procesar el artículo. Mostrando web original.";
                     FullWebView.Source = new UrlWebViewSource { Url = Link };
                 });
             }
@@ -280,8 +286,12 @@ namespace FeedHub_App.Views.News
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 _quickViewAvailable = false;
-                QuickViewContainer.IsVisible = true;
+
+                QuickViewContainer.IsVisible = false;
                 FullWebView.IsVisible = false;
+
+                NoConnectionPanel.IsVisible = false;
+                QuickViewUnavailablePanel.IsVisible = true;
 
                 ShareButton.IsVisible = true;
                 SpeakButton.IsVisible = false;
@@ -289,27 +299,7 @@ namespace FeedHub_App.Views.News
                 ToggleViewButton.IsVisible = true;
                 ToggleViewButton.Text = "🌐";
 
-                TitleLabel.Text = "Vista rápida no disponible";
-
-                ArticleImage.IsVisible = false;
-
-                ArticleWebView.Source = new HtmlWebViewSource
-                {
-                    Html = ArticleHtmlContent(@"
-                        <div style='text-align:center; padding:40px 20px;'>
-                            <h2>No se puede mostrar la vista rápida</h2>
-                            <p>
-                                Este medio no permite obtener el contenido del artículo
-                                directamente.
-                            </p>
-                            <p>
-                                Puedes abrir la web original para leerlo.
-                            </p>
-                        </div>")
-                };
-
-                InfoBanner.IsVisible = true;
-                InfoBanner.Text = "Abriendo el artículo original...";
+                InfoBanner.IsVisible = false;
             });
         }
         private async void OnRetryClicked(object sender, EventArgs e)
@@ -323,16 +313,24 @@ namespace FeedHub_App.Views.News
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 if (QuickViewContainer == null) return;
+
+                QuickViewUnavailablePanel.IsVisible = false;
+                NoConnectionPanel.IsVisible = false;
+
                 QuickViewContainer.IsVisible = true;
                 ArticleImage.IsVisible = true;
                 FullWebView.IsVisible = false;
 
                 ShareButton.IsVisible = true;
                 SpeakButton.IsVisible = true;
+
                 _quickViewAvailable = true;
 
                 ToggleViewButton.IsVisible = true;
                 ToggleViewButton.Text = "🌐";
+
+                InfoBanner.IsVisible = false;
+
                 _logger.Info("Modo QuickView establecido correctamente");
             });
         }
@@ -365,20 +363,27 @@ namespace FeedHub_App.Views.News
             if (QuickViewContainer.IsVisible)
             {
                 ShowFullWeb();
-                if (FullWebView.Source == null || FullWebView.Source is UrlWebViewSource s && string.IsNullOrEmpty(s.Url))
-                    FullWebView.Source = new UrlWebViewSource { Url = Link };
+
+                if (FullWebView.Source == null ||
+                    FullWebView.Source is UrlWebViewSource s &&
+                    string.IsNullOrEmpty(s.Url))
+                {
+                    FullWebView.Source = new UrlWebViewSource
+                    {
+                        Url = Link
+                    };
+                }
+
+                return;
             }
-            else
+
+            if (_quickViewAvailable)
             {
-                if (_quickViewAvailable)
-                {
-                    ShowQuickView();
-                }
-                else
-                {
-                    ShowQuickViewUnavailable();
-                }
+                ShowQuickView();
+                return;
             }
+
+            OnSourceClicked(this, EventArgs.Empty);
         }
         private void OnSourceClicked(object sender, EventArgs e)
         {
@@ -465,6 +470,8 @@ namespace FeedHub_App.Views.News
         {
             QuickViewContainer.IsVisible = false;
             FullWebView.IsVisible = false;
+            QuickViewUnavailablePanel.IsVisible = false;
+
             InfoBanner.IsVisible = false;
             NoConnectionPanel.IsVisible = true;
         }

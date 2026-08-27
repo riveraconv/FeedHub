@@ -31,6 +31,7 @@ public partial class NewsBySourceViewModel : ObservableObject
     [ObservableProperty]
     private bool isLoadingMore;
     private int _currentOffset = 0;
+    private bool _hasLoaded;
     private const int PageSize = 20;
     [ObservableProperty]
     private bool canLoadMore;
@@ -312,6 +313,11 @@ public partial class NewsBySourceViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(SourceId))
             return;
+
+        if(_hasLoaded)
+            return;
+
+            _hasLoaded = true;
 
         await LoadNews();
     }

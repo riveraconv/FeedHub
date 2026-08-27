@@ -6,8 +6,6 @@ namespace FeedHub_App.ViewModels.News
 {
     public partial class QuickViewViewModel : ObservableObject
     {
-
-
         [ObservableProperty]
         private string _newsContent;
 
