@@ -51,7 +51,7 @@
                                    HeightRequest="200"
                                    Aspect="AspectFill"
                                    IsVisible="{Binding ImageUrl, Converter={StaticResource NullToBoolConverter}}"/>
-                            <BoxView VerticalOptions="End" HeightRequest="30">
+                            <BoxView VerticalOptions="End" HeightRequest="10">
                                 <BoxView.Background>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                         <GradientStop Color="Transparent" Offset="0"/>
@@ -258,7 +258,7 @@
                 </CollectionView>
 
                 <!-- FADE SUPERIOR DEL FEED -->
-                <Grid HeightRequest="45"
+                <Grid HeightRequest="20"
                       VerticalOptions="Start"
                       HorizontalOptions="Fill"
                       InputTransparent="True"
