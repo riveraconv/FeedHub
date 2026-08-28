@@ -121,7 +121,7 @@
                                 <Label Text="¿Qué es FeedHub?" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" FontSize="13" FontAttributes="Bold"/>
                                 <Label TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
                                        FontSize="14" LineBreakMode="WordWrap">
-                                    <Label.Text>FeedHub es un agregador de noticias que recopila contenido de medios españoles e internacionales. El contenido mostrado es responsabilidad de cada medio original — FeedHub actúa únicamente como lector y no modifica ni se apropia del contenido de terceros.</Label.Text>
+                                    <Label.Text>FeedHub es un agregador de noticias que reúne contenido de distintos medios españoles e internacionales en una sola aplicación. El contenido procede de sus respectivas fuentes y FeedHub actúa únicamente como lector y agregador, sin modificar ni atribuirse la autoría del contenido de terceros.</Label.Text>
                                 </Label>
                             </VerticalStackLayout>
                         </Border>
@@ -133,7 +133,7 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Contenido externo" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" FontSize="13" FontAttributes="Bold"/>
                                 <Label TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" FontSize="14" LineBreakMode="WordWrap">
-                                    <Label.Text>Si un artículo no carga correctamente o muestra contenido incompleto, puede deberse a restricciones técnicas del medio original. FeedHub no tiene control sobre el contenido de terceros.</Label.Text>
+                                    <Label.Text>FeedHub obtiene contenido de fuentes RSS y de los sitios web de los medios originales. La disponibilidad, formato y contenido de estos servicios dependen de sus respectivos operadores, por lo que algunos artículos pueden no cargarse correctamente o mostrarse de forma incompleta.</Label.Text>
                                 </Label>
                             </VerticalStackLayout>
                         </Border>
@@ -145,7 +145,7 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Publicidad" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" FontSize="13" FontAttributes="Bold"/>
                                 <Label TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" FontSize="14" LineBreakMode="WordWrap">
-                                    <Label.Text>La publicidad mostrada en la app ayuda a mantenerla gratuita y en desarrollo continuo.</Label.Text>
+                                    <Label.Text>FeedHub puede incorporar publicidad para contribuir al mantenimiento y desarrollo de la aplicación y mantener su acceso gratuito. Cualquier servicio publicitario de terceros se indicará en la correspondiente política de privacidad.</Label.Text>
                                 </Label>
                             </VerticalStackLayout>
                         </Border>
@@ -157,7 +157,7 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Proyecto en desarrollo" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" FontSize="13" FontAttributes="Bold"/>
                                 <Label TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" FontSize="14" LineBreakMode="WordWrap">
-                                    <Label.Text>FeedHub es un proyecto personal en desarrollo continuo. Si encuentras algún problema, agradezco tu paciencia.</Label.Text>
+                                    <Label.Text>FeedHub es un proyecto personal en desarrollo continuo. La aplicación puede recibir mejoras, cambios y correcciones con el tiempo.</Label.Text>
                                 </Label>
                             </VerticalStackLayout>
                         </Border>
@@ -174,7 +174,7 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Política de Privacidad" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" FontSize="13" FontAttributes="Bold"/>
                                 <Label TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" FontSize="14" LineBreakMode="WordWrap">
-                                    <Label.Text>La política de privacidad estará disponible próximamente en nuestra web.</Label.Text>
+                                    <Label.Text>FeedHub no recopila, almacena ni comparte datos personales del usuario. La aplicación no requiere una cuenta ni un registro para utilizar sus funciones principales. FeedHub únicamente almacena de forma local determinadas preferencias de funcionamiento, como el tema visual seleccionado y las fuentes o categorías desactivadas. Estas preferencias permanecen en el dispositivo y no se envían a servidores de FeedHub.</Label.Text>
                                 </Label>
                             </VerticalStackLayout>
                         </Border>
@@ -186,7 +186,7 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Publicidad y datos" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" FontSize="13" FontAttributes="Bold"/>
                                 <Label TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" FontSize="14" LineBreakMode="WordWrap">
-                                    <Label.Text>FeedHub utiliza Google AdMob para mostrar publicidad. AdMob puede recopilar datos del dispositivo para personalizar anuncios según la legislación vigente.</Label.Text>
+                                    <Label.Text>Actualmente, FeedHub no incorpora ningún sistema propio de analítica, seguimiento o recopilación de datos personales. La aplicación podrá utilizar servicios publicitarios de terceros para mostrar anuncios. En ese caso, dichos proveedores podrán tratar determinados datos técnicos y identificadores de acuerdo con sus propias políticas de privacidad y las opciones de consentimiento aplicables. Esta información se detallará en la presente sección cuando dichos servicios sean incorporados.</Label.Text>
                                 </Label>
                             </VerticalStackLayout>
                         </Border>
@@ -198,11 +198,22 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Contenido de terceros" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" FontSize="13" FontAttributes="Bold"/>
                                 <Label TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" FontSize="14" LineBreakMode="WordWrap">
-                                    <Label.Text>El uso de esta aplicación implica la aceptación de los términos de uso de los medios de comunicación cuyos contenidos se muestran.</Label.Text>
+                                    <Label.Text>FeedHub se conecta a servidores y sitios web de terceros para obtener y mostrar contenido de noticias. Estos operadores pueden registrar y tratar información técnica asociada a las conexiones, como direcciones IP, conforme a sus propias políticas de privacidad, cookies y condiciones de uso. Una vez que el usuario accede directamente a un sitio web externo, cualquier tratamiento de datos realizado por dicho operador queda sujeto a sus propias políticas.</Label.Text>
                                 </Label>
                             </VerticalStackLayout>
                         </Border>
 
+                        <Border StrokeShape="RoundRectangle 20"
+                                Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},Dark={StaticResource FeedHubDarkCardBorder}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},Dark={StaticResource FeedHubDarkCard}}"
+                                StrokeThickness="1" Padding="20">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Recopilación de datos" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},Dark={StaticResource FeedHubDarkAccent}}" FontSize="13" FontAttributes="Bold"/>
+                                <Label TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}" FontSize="14" LineBreakMode="WordWrap">
+                                    <Label.Text>FeedHub no recopila datos personales del usuario para su propio uso. No se requiere proporcionar nombre, correo electrónico, número de teléfono, ubicación ni crear una cuenta para utilizar la aplicación. La aplicación puede almacenar localmente preferencias y datos temporales relacionados con el funcionamiento y la visualización de noticias, pero estos datos no se utilizan para crear perfiles personales ni se transmiten a servidores de FeedHub.</Label.Text>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Border>
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </ScrollView>
