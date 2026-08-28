@@ -1,18 +1,22 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_App.Views.Settings;
+using FeedHub_Core.Services;
 
 namespace FeedHub_App.ViewModels.Settings;
 
 public partial class SettingsViewModel : ObservableObject
 {
+    private readonly QuickArticleCacheService _cacheService;
     [ObservableProperty]
     private bool _isDarkMode;
     [ObservableProperty]
     string _appVersion;
 
-    public SettingsViewModel()
+    public SettingsViewModel(QuickArticleCacheService cacheService)
     {
+        _cacheService = cacheService;
+
         // Al arrancar, leemos de Preferences. 
         // Si no existe, usamos el tema actual del sistema.
         IsDarkMode = Preferences.Default.Get("DarkMode", Application.Current.RequestedTheme == AppTheme.Dark);
@@ -23,7 +27,6 @@ public partial class SettingsViewModel : ObservableObject
     // porque el Toolkit detecta que la propiedad "IsDarkMode" ha cambiado.
     partial void OnIsDarkModeChanged(bool value)
     {
-        // Guardamos el valor permanentemente
         Preferences.Default.Set("DarkMode", value);
 
         // Aplicamos el tema visual a toda la aplicaci�n
@@ -33,12 +36,21 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task ClearCache()
     {
-        bool confirm = await Shell.Current.DisplayAlert("Limpiar Cache", "Confirma para borrar la caché temporal.", "Si", "No");
-        if (confirm)
-        {
-            await Task.Delay(1000); // Simulaci�n
-            await Shell.Current.DisplayAlert("Listo", "Caché de noticias borrado", "OK");
-        }
+        bool confirm = await Shell.Current.DisplayAlert(
+            "Limpiar caché",
+            "Se eliminará la caché temporal de noticias.",
+            "Sí",
+            "No");
+
+        if (!confirm)
+            return;
+
+        _cacheService.Clear();
+
+        await Shell.Current.DisplayAlert(
+            "Listo",
+            "La caché de noticias se ha borrado.",
+            "OK");
     }
 
     [RelayCommand]

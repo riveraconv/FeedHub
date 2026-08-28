@@ -32,14 +32,19 @@ public class QuickArticleCacheService
             CachedAt = DateTime.Now
         };
     }
+
+    public void Clear()
+    {
+        _cache.Clear();
+    }
 }
 
 public class CachedArticle
 {
-    public string Url { get; set; }
-    public string Title { get; set; }
-    public string Html { get; set; }
-    public string Text { get; set; }
-    public string ImageUrl { get; set; }
+    public string Url { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Html { get; set; } = string.Empty;
+    public string Text { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
     public DateTime CachedAt { get; set; }
 }
