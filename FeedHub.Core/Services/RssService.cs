@@ -130,7 +130,8 @@ private string? ExtractImageUrl(SyndicationItem item)
         if (customExt != null)
         {
             using var reader = customExt.GetReader();
-            var xml = XElement.Load(reader);
+            using var subtree = reader.ReadSubtree();
+            var xml = XElement.Load(subtree);
             
             // Intento A: La URL está en el texto de la etiqueta <image>URL</image>
             string val = xml.Value.Trim();
