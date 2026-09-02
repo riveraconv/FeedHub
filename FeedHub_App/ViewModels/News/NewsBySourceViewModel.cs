@@ -164,6 +164,15 @@ public partial class NewsBySourceViewModel : ObservableObject
             // Tenemos contenido.
             _fullListCache = result.Items;
 
+            var withImage = _fullListCache.Count(x => !string.IsNullOrWhiteSpace(x.ImageUrl));
+            var withoutImage = _fullListCache.Count - withImage;
+
+            _logger?.Info(
+                $"[IMAGE DEBUG] Fuente '{SourceId}' | " +
+                $"Noticias: {_fullListCache.Count} | " +
+                $"Con imagen: {withImage} | " +
+                $"Sin imagen: {withoutImage}");
+                
             var pagedItems = _fullListCache
                 .Take(PageSize)
                 .ToList();
