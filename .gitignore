@@ -29,3 +29,6 @@ Thumbs.db
 # Backups
 *.bak
 *.tmp
+
+# Local signing configuration
+Directory.Build.props.user
