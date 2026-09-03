@@ -14,7 +14,7 @@
                                    StatusBarStyle="{AppThemeBinding Light=DarkContent,Dark=LightContent}" />
         </ContentPage.Behaviors>
 
-    <Grid IgnoreSafeArea="True">
+    <Grid>
                     <!-- GRADIENTE LIGHT -->
                 <BoxView
                     IsEnabled="False"
@@ -77,7 +77,7 @@
                     BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
                         Dark={StaticResource FeedHubDarkCard}}"
                     Padding="0" 
-                    HeightRequest="230">
+                    MinimumHeightRequest="230">
                 <Grid>
                     
                     <VerticalStackLayout Spacing="8" Padding="20">
@@ -124,7 +124,7 @@
                 <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 24"
                         Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},Dark ={StaticResource FeedHubDarkCardBorder}}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},  Dark={StaticResource FeedHubDarkCard}}" 
-                        HeightRequest="170" StrokeThickness="1">
+                        MinimumHeightRequest="170" StrokeThickness="1">
                     <Grid>
                         <VerticalStackLayout Spacing="8" Padding="20" VerticalOptions="Center">
                             <Label  Text="📂" FontSize="32" Margin="0,0,0,5"/>
@@ -147,7 +147,7 @@
                         StrokeThickness="1"
                         Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},Dark ={StaticResource FeedHubDarkCardBorder}}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},  Dark={StaticResource FeedHubDarkCard}}" 
-                        HeightRequest="170" >
+                        MinimumHeightRequest="170" >
                     <Grid>
                             <VerticalStackLayout Spacing="8" Padding="20" VerticalOptions="Center">
                                 <Label  Text="⚙️" FontSize="32" Margin="0,0,0,5"/>
@@ -167,7 +167,7 @@
                     </Border>
 
                 <Border Grid.Row="1" Grid.ColumnSpan="2" StrokeShape="RoundRectangle 24" StrokeThickness="1"
-                            HeightRequest="130"
+                            MinimumHeightRequest="130"
                             Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},Dark ={StaticResource FeedHubDarkCardBorder}}"
                             BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},  Dark={StaticResource FeedHubDarkCard}}">
                         <Grid ColumnDefinitions="80, *">
@@ -193,7 +193,7 @@
                 </Grid>
 
                 <Border StrokeShape="RoundRectangle 24" StrokeThickness="1"
-                        HeightRequest="70"
+                        MinimumHeightRequest="70"
                         Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},Dark ={StaticResource FeedHubDarkCardBorder}}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},  Dark={StaticResource FeedHubDarkCard}}">
                     <Grid ColumnDefinitions="80,*">
