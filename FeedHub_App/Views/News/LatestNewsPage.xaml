@@ -260,7 +260,7 @@
 
                     <CollectionView.Footer>
                         <VerticalStackLayout Padding="35,10,35,50" Spacing="0">
-                            <Grid HeightRequest="50">
+                            <Grid MinimumHeightRequest="50">
                                 <Border IsVisible="{Binding CanLoadMore}"
                                         BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft},
                                                         Dark={StaticResource FeedHubDarkAccentSoft}}" 
@@ -268,7 +268,7 @@
                                                 Dark={StaticResource FeedHubDarkCardBorder}}"
                                         StrokeShape="RoundRectangle 25" 
                                         StrokeThickness="1"  
-                                        HorizontalOptions="Fill" WidthRequest="200" HeightRequest="40">
+                                        HorizontalOptions="Fill" WidthRequest="200" MinimumHeightRequest="40">
                                     <Border.Triggers>
                                         <DataTrigger TargetType="Border" Binding="{Binding IsLoading}" Value="True">
                                             <Setter Property="IsVisible" Value="False" />
@@ -286,7 +286,8 @@
                                         <Label Text="Cargar más noticias" 
                                                TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextAccent},
                                                           Dark={StaticResource FeedHubDarkTextAccent}}"
-                                                FontAttributes="Bold" VerticalOptions="Center"/>
+                                                FontAttributes="Bold" VerticalOptions="Center"
+                                                FontAutoScalingEnabled="False"/>
                                         <Image Source="{FontImage FontFamily=FontAwesome, Glyph='&#xf103;', Color=#38BDF8, Size=16}"
                                                VerticalOptions="Center"/>
                                     </HorizontalStackLayout>
