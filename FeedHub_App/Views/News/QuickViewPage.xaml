@@ -40,6 +40,8 @@
                     Value="50"/>
             <Setter Property="CornerRadius"
                     Value="25"/>
+            <Setter Property="FontAutoScalingEnabled" 
+                    Value="False"/>
             <Setter Property="VisualStateManager.VisualStateGroups">
                 <VisualStateGroupList>
                     <VisualStateGroup Name="CommonStates">
