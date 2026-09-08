@@ -1,6 +1,4 @@
 ﻿using FeedHub_Core.Utilities;
-using System.Runtime.CompilerServices;
-using System.Diagnostics;
 
 #if ANDROID
 using Android.Util;
