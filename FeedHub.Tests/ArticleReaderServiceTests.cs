@@ -46,11 +46,11 @@ public class ArticleReaderServiceTests
         // Verifies that GetCleanArticleAsync extracts the content from an article element.
     }
     [Fact]
-public async Task GetCleanArticleAsync_UsesContentDivWhenArticleIsNotAvailable()
-{
-    // ARRANGE
+    public async Task GetCleanArticleAsync_UsesContentDivWhenArticleIsNotAvailable()
+    {
+        // ARRANGE
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="content">
@@ -60,35 +60,35 @@ public async Task GetCleanArticleAsync_UsesContentDivWhenArticleIsNotAvailable()
                   </html>
                   """;
 
-    var handler = new TestHttpMessageHandler(
-        HttpStatusCode.OK,
-        rawHtml);
+        var handler = new TestHttpMessageHandler(
+            HttpStatusCode.OK,
+            rawHtml);
 
-    var httpClient = new HttpClient(handler);
+        var httpClient = new HttpClient(handler);
 
-    var service = new ArticleReaderService();
+        var service = new ArticleReaderService();
 
-    var httpClientField = typeof(ArticleReaderService)
-        .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
+        var httpClientField = typeof(ArticleReaderService)
+            .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    httpClientField!.SetValue(service, httpClient);
+        httpClientField!.SetValue(service, httpClient);
 
-    // ACT
+        // ACT
 
-    var result = await service.GetCleanArticleAsync("https://example.com/article");
+        var result = await service.GetCleanArticleAsync("https://example.com/article");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Contains("Este es el contenido principal dentro del contenedor content.", result);
+        Assert.Contains("Este es el contenido principal dentro del contenedor content.", result);
 
-    // Verifies that GetCleanArticleAsync uses a content div when no article element is available.
-}
-[Fact]
-public async Task GetCleanArticleAsync_UsesPostDivWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that GetCleanArticleAsync uses a content div when no article element is available.
+    }
+    [Fact]
+    public async Task GetCleanArticleAsync_UsesPostDivWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="post">
@@ -98,35 +98,35 @@ public async Task GetCleanArticleAsync_UsesPostDivWhenPreviousSelectorsAreNotAva
                   </html>
                   """;
 
-    var handler = new TestHttpMessageHandler(
-        HttpStatusCode.OK,
-        rawHtml);
+        var handler = new TestHttpMessageHandler(
+            HttpStatusCode.OK,
+            rawHtml);
 
-    var httpClient = new HttpClient(handler);
+        var httpClient = new HttpClient(handler);
 
-    var service = new ArticleReaderService();
+        var service = new ArticleReaderService();
 
-    var httpClientField = typeof(ArticleReaderService)
-        .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
+        var httpClientField = typeof(ArticleReaderService)
+            .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    httpClientField!.SetValue(service, httpClient);
+        httpClientField!.SetValue(service, httpClient);
 
-    // ACT
+        // ACT
 
-    var result = await service.GetCleanArticleAsync("https://example.com/article");
+        var result = await service.GetCleanArticleAsync("https://example.com/article");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Contains("Este es el contenido principal dentro del contenedor post.", result);
+        Assert.Contains("Este es el contenido principal dentro del contenedor post.", result);
 
-    // Verifies that GetCleanArticleAsync uses a post div when previous selectors are unavailable.
-}
-[Fact]
-public async Task GetCleanArticleAsync_UsesBodyWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that GetCleanArticleAsync uses a post div when previous selectors are unavailable.
+    }
+    [Fact]
+    public async Task GetCleanArticleAsync_UsesBodyWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <p>Este es el contenido principal encontrado directamente dentro del body.</p>
@@ -134,35 +134,35 @@ public async Task GetCleanArticleAsync_UsesBodyWhenPreviousSelectorsAreNotAvaila
                   </html>
                   """;
 
-    var handler = new TestHttpMessageHandler(
-        HttpStatusCode.OK,
-        rawHtml);
+        var handler = new TestHttpMessageHandler(
+            HttpStatusCode.OK,
+            rawHtml);
 
-    var httpClient = new HttpClient(handler);
+        var httpClient = new HttpClient(handler);
 
-    var service = new ArticleReaderService();
+        var service = new ArticleReaderService();
 
-    var httpClientField = typeof(ArticleReaderService)
-        .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
+        var httpClientField = typeof(ArticleReaderService)
+            .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    httpClientField!.SetValue(service, httpClient);
+        httpClientField!.SetValue(service, httpClient);
 
-    // ACT
+        // ACT
 
-    var result = await service.GetCleanArticleAsync("https://example.com/article");
+        var result = await service.GetCleanArticleAsync("https://example.com/article");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Contains("Este es el contenido principal encontrado directamente dentro del body.", result);
+        Assert.Contains("Este es el contenido principal encontrado directamente dentro del body.", result);
 
-    // Verifies that GetCleanArticleAsync uses the body when previous selectors are unavailable.
-}
-[Fact]
-public async Task GetCleanArticleAsync_RemovesScriptFromArticleContent()
-{
-    // ARRANGE
+        // Verifies that GetCleanArticleAsync uses the body when previous selectors are unavailable.
+    }
+    [Fact]
+    public async Task GetCleanArticleAsync_RemovesScriptFromArticleContent()
+    {
+        // ARRANGE
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -175,37 +175,37 @@ public async Task GetCleanArticleAsync_RemovesScriptFromArticleContent()
                   </html>
                   """;
 
-    var handler = new TestHttpMessageHandler(
-        HttpStatusCode.OK,
-        rawHtml);
+        var handler = new TestHttpMessageHandler(
+            HttpStatusCode.OK,
+            rawHtml);
 
-    var httpClient = new HttpClient(handler);
+        var httpClient = new HttpClient(handler);
 
-    var service = new ArticleReaderService();
+        var service = new ArticleReaderService();
 
-    var httpClientField = typeof(ArticleReaderService)
-        .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
+        var httpClientField = typeof(ArticleReaderService)
+            .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    httpClientField!.SetValue(service, httpClient);
+        httpClientField!.SetValue(service, httpClient);
 
-    // ACT
+        // ACT
 
-    var result = await service.GetCleanArticleAsync("https://example.com/article");
+        var result = await service.GetCleanArticleAsync("https://example.com/article");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Contains("Este es el contenido principal del artículo", result);
-    Assert.DoesNotContain("console.log", result);
-    Assert.DoesNotContain("Este contenido debe eliminarse", result);
+        Assert.Contains("Este es el contenido principal del artículo", result);
+        Assert.DoesNotContain("console.log", result);
+        Assert.DoesNotContain("Este contenido debe eliminarse", result);
 
-    // Verifies that GetCleanArticleAsync removes script elements from article content.
-}
-[Fact]
-public async Task GetCleanArticleAsync_ReturnsFallbackMessageWhenArticleNodeIsNotFound()
-{
-    // ARRANGE
+        // Verifies that GetCleanArticleAsync removes script elements from article content.
+    }
+    [Fact]
+    public async Task GetCleanArticleAsync_ReturnsFallbackMessageWhenArticleNodeIsNotFound()
+    {
+        // ARRANGE
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <head>
                           <title>Test</title>
@@ -213,35 +213,35 @@ public async Task GetCleanArticleAsync_ReturnsFallbackMessageWhenArticleNodeIsNo
                   </html>
                   """;
 
-    var handler = new TestHttpMessageHandler(
-        HttpStatusCode.OK,
-        rawHtml);
+        var handler = new TestHttpMessageHandler(
+            HttpStatusCode.OK,
+            rawHtml);
 
-    var httpClient = new HttpClient(handler);
+        var httpClient = new HttpClient(handler);
 
-    var service = new ArticleReaderService();
+        var service = new ArticleReaderService();
 
-    var httpClientField = typeof(ArticleReaderService)
-        .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
+        var httpClientField = typeof(ArticleReaderService)
+            .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    httpClientField!.SetValue(service, httpClient);
+        httpClientField!.SetValue(service, httpClient);
 
-    // ACT
+        // ACT
 
-    var result = await service.GetCleanArticleAsync("https://example.com/article");
+        var result = await service.GetCleanArticleAsync("https://example.com/article");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Equal("Could not extract article content.", result);
+        Assert.Equal("Could not extract article content.", result);
 
-    // Verifies that the fallback message is returned when no article content node is found.
-}
-[Fact]
-public void GetCleanArticleSync_ReturnsArticleContent()
-{
-    // ARRANGE
+        // Verifies that the fallback message is returned when no article content node is found.
+    }
+    [Fact]
+    public void GetCleanArticleSync_ReturnsArticleContent()
+    {
+        // ARRANGE
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -251,35 +251,35 @@ public void GetCleanArticleSync_ReturnsArticleContent()
                   </html>
                   """;
 
-    var handler = new TestHttpMessageHandler(
-        HttpStatusCode.OK,
-        rawHtml);
+        var handler = new TestHttpMessageHandler(
+            HttpStatusCode.OK,
+            rawHtml);
 
-    var httpClient = new HttpClient(handler);
+        var httpClient = new HttpClient(handler);
 
-    var service = new ArticleReaderService();
+        var service = new ArticleReaderService();
 
-    var httpClientField = typeof(ArticleReaderService)
-        .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
+        var httpClientField = typeof(ArticleReaderService)
+            .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    httpClientField!.SetValue(service, httpClient);
+        httpClientField!.SetValue(service, httpClient);
 
-    // ACT
+        // ACT
 
-    var result = service.GetCleanArticleSync("https://example.com/article");
+        var result = service.GetCleanArticleSync("https://example.com/article");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Contains("Este es el contenido del artículo.", result);
+        Assert.Contains("Este es el contenido del artículo.", result);
 
-    // Verifies that GetCleanArticleSync returns the cleaned article content.
-}
-[Fact]
-public async Task GetRawHtmlAsync_ReturnsRawHtml()
-{
-    // ARRANGE
+        // Verifies that GetCleanArticleSync returns the cleaned article content.
+    }
+    [Fact]
+    public async Task GetRawHtmlAsync_ReturnsRawHtml()
+    {
+        // ARRANGE
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -289,27 +289,27 @@ public async Task GetRawHtmlAsync_ReturnsRawHtml()
                   </html>
                   """;
 
-    var handler = new TestHttpMessageHandler(
-        HttpStatusCode.OK,
-        rawHtml);
+        var handler = new TestHttpMessageHandler(
+            HttpStatusCode.OK,
+            rawHtml);
 
-    var httpClient = new HttpClient(handler);
+        var httpClient = new HttpClient(handler);
 
-    var service = new ArticleReaderService();
+        var service = new ArticleReaderService();
 
-    var httpClientField = typeof(ArticleReaderService)
-        .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
+        var httpClientField = typeof(ArticleReaderService)
+            .GetField("_httpClient", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    httpClientField!.SetValue(service, httpClient);
+        httpClientField!.SetValue(service, httpClient);
 
-    // ACT
+        // ACT
 
-    var result = await service.GetRawHtmlAsync("https://example.com/article");
+        var result = await service.GetRawHtmlAsync("https://example.com/article");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Equal(rawHtml, result);
+        Assert.Equal(rawHtml, result);
 
-    // Verifies that GetRawHtmlAsync returns the original HTML without processing it.
-}
+        // Verifies that GetRawHtmlAsync returns the original HTML without processing it.
+    }
 }
