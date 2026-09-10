@@ -43,185 +43,185 @@ public class FilterPreferencesServiceTests
         // Verifies that a source is active when no disabled sources are stored.
     }
     [Fact]
-public void IsSourceActive_ReturnsFalseWhenSourceIsDisabled()
-{
-    // ARRANGE
+    public void IsSourceActive_ReturnsFalseWhenSourceIsDisabled()
+    {
+        // ARRANGE
 
-    var prefs = new TestPreferencesService();
+        var prefs = new TestPreferencesService();
 
-    prefs.Set(
-        "disabled_sources",
-        """["elpais", "bbc"]""");
+        prefs.Set(
+            "disabled_sources",
+            """["elpais", "bbc"]""");
 
-    var service = new FilterPreferencesService(prefs);
+        var service = new FilterPreferencesService(prefs);
 
-    // ACT
+        // ACT
 
-    var result = service.IsSourceActive("elpais");
+        var result = service.IsSourceActive("elpais");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.False(result);
+        Assert.False(result);
 
-    // Verifies that a source is inactive when it is present in the stored disabled sources.
-}
-[Fact]
-public void IsSourceActive_ReturnsTrueWhenStoredSourcesDeserializeToNull()
-{
-    // ARRANGE
+        // Verifies that a source is inactive when it is present in the stored disabled sources.
+    }
+    [Fact]
+    public void IsSourceActive_ReturnsTrueWhenStoredSourcesDeserializeToNull()
+    {
+        // ARRANGE
 
-    var prefs = new TestPreferencesService();
+        var prefs = new TestPreferencesService();
 
-    prefs.Set(
-        "disabled_sources",
-        "null");
+        prefs.Set(
+            "disabled_sources",
+            "null");
 
-    var service = new FilterPreferencesService(prefs);
+        var service = new FilterPreferencesService(prefs);
 
-    // ACT
+        // ACT
 
-    var result = service.IsSourceActive("elpais");
+        var result = service.IsSourceActive("elpais");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.True(result);
+        Assert.True(result);
 
-    // Verifies that a null deserialized collection is replaced with an empty set.
-}
-[Fact]
-public void SetSourceActive_DisablesSourceWhenActiveIsFalse()
-{
-    // ARRANGE
+        // Verifies that a null deserialized collection is replaced with an empty set.
+    }
+    [Fact]
+    public void SetSourceActive_DisablesSourceWhenActiveIsFalse()
+    {
+        // ARRANGE
 
-    var prefs = new TestPreferencesService();
+        var prefs = new TestPreferencesService();
 
-    var service = new FilterPreferencesService(prefs);
+        var service = new FilterPreferencesService(prefs);
 
-    // ACT
+        // ACT
 
-    service.SetSourceActive("elpais", false);
+        service.SetSourceActive("elpais", false);
 
-    // ASSERT
+        // ASSERT
 
-    var result = service.IsSourceActive("elpais");
+        var result = service.IsSourceActive("elpais");
 
-    Assert.False(result);
+        Assert.False(result);
 
-    // Verifies that a source is added to the disabled sources when active is false.
-}
-[Fact]
-public void SetSourceActive_EnablesSourceWhenActiveIsTrue()
-{
-    // ARRANGE
+        // Verifies that a source is added to the disabled sources when active is false.
+    }
+    [Fact]
+    public void SetSourceActive_EnablesSourceWhenActiveIsTrue()
+    {
+        // ARRANGE
 
-    var prefs = new TestPreferencesService();
+        var prefs = new TestPreferencesService();
 
-    prefs.Set(
-        "disabled_sources",
-        """["elpais", "bbc"]""");
+        prefs.Set(
+            "disabled_sources",
+            """["elpais", "bbc"]""");
 
-    var service = new FilterPreferencesService(prefs);
+        var service = new FilterPreferencesService(prefs);
 
-    // ACT
+        // ACT
 
-    service.SetSourceActive("elpais", true);
+        service.SetSourceActive("elpais", true);
 
-    // ASSERT
+        // ASSERT
 
-    var result = service.IsSourceActive("elpais");
+        var result = service.IsSourceActive("elpais");
 
-    Assert.True(result);
+        Assert.True(result);
 
-    // Verifies that a source is removed from the disabled sources when active is true.
-}
-[Fact]
-public void IsCategoryActive_ReturnsTrueWhenNoDisabledCategoriesAreStored()
-{
-    // ARRANGE
+        // Verifies that a source is removed from the disabled sources when active is true.
+    }
+    [Fact]
+    public void IsCategoryActive_ReturnsTrueWhenNoDisabledCategoriesAreStored()
+    {
+        // ARRANGE
 
-    var prefs = new TestPreferencesService();
+        var prefs = new TestPreferencesService();
 
-    var service = new FilterPreferencesService(prefs);
+        var service = new FilterPreferencesService(prefs);
 
-    // ACT
+        // ACT
 
-    var result = service.IsCategoryActive("Tecnología");
+        var result = service.IsCategoryActive("Tecnología");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.True(result);
+        Assert.True(result);
 
-    // Verifies that a category is active when no disabled categories are stored.
-}
-[Fact]
-public void IsCategoryActive_ReturnsFalseWhenCategoryIsDisabled()
-{
-    // ARRANGE
+        // Verifies that a category is active when no disabled categories are stored.
+    }
+    [Fact]
+    public void IsCategoryActive_ReturnsFalseWhenCategoryIsDisabled()
+    {
+        // ARRANGE
 
-    var prefs = new TestPreferencesService();
+        var prefs = new TestPreferencesService();
 
-    prefs.Set(
-        "disabled_categories",
-        """["Tecnología", "Deportes"]""");
+        prefs.Set(
+            "disabled_categories",
+            """["Tecnología", "Deportes"]""");
 
-    var service = new FilterPreferencesService(prefs);
+        var service = new FilterPreferencesService(prefs);
 
-    // ACT
+        // ACT
 
-    var result = service.IsCategoryActive("Tecnología");
+        var result = service.IsCategoryActive("Tecnología");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.False(result);
+        Assert.False(result);
 
-    // Verifies that a category is inactive when it is present in the stored disabled categories.
-}
-[Fact]
-public void SetCategoryActive_DisablesCategoryWhenActiveIsFalse()
-{
-    // ARRANGE
+        // Verifies that a category is inactive when it is present in the stored disabled categories.
+    }
+    [Fact]
+    public void SetCategoryActive_DisablesCategoryWhenActiveIsFalse()
+    {
+        // ARRANGE
 
-    var prefs = new TestPreferencesService();
+        var prefs = new TestPreferencesService();
 
-    var service = new FilterPreferencesService(prefs);
+        var service = new FilterPreferencesService(prefs);
 
-    // ACT
+        // ACT
 
-    service.SetCategoryActive("Tecnología", false);
+        service.SetCategoryActive("Tecnología", false);
 
-    // ASSERT
+        // ASSERT
 
-    var result = service.IsCategoryActive("Tecnología");
+        var result = service.IsCategoryActive("Tecnología");
 
-    Assert.False(result);
+        Assert.False(result);
 
-    // Verifies that a category is added to the disabled categories when active is false.
-}
-[Fact]
-public void SetCategoryActive_EnablesCategoryWhenActiveIsTrue()
-{
-    // ARRANGE
+        // Verifies that a category is added to the disabled categories when active is false.
+    }
+    [Fact]
+    public void SetCategoryActive_EnablesCategoryWhenActiveIsTrue()
+    {
+        // ARRANGE
 
-    var prefs = new TestPreferencesService();
+        var prefs = new TestPreferencesService();
 
-    prefs.Set(
-        "disabled_categories",
-        """["Tecnología", "Deportes"]""");
+        prefs.Set(
+            "disabled_categories",
+            """["Tecnología", "Deportes"]""");
 
-    var service = new FilterPreferencesService(prefs);
+        var service = new FilterPreferencesService(prefs);
 
-    // ACT
+        // ACT
 
-    service.SetCategoryActive("Tecnología", true);
+        service.SetCategoryActive("Tecnología", true);
 
-    // ASSERT
+        // ASSERT
 
-    var result = service.IsCategoryActive("Tecnología");
+        var result = service.IsCategoryActive("Tecnología");
 
-    Assert.True(result);
+        Assert.True(result);
 
-    // Verifies that a category is removed from the disabled categories when active is true.
-}
+        // Verifies that a category is removed from the disabled categories when active is true.
+    }
 }
 
 
