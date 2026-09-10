@@ -90,13 +90,13 @@ public class QuickArticleResultServiceTests
         // Verifies that Extract uses the h1 element as the article title when available.
     }
     [Fact]
-public async Task Extract_UsesTitleElementWhenH1IsNotAvailable()
-{
-    // ARRANGE
+    public async Task Extract_UsesTitleElementWhenH1IsNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <head>
                           <title>Mi título desde title</title>
@@ -109,25 +109,25 @@ public async Task Extract_UsesTitleElementWhenH1IsNotAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("Mi título desde title", result.Title);
+        Assert.NotNull(result);
+        Assert.Equal("Mi título desde title", result.Title);
 
-    // Verifies that Extract uses the title element when no h1 element is available.
-}
-[Fact]
-public async Task Extract_UsesDefaultTitleWhenH1AndTitleAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the title element when no h1 element is available.
+    }
+    [Fact]
+    public async Task Extract_UsesDefaultTitleWhenH1AndTitleAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -137,25 +137,25 @@ public async Task Extract_UsesDefaultTitleWhenH1AndTitleAreNotAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("Sin título", result.Title);
+        Assert.NotNull(result);
+        Assert.Equal("Sin título", result.Title);
 
-    // Verifies that Extract uses the default title when neither h1 nor title is available.
-}
-[Fact]
-public async Task Extract_UsesOpenGraphImageWhenAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the default title when neither h1 nor title is available.
+    }
+    [Fact]
+    public async Task Extract_UsesOpenGraphImageWhenAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <head>
                           <meta property="og:image" content="https://example.com/article-image.jpg" />
@@ -168,25 +168,25 @@ public async Task Extract_UsesOpenGraphImageWhenAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract uses a valid Open Graph image when available.
-}
-[Fact]
-public async Task Extract_UsesArticleImageWhenOpenGraphImageIsNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses a valid Open Graph image when available.
+    }
+    [Fact]
+    public async Task Extract_UsesArticleImageWhenOpenGraphImageIsNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -197,25 +197,25 @@ public async Task Extract_UsesArticleImageWhenOpenGraphImageIsNotAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract uses the first valid article image when no Open Graph image is available.
-}
-[Fact]
-public async Task Extract_UsesArticleImageFromDataSrcWhenAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the first valid article image when no Open Graph image is available.
+    }
+    [Fact]
+    public async Task Extract_UsesArticleImageFromDataSrcWhenAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -226,25 +226,25 @@ public async Task Extract_UsesArticleImageFromDataSrcWhenAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/lazy-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/lazy-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract uses the article image from data-src when available, lazy-loading.
-}
-[Fact]
-public async Task Extract_IgnoresAvatarAndUsesNextValidArticleImage()
-{
-    // ARRANGE
+        // Verifies that Extract uses the article image from data-src when available, lazy-loading.
+    }
+    [Fact]
+    public async Task Extract_IgnoresAvatarAndUsesNextValidArticleImage()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -256,25 +256,25 @@ public async Task Extract_IgnoresAvatarAndUsesNextValidArticleImage()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract ignores avatar images and uses the next valid article image.
-}
-[Fact]
-public async Task Extract_IgnoresIconAndUsesNextValidArticleImage()
-{
-    // ARRANGE
+        // Verifies that Extract ignores avatar images and uses the next valid article image.
+    }
+    [Fact]
+    public async Task Extract_IgnoresIconAndUsesNextValidArticleImage()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -286,25 +286,25 @@ public async Task Extract_IgnoresIconAndUsesNextValidArticleImage()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract ignores icon images and uses the next valid article image.
-}
-[Fact]
-public async Task Extract_IgnoresLogoAndUsesNextValidArticleImage()
-{
-    // ARRANGE
+        // Verifies that Extract ignores icon images and uses the next valid article image.
+    }
+    [Fact]
+    public async Task Extract_IgnoresLogoAndUsesNextValidArticleImage()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -316,25 +316,25 @@ public async Task Extract_IgnoresLogoAndUsesNextValidArticleImage()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract ignores logo images and uses the next valid article image.
-}
-[Fact]
-public async Task Extract_IgnoresInvalidOpenGraphImageAndUsesArticleImage()
-{
-    // ARRANGE
+        // Verifies that Extract ignores logo images and uses the next valid article image.
+    }
+    [Fact]
+    public async Task Extract_IgnoresInvalidOpenGraphImageAndUsesArticleImage()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <head>
                           <meta property="og:image" content="https://example.com/image.svg" />
@@ -348,25 +348,25 @@ public async Task Extract_IgnoresInvalidOpenGraphImageAndUsesArticleImage()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract ignores an invalid Open Graph image and uses a valid article image instead.
-}
-[Fact]
-public async Task Extract_IgnoresOpenGraphImageWithInvalidProtocolAndUsesArticleImage()
-{
-    // ARRANGE
+        // Verifies that Extract ignores an invalid Open Graph image and uses a valid article image instead.
+    }
+    [Fact]
+    public async Task Extract_IgnoresOpenGraphImageWithInvalidProtocolAndUsesArticleImage()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <head>
                           <meta property="og:image" content="ftp://example.com/image.jpg" />
@@ -380,25 +380,25 @@ public async Task Extract_IgnoresOpenGraphImageWithInvalidProtocolAndUsesArticle
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/article-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract ignores an Open Graph image with an invalid protocol and uses a valid article image instead.
-}
-[Fact]
-public async Task Extract_UsesProtocolRelativeOpenGraphImageWhenAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract ignores an Open Graph image with an invalid protocol and uses a valid article image instead.
+    }
+    [Fact]
+    public async Task Extract_UsesProtocolRelativeOpenGraphImageWhenAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <head>
                           <meta property="og:image" content="//example.com/article-image.jpg" />
@@ -412,25 +412,25 @@ public async Task Extract_UsesProtocolRelativeOpenGraphImageWhenAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("//example.com/article-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("//example.com/article-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract accepts a protocol-relative Open Graph image URL.
-}
-[Fact]
-public async Task Extract_UsesDataSrcBeforeSrcWhenBothAreAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract accepts a protocol-relative Open Graph image URL.
+    }
+    [Fact]
+    public async Task Extract_UsesDataSrcBeforeSrcWhenBothAreAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -442,25 +442,25 @@ public async Task Extract_UsesDataSrcBeforeSrcWhenBothAreAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal("https://example.com/data-src-image.jpg", result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal("https://example.com/data-src-image.jpg", result.ImageUrl);
 
-    // Verifies that Extract prefers data-src over src when both image attributes are available.
-}
-[Fact]
-public async Task Extract_ReturnsEmptyImageUrlWhenNoArticleImageIsAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract prefers data-src over src when both image attributes are available.
+    }
+    [Fact]
+    public async Task Extract_ReturnsEmptyImageUrlWhenNoArticleImageIsAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -470,25 +470,25 @@ public async Task Extract_ReturnsEmptyImageUrlWhenNoArticleImageIsAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal(string.Empty, result.ImageUrl);
+        Assert.NotNull(result);
+        Assert.Equal(string.Empty, result.ImageUrl);
 
-    // Verifies that Extract returns an empty image URL when no valid article image is available.
-}
-[Fact]
-public async Task Extract_ReturnsEmptyTextWhenArticleContentIsEmpty()
-{
-    // ARRANGE
+        // Verifies that Extract returns an empty image URL when no valid article image is available.
+    }
+    [Fact]
+    public async Task Extract_ReturnsEmptyTextWhenArticleContentIsEmpty()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article></article>
@@ -496,26 +496,26 @@ public async Task Extract_ReturnsEmptyTextWhenArticleContentIsEmpty()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Equal(string.Empty, result.Html);
-    Assert.Equal(string.Empty, result.Text);
+        Assert.NotNull(result);
+        Assert.Equal(string.Empty, result.Html);
+        Assert.Equal(string.Empty, result.Text);
 
-    // Verifies that Extract returns empty text when the article contains no content.
-}
-[Fact]
-public async Task Extract_DecodesHtmlEntitiesInArticleText()
-{
-    // ARRANGE
+        // Verifies that Extract returns empty text when the article contains no content.
+    }
+    [Fact]
+    public async Task Extract_DecodesHtmlEntitiesInArticleText()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -525,25 +525,25 @@ public async Task Extract_DecodesHtmlEntitiesInArticleText()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("economía & tecnología", result.Text);
+        Assert.NotNull(result);
+        Assert.Contains("economía & tecnología", result.Text);
 
-    // Verifies that Extract decodes HTML entities in the article text.
-}
-[Fact]
-public async Task Extract_PreservesSeparateParagraphsAsSeparateLines()
-{
-    // ARRANGE
+        // Verifies that Extract decodes HTML entities in the article text.
+    }
+    [Fact]
+    public async Task Extract_PreservesSeparateParagraphsAsSeparateLines()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -554,25 +554,25 @@ public async Task Extract_PreservesSeparateParagraphsAsSeparateLines()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("</p>\n<p>", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("</p>\n<p>", result.Html);
 
-    // Verifies that separate article paragraphs remain separated by new lines in the cleaned HTML.
-}
-[Fact]
-public async Task Extract_ConvertsBrTagsToLineBreaks()
-{
-    // ARRANGE
+        // Verifies that separate article paragraphs remain separated by new lines in the cleaned HTML.
+    }
+    [Fact]
+    public async Task Extract_ConvertsBrTagsToLineBreaks()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -582,27 +582,27 @@ public async Task Extract_ConvertsBrTagsToLineBreaks()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("\n", result.Html);
-    Assert.Contains("Este es el primer texto", result.Html);
-    Assert.Contains("Este es el segundo texto", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("\n", result.Html);
+        Assert.Contains("Este es el primer texto", result.Html);
+        Assert.Contains("Este es el segundo texto", result.Html);
 
-    // Verifies that Extract converts br tags into line breaks in the cleaned HTML.
-}
-[Fact]
-public async Task Extract_RemovesUnwantedHtmlTagsFromArticleText()
-{
-    // ARRANGE
+        // Verifies that Extract converts br tags into line breaks in the cleaned HTML.
+    }
+    [Fact]
+    public async Task Extract_RemovesUnwantedHtmlTagsFromArticleText()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -613,28 +613,28 @@ public async Task Extract_RemovesUnwantedHtmlTagsFromArticleText()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.DoesNotContain("<script>", result.Html);
-    Assert.DoesNotContain("contenido que no debe aparecer", result.Html);
+        Assert.NotNull(result);
+        Assert.DoesNotContain("<script>", result.Html);
+        Assert.DoesNotContain("contenido que no debe aparecer", result.Html);
 
-    // Verifies that Extract removes unwanted HTML tags and their content from the article text.
-    // This test don't tottally isolates the regular expression from CleanText(), the behaviour is covered by
-    // GetCleanArticleNode(). 
-}
-[Fact]
-public async Task Extract_PreservesAllowedFormattingTags()
-{
-    // ARRANGE
+        // Verifies that Extract removes unwanted HTML tags and their content from the article text.
+        // This test don't tottally isolates the regular expression from CleanText(), the behaviour is covered by
+        // GetCleanArticleNode(). 
+    }
+    [Fact]
+    public async Task Extract_PreservesAllowedFormattingTags()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -645,25 +645,25 @@ public async Task Extract_PreservesAllowedFormattingTags()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("<strong>información importante</strong>", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("<strong>información importante</strong>", result.Html);
 
-    // Verifies that Extract preserves allowed formatting tags in the cleaned HTML.
-}
-[Fact]
-public async Task Extract_RemovesUnallowedFormattingTagsButKeepsTheirText()
-{
-    // ARRANGE
+        // Verifies that Extract preserves allowed formatting tags in the cleaned HTML.
+    }
+    [Fact]
+    public async Task Extract_RemovesUnallowedFormattingTagsButKeepsTheirText()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -674,26 +674,26 @@ public async Task Extract_RemovesUnallowedFormattingTagsButKeepsTheirText()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.DoesNotContain("<u>", result.Html);
-    Assert.Contains("formato no permitido", result.Html);
+        Assert.NotNull(result);
+        Assert.DoesNotContain("<u>", result.Html);
+        Assert.Contains("formato no permitido", result.Html);
 
-    // Verifies that Extract removes unallowed formatting tags while preserving their text content.
-}
-[Fact]
-public async Task Extract_PreservesAllAllowedFormattingTags()
-{
-    // ARRANGE
+        // Verifies that Extract removes unallowed formatting tags while preserving their text content.
+    }
+    [Fact]
+    public async Task Extract_PreservesAllAllowedFormattingTags()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -704,27 +704,27 @@ public async Task Extract_PreservesAllAllowedFormattingTags()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("<b>Texto en negrita</b>", result.Html);
-    Assert.Contains("<i>texto en cursiva</i>", result.Html);
-    Assert.Contains("<em>texto enfatizado</em>", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("<b>Texto en negrita</b>", result.Html);
+        Assert.Contains("<i>texto en cursiva</i>", result.Html);
+        Assert.Contains("<em>texto enfatizado</em>", result.Html);
 
-    // Verifies that Extract preserves all allowed formatting tags in the cleaned HTML.
-}
-[Fact]
-public async Task Extract_IgnoresArticleLinesShorterThanMinimumLength()
-{
-    // ARRANGE
+        // Verifies that Extract preserves all allowed formatting tags in the cleaned HTML.
+    }
+    [Fact]
+    public async Task Extract_IgnoresArticleLinesShorterThanMinimumLength()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -735,26 +735,26 @@ public async Task Extract_IgnoresArticleLinesShorterThanMinimumLength()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.DoesNotContain("Texto corto", result.Html);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.NotNull(result);
+        Assert.DoesNotContain("Texto corto", result.Html);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
 
-    // Verifies that Extract ignores article lines shorter than 25 characters.
-}
-[Fact]
-public async Task Extract_IgnoresLinesContainingNoisePatterns()
-{
-    // ARRANGE
+        // Verifies that Extract ignores article lines shorter than 25 characters.
+    }
+    [Fact]
+    public async Task Extract_IgnoresLinesContainingNoisePatterns()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -765,26 +765,26 @@ public async Task Extract_IgnoresLinesContainingNoisePatterns()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.DoesNotContain("Esta sección contiene publicidad", result.Html);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.NotNull(result);
+        Assert.DoesNotContain("Esta sección contiene publicidad", result.Html);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
 
-    // Verifies that Extract ignores article lines containing configured noise patterns.
-}
-[Fact]
-public async Task Extract_IgnoresLinesStartingWithHttp()
-{
-    // ARRANGE
+        // Verifies that Extract ignores article lines containing configured noise patterns.
+    }
+    [Fact]
+    public async Task Extract_IgnoresLinesStartingWithHttp()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -795,26 +795,26 @@ public async Task Extract_IgnoresLinesStartingWithHttp()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.DoesNotContain("https://example.com/some-link-that-should-not-appear", result.Html);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.NotNull(result);
+        Assert.DoesNotContain("https://example.com/some-link-that-should-not-appear", result.Html);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
 
-    // Verifies that Extract ignores article lines starting with http.
-}
-[Fact]
-public async Task Extract_IgnoresLinesContainingPicTwitter()
-{
-    // ARRANGE
+        // Verifies that Extract ignores article lines starting with http.
+    }
+    [Fact]
+    public async Task Extract_IgnoresLinesContainingPicTwitter()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -825,26 +825,26 @@ public async Task Extract_IgnoresLinesContainingPicTwitter()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.DoesNotContain("pic.twitter.com/example-image-link", result.Html);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.NotNull(result);
+        Assert.DoesNotContain("pic.twitter.com/example-image-link", result.Html);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
 
-    // Verifies that Extract ignores article lines containing pic.twitter.
-}
-[Fact]
-public async Task Extract_IgnoresLinesContainingEuroPrices()
-{
-    // ARRANGE
+        // Verifies that Extract ignores article lines containing pic.twitter.
+    }
+    [Fact]
+    public async Task Extract_IgnoresLinesContainingEuroPrices()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -855,26 +855,26 @@ public async Task Extract_IgnoresLinesContainingEuroPrices()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.DoesNotContain("19,99 €", result.Html);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.NotNull(result);
+        Assert.DoesNotContain("19,99 €", result.Html);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
 
-    // Verifies that Extract ignores article lines containing prices in euros.
-}
-[Fact]
-public async Task Extract_IgnoresLinesContainingEuroPricesWithEuros()
-{
-    // ARRANGE
+        // Verifies that Extract ignores article lines containing prices in euros.
+    }
+    [Fact]
+    public async Task Extract_IgnoresLinesContainingEuroPricesWithEuros()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -885,26 +885,26 @@ public async Task Extract_IgnoresLinesContainingEuroPricesWithEuros()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.DoesNotContain("19.99 euros", result.Html);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.NotNull(result);
+        Assert.DoesNotContain("19.99 euros", result.Html);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
 
-    // Verifies that Extract ignores article lines containing prices followed by euros.
-}
-[Fact]
-public async Task Extract_NormalizesMultipleSpacesInArticleText()
-{
-    // ARRANGE
+        // Verifies that Extract ignores article lines containing prices followed by euros.
+    }
+    [Fact]
+    public async Task Extract_NormalizesMultipleSpacesInArticleText()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -914,26 +914,26 @@ public async Task Extract_NormalizesMultipleSpacesInArticleText()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este texto contiene múltiples espacios consecutivos.", result.Html);
-    Assert.DoesNotContain("Este    texto", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este texto contiene múltiples espacios consecutivos.", result.Html);
+        Assert.DoesNotContain("Este    texto", result.Html);
 
-    // Verifies that Extract normalizes consecutive whitespace into single spaces.
-}
-[Fact]
-public async Task Extract_StopsProcessingWhenStopPatternIsFound()
-{
-    // ARRANGE
+        // Verifies that Extract normalizes consecutive whitespace into single spaces.
+    }
+    [Fact]
+    public async Task Extract_StopsProcessingWhenStopPatternIsFound()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -945,27 +945,27 @@ public async Task Extract_StopsProcessingWhenStopPatternIsFound()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
-    Assert.DoesNotContain("Sigue leyendo", result.Html);
-    Assert.DoesNotContain("Este contenido aparece después del patrón de parada", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.DoesNotContain("Sigue leyendo", result.Html);
+        Assert.DoesNotContain("Este contenido aparece después del patrón de parada", result.Html);
 
-    // Verifies that Extract stops processing article text when a stop pattern is found.
-}
-[Fact]
-public async Task Extract_RemovesCopyrightResidualGarbage()
-{
-    // ARRANGE
+        // Verifies that Extract stops processing article text when a stop pattern is found.
+    }
+    [Fact]
+    public async Task Extract_RemovesCopyrightResidualGarbage()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -976,26 +976,26 @@ public async Task Extract_RemovesCopyrightResidualGarbage()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
-    Assert.DoesNotContain("Copyright 2026 Example News", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.DoesNotContain("Copyright 2026 Example News", result.Html);
 
-    // Verifies that Extract removes residual copyright text from the cleaned article HTML.
-}
-[Fact]
-public async Task Extract_RemovesRightsReservedResidualGarbage()
-{
-    // ARRANGE
+        // Verifies that Extract removes residual copyright text from the cleaned article HTML.
+    }
+    [Fact]
+    public async Task Extract_RemovesRightsReservedResidualGarbage()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1006,26 +1006,26 @@ public async Task Extract_RemovesRightsReservedResidualGarbage()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
-    Assert.DoesNotContain("Derechos reservados 2026 Example News", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.DoesNotContain("Derechos reservados 2026 Example News", result.Html);
 
-    // Verifies that Extract removes residual rights reserved text from the cleaned article HTML.
-}
-[Fact]
-public async Task Extract_RemovesCopyrightSymbolResidualGarbage()
-{
-    // ARRANGE
+        // Verifies that Extract removes residual rights reserved text from the cleaned article HTML.
+    }
+    [Fact]
+    public async Task Extract_RemovesCopyrightSymbolResidualGarbage()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1036,26 +1036,26 @@ public async Task Extract_RemovesCopyrightSymbolResidualGarbage()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
-    Assert.DoesNotContain("© 2026 Example News", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.DoesNotContain("© 2026 Example News", result.Html);
 
-    // Verifies that Extract removes residual copyright symbol text from the cleaned article HTML.
-}
-[Fact]
-public async Task Extract_UsesBlobContainerAsArticleNodeWhenAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract removes residual copyright symbol text from the cleaned article HTML.
+    }
+    [Fact]
+    public async Task Extract_UsesBlobContainerAsArticleNodeWhenAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="blob-container">
@@ -1069,26 +1069,26 @@ public async Task Extract_UsesBlobContainerAsArticleNodeWhenAvailable()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract prioritizes the blob-container element as the article content.
-}
-[Fact]
-public async Task Extract_UsesArticleBodyAsArticleNodeWhenBlobContainerIsNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract prioritizes the blob-container element as the article content.
+    }
+    [Fact]
+    public async Task Extract_UsesArticleBodyAsArticleNodeWhenBlobContainerIsNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div itemprop="articleBody">
@@ -1102,26 +1102,26 @@ public async Task Extract_UsesArticleBodyAsArticleNodeWhenBlobContainerIsNotAvai
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the articleBody element when blob-container is not available.
-}
-[Fact]
-public async Task Extract_UsesArticleTextAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the articleBody element when blob-container is not available.
+    }
+    [Fact]
+    public async Task Extract_UsesArticleTextAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="article-text">
@@ -1135,26 +1135,26 @@ public async Task Extract_UsesArticleTextAsArticleNodeWhenPreviousSelectorsAreNo
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the article-text element when higher-priority selectors are not available.
-}
-[Fact]
-public async Task Extract_UsesArticleContentAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the article-text element when higher-priority selectors are not available.
+    }
+    [Fact]
+    public async Task Extract_UsesArticleContentAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="article-content">
@@ -1168,26 +1168,26 @@ public async Task Extract_UsesArticleContentAsArticleNodeWhenPreviousSelectorsAr
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the article-content element when higher-priority selectors are not available.
-}
-[Fact]
-public async Task Extract_UsesPostContentAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the article-content element when higher-priority selectors are not available.
+    }
+    [Fact]
+    public async Task Extract_UsesPostContentAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="post-content">
@@ -1201,26 +1201,26 @@ public async Task Extract_UsesPostContentAsArticleNodeWhenPreviousSelectorsAreNo
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the post-content element when higher-priority selectors are not available.
-}
-[Fact]
-public async Task Extract_UsesMainContentAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the post-content element when higher-priority selectors are not available.
+    }
+    [Fact]
+    public async Task Extract_UsesMainContentAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div id="main-content">
@@ -1234,26 +1234,26 @@ public async Task Extract_UsesMainContentAsArticleNodeWhenPreviousSelectorsAreNo
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the main-content element when higher-priority selectors are not available.
-}
-[Fact]
-public async Task Extract_UsesMainContentClassAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the main-content element when higher-priority selectors are not available.
+    }
+    [Fact]
+    public async Task Extract_UsesMainContentClassAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="main-content">
@@ -1267,26 +1267,26 @@ public async Task Extract_UsesMainContentClassAsArticleNodeWhenPreviousSelectors
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the main-content class when higher-priority selectors are not available.
-}
-[Fact]
-public async Task Extract_UsesContentInnerAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the main-content class when higher-priority selectors are not available.
+    }
+    [Fact]
+    public async Task Extract_UsesContentInnerAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="content-inner">
@@ -1300,26 +1300,26 @@ public async Task Extract_UsesContentInnerAsArticleNodeWhenPreviousSelectorsAreN
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the content-inner element when higher-priority selectors are not available.
-}
-[Fact]
-public async Task Extract_UsesEpArticleBodyAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the content-inner element when higher-priority selectors are not available.
+    }
+    [Fact]
+    public async Task Extract_UsesEpArticleBodyAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div class="ep-article-body">
@@ -1333,26 +1333,26 @@ public async Task Extract_UsesEpArticleBodyAsArticleNodeWhenPreviousSelectorsAre
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the ep-article-body element when higher-priority selectors are not available.
-}
-[Fact]
-public async Task Extract_UsesArticleElementAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the ep-article-body element when higher-priority selectors are not available.
+    }
+    [Fact]
+    public async Task Extract_UsesArticleElementAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1366,26 +1366,26 @@ public async Task Extract_UsesArticleElementAsArticleNodeWhenPreviousSelectorsAr
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the article element when higher-priority selectors are not available.
-}
-[Fact]
-public async Task Extract_UsesMainElementAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
-{
-    // ARRANGE
+        // Verifies that Extract uses the article element when higher-priority selectors are not available.
+    }
+    [Fact]
+    public async Task Extract_UsesMainElementAsArticleNodeWhenPreviousSelectorsAreNotAvailable()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <main>
@@ -1399,29 +1399,29 @@ public async Task Extract_UsesMainElementAsArticleNodeWhenPreviousSelectorsAreNo
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido correcto del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido correcto del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a otro candidato", result.Html);
 
-    // Verifies that Extract uses the main element when higher-priority selectors are not available.
-}
+        // Verifies that Extract uses the main element when higher-priority selectors are not available.
+    }
 
-//FALLBACK FOR GetBestContentNode()
+    //FALLBACK FOR GetBestContentNode()
 
-[Fact]
-public async Task Extract_UsesContentNodeWithMostLongParagraphsAsFallback()
-{
-    // ARRANGE
+    [Fact]
+    public async Task Extract_UsesContentNodeWithMostLongParagraphsAsFallback()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div>
@@ -1436,27 +1436,27 @@ public async Task Extract_UsesContentNodeWithMostLongParagraphsAsFallback()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el primer párrafo del segundo nodo", result.Html);
-    Assert.Contains("Este es el segundo párrafo del segundo nodo", result.Html);
-    Assert.DoesNotContain("Este es el contenido del primer nodo", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el primer párrafo del segundo nodo", result.Html);
+        Assert.Contains("Este es el segundo párrafo del segundo nodo", result.Html);
+        Assert.DoesNotContain("Este es el contenido del primer nodo", result.Html);
 
-    // Verifies that Extract selects the fallback content node with the most long paragraphs.
-}
-[Fact]
-public async Task Extract_PenalizesFallbackContentNodesWithHighLinkDensity()
-{
-    // ARRANGE
+        // Verifies that Extract selects the fallback content node with the most long paragraphs.
+    }
+    [Fact]
+    public async Task Extract_PenalizesFallbackContentNodesWithHighLinkDensity()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div>
@@ -1474,26 +1474,26 @@ public async Task Extract_PenalizesFallbackContentNodesWithHighLinkDensity()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido real del artículo", result.Html);
-    Assert.DoesNotContain("Este es un enlace con mucho contenido", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido real del artículo", result.Html);
+        Assert.DoesNotContain("Este es un enlace con mucho contenido", result.Html);
 
-    // Verifies that Extract penalizes fallback content nodes with high link density.
-}
-[Fact]
-public async Task Extract_RemovesAsideFromArticleContent()
-{
-    // ARRANGE
+        // Verifies that Extract penalizes fallback content nodes with high link density.
+    }
+    [Fact]
+    public async Task Extract_RemovesAsideFromArticleContent()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1506,29 +1506,29 @@ public async Task Extract_RemovesAsideFromArticleContent()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido principal del artículo", result.Html);
-    Assert.DoesNotContain("Este contenido pertenece a una sección lateral", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido principal del artículo", result.Html);
+        Assert.DoesNotContain("Este contenido pertenece a una sección lateral", result.Html);
 
-    // Verifies that Extract removes aside elements from the selected article content.
-}
+        // Verifies that Extract removes aside elements from the selected article content.
+    }
 
-//Selection for sensitive cases of selectors, not all cases were covered
+    //Selection for sensitive cases of selectors, not all cases were covered
 
-[Fact]
-public async Task Extract_RemovesRelatedContentFromArticle()
-{
-    // ARRANGE
+    [Fact]
+    public async Task Extract_RemovesRelatedContentFromArticle()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1542,26 +1542,26 @@ public async Task Extract_RemovesRelatedContentFromArticle()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido principal del artículo", result.Html);
-    Assert.DoesNotContain("Esta es una noticia relacionada", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido principal del artículo", result.Html);
+        Assert.DoesNotContain("Esta es una noticia relacionada", result.Html);
 
-    // Verifies that Extract removes related content from the selected article node.
-}
-[Fact]
-public async Task Extract_RemovesShortLinkParagraphs()
-{
-    // ARRANGE
+        // Verifies that Extract removes related content from the selected article node.
+    }
+    [Fact]
+    public async Task Extract_RemovesShortLinkParagraphs()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1572,26 +1572,26 @@ public async Task Extract_RemovesShortLinkParagraphs()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
-    Assert.DoesNotContain("Enlace corto", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.DoesNotContain("Enlace corto", result.Html);
 
-    // Verifies that Extract removes short paragraphs containing a single link.
-}
-[Fact]
-public async Task Extract_KeepsLongParagraphsWhenArticleHasHighLinkDensity()
-{
-    // ARRANGE
+        // Verifies that Extract removes short paragraphs containing a single link.
+    }
+    [Fact]
+    public async Task Extract_KeepsLongParagraphsWhenArticleHasHighLinkDensity()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1605,29 +1605,29 @@ public async Task Extract_KeepsLongParagraphsWhenArticleHasHighLinkDensity()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
-    Assert.Contains("Otro párrafo suficientemente largo", result.Html);
-    Assert.DoesNotContain("Enlace corto", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.Contains("Otro párrafo suficientemente largo", result.Html);
+        Assert.DoesNotContain("Enlace corto", result.Html);
 
-    // Verifies that high link density keeps only sufficiently long paragraphs.
-    //This test checks the behaviour for the selected node when is clean already. Don't verifies per lenght, it was already
-    //managed by past tests.
-}
-[Fact]
-public async Task Extract_HandlesHighLinkDensityWithoutParagraphs()
-{
-    // ARRANGE
+        // Verifies that high link density keeps only sufficiently long paragraphs.
+        //This test checks the behaviour for the selected node when is clean already. Don't verifies per lenght, it was already
+        //managed by past tests.
+    }
+    [Fact]
+    public async Task Extract_HandlesHighLinkDensityWithoutParagraphs()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1638,26 +1638,26 @@ public async Task Extract_HandlesHighLinkDensityWithoutParagraphs()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es un enlace suficientemente largo", result.Html);
-    Assert.Contains("Este es otro enlace suficientemente largo", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es un enlace suficientemente largo", result.Html);
+        Assert.Contains("Este es otro enlace suficientemente largo", result.Html);
 
-    // Verifies that Extract handles high link density when no paragraphs are present.
-}
-[Fact]
-public async Task Extract_IgnoresFallbackContentNodesWithoutParagraphs()
-{
-    // ARRANGE
+        // Verifies that Extract handles high link density when no paragraphs are present.
+    }
+    [Fact]
+    public async Task Extract_IgnoresFallbackContentNodesWithoutParagraphs()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <div>
@@ -1674,27 +1674,27 @@ public async Task Extract_IgnoresFallbackContentNodesWithoutParagraphs()
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es el contenido principal del artículo", result.Html);
-    Assert.Contains("Este es otro párrafo suficientemente largo", result.Html);
-    Assert.DoesNotContain("Este contenido no está dentro de un párrafo", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es el contenido principal del artículo", result.Html);
+        Assert.Contains("Este es otro párrafo suficientemente largo", result.Html);
+        Assert.DoesNotContain("Este contenido no está dentro de un párrafo", result.Html);
 
-    // Verifies that fallback content nodes without paragraphs receive no score.
-}
-[Fact]
-public async Task Extract_RemovesLongParagraphsContainingStopPatternsWhenArticleHasHighLinkDensity()
-{
-    // ARRANGE
+        // Verifies that fallback content nodes without paragraphs receive no score.
+    }
+    [Fact]
+    public async Task Extract_RemovesLongParagraphsContainingStopPatternsWhenArticleHasHighLinkDensity()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   <html>
                       <body>
                           <article>
@@ -1708,123 +1708,123 @@ public async Task Extract_RemovesLongParagraphsContainingStopPatternsWhenArticle
                   </html>
                   """;
 
-    // ACT
+        // ACT
 
-    var result = await service.Extract(rawHtml);
+        var result = await service.Extract(rawHtml);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.NotNull(result);
-    Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
-    Assert.DoesNotContain("Sigue leyendo para descubrir toda la información", result.Html);
+        Assert.NotNull(result);
+        Assert.Contains("Este es un párrafo suficientemente largo", result.Html);
+        Assert.DoesNotContain("Sigue leyendo para descubrir toda la información", result.Html);
 
-    // Verifies that high-link-density content removes long paragraphs containing stop patterns.
-}
+        // Verifies that high-link-density content removes long paragraphs containing stop patterns.
+    }
 
-[Fact]
-public void DecodeHtml_UsesProvidedCharsetWhenValid()
-{
-    // ARRANGE
+    [Fact]
+    public void DecodeHtml_UsesProvidedCharsetWhenValid()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var expectedHtml = "<p>Noticias de España: año, información y economía.</p>";
-    var bytes = Encoding.UTF8.GetBytes(expectedHtml);
+        var expectedHtml = "<p>Noticias de España: año, información y economía.</p>";
+        var bytes = Encoding.UTF8.GetBytes(expectedHtml);
 
-    // ACT
+        // ACT
 
-    var result = service.DecodeHtml(bytes, "utf-8");
+        var result = service.DecodeHtml(bytes, "utf-8");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Equal(expectedHtml, result);
+        Assert.Equal(expectedHtml, result);
 
-    // Verifies that DecodeHtml uses the provided charset when it is valid.
-}
-[Fact]
-public void DecodeHtml_UsesUtf8WhenCharsetIsNull()
-{
-    // ARRANGE
+        // Verifies that DecodeHtml uses the provided charset when it is valid.
+    }
+    [Fact]
+    public void DecodeHtml_UsesUtf8WhenCharsetIsNull()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var expectedHtml = "<p>Noticias de España: año, información y economía.</p>";
-    var bytes = Encoding.UTF8.GetBytes(expectedHtml);
+        var expectedHtml = "<p>Noticias de España: año, información y economía.</p>";
+        var bytes = Encoding.UTF8.GetBytes(expectedHtml);
 
-    // ACT
+        // ACT
 
-    var result = service.DecodeHtml(bytes, null);
+        var result = service.DecodeHtml(bytes, null);
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Equal(expectedHtml, result);
+        Assert.Equal(expectedHtml, result);
 
-    // Verifies that DecodeHtml uses UTF-8 when no charset is provided.
-}
-[Fact]
-public void DecodeHtml_UsesUtf8WhenCharsetIsEmpty()
-{
-    // ARRANGE
+        // Verifies that DecodeHtml uses UTF-8 when no charset is provided.
+    }
+    [Fact]
+    public void DecodeHtml_UsesUtf8WhenCharsetIsEmpty()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var expectedHtml = "<p>Noticias de España: año, información y economía.</p>";
-    var bytes = Encoding.UTF8.GetBytes(expectedHtml);
+        var expectedHtml = "<p>Noticias de España: año, información y economía.</p>";
+        var bytes = Encoding.UTF8.GetBytes(expectedHtml);
 
-    // ACT
+        // ACT
 
-    var result = service.DecodeHtml(bytes, "");
+        var result = service.DecodeHtml(bytes, "");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Equal(expectedHtml, result);
+        Assert.Equal(expectedHtml, result);
 
-    // Verifies that DecodeHtml uses UTF-8 when the charset is empty.
-}
-[Fact]
-public void DecodeHtml_UsesUtf8WhenCharsetIsInvalid()
-{
-    // ARRANGE
+        // Verifies that DecodeHtml uses UTF-8 when the charset is empty.
+    }
+    [Fact]
+    public void DecodeHtml_UsesUtf8WhenCharsetIsInvalid()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var expectedHtml = "<p>Noticias de España: año, información y economía.</p>";
-    var bytes = Encoding.UTF8.GetBytes(expectedHtml);
+        var expectedHtml = "<p>Noticias de España: año, información y economía.</p>";
+        var bytes = Encoding.UTF8.GetBytes(expectedHtml);
 
-    // ACT
+        // ACT
 
-    var result = service.DecodeHtml(bytes, "invalid-charset");
+        var result = service.DecodeHtml(bytes, "invalid-charset");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Equal(expectedHtml, result);
+        Assert.Equal(expectedHtml, result);
 
-    // Verifies that DecodeHtml falls back to UTF-8 when the charset is invalid.
-}
-[Fact]
-public void DecodeHtml_NormalizesWhitespaceAndTrimsResult()
-{
-    // ARRANGE
+        // Verifies that DecodeHtml falls back to UTF-8 when the charset is invalid.
+    }
+    [Fact]
+    public void DecodeHtml_NormalizesWhitespaceAndTrimsResult()
+    {
+        // ARRANGE
 
-    var service = new QuickArticleService();
+        var service = new QuickArticleService();
 
-    var rawHtml = """
+        var rawHtml = """
                   
                       <p>Este    texto
                       contiene    varios espacios y saltos de línea.</p>
                   
                   """;
 
-    var bytes = Encoding.UTF8.GetBytes(rawHtml);
+        var bytes = Encoding.UTF8.GetBytes(rawHtml);
 
-    // ACT
+        // ACT
 
-    var result = service.DecodeHtml(bytes, "utf-8");
+        var result = service.DecodeHtml(bytes, "utf-8");
 
-    // ASSERT
+        // ASSERT
 
-    Assert.Equal("<p>Este texto contiene varios espacios y saltos de línea.</p>", result);
+        Assert.Equal("<p>Este texto contiene varios espacios y saltos de línea.</p>", result);
 
-    // Verifies that DecodeHtml normalizes whitespace and trims the result.
-}
+        // Verifies that DecodeHtml normalizes whitespace and trims the result.
+    }
 }

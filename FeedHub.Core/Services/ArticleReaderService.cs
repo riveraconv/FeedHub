@@ -1,8 +1,5 @@
 ﻿using FeedHub_Core.Interfaces;
 using HtmlAgilityPack;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace FeedHub_Core.Services
 {
