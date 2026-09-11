@@ -1,6 +1,6 @@
 using FeedHub_Core.Utilities;
 
-namespace FeedHub.Test;
+namespace FeedHub.Tests;
 
 public class TestLogger : ILogger
 {

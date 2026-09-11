@@ -1,7 +1,7 @@
 using FeedHub_Core.Models;
 using FeedHub_Core.Services;
 
-namespace FeedHub.Test;
+namespace FeedHub.Tests;
 
 public class AdInterleaveServiceTests()
 {

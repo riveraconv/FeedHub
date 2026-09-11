@@ -2,7 +2,7 @@
 using System.Net;
 
 
-namespace FeedHub.Test;
+namespace FeedHub.Tests;
 
 public class RssServiceTests
 {
