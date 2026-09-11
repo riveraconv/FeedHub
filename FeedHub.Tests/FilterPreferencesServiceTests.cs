@@ -3,9 +3,7 @@ using FeedHub_Core.Services;
 
 namespace FeedHub.Tests;
 
-public class FilterPreferencesServiceTests
-{
-    public class TestPreferencesService : IPreferencesService
+public class TestPreferencesService : IPreferencesService
     {
         private readonly Dictionary<string, string> _values = new();
 
@@ -22,7 +20,12 @@ public class FilterPreferencesServiceTests
         {
             _values[key] = value;
         }
+
+        //common helper to simulate IRssService interface from FeedHub.Core
     }
+public class FilterPreferencesServiceTests
+{
+    
     [Fact]
     public void IsSourceActive_ReturnsTrueWhenNoDisabledSourcesAreStored()
     {

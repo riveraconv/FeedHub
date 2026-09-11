@@ -1,12 +1,32 @@
 
+using FeedHub_Core.Interfaces;
+using FeedHub_Core.Models;
 using System.Net;
 
 
 namespace FeedHub.Tests;
 
+public class TestRssService : IRssService
+{
+    public List<NewsItem> Items { get; set; } = new();
+    public Exception? ExceptionToThrow { get; set; }
+    public HashSet<string> FailingFeedUrls { get; set; } = new();
+
+    public Task<List<NewsItem>> GetNewsAsync(string feedUrl, string categoryFromDict, CancellationToken ct = default)
+    {
+        if (ExceptionToThrow is not null)
+            throw ExceptionToThrow;
+        if (FailingFeedUrls.Contains(feedUrl))
+            throw new HttpRequestException("Test exception");
+            
+        return Task.FromResult(Items);
+    }
+
+    //common helper to simulate IRssService interface from FeedHub.Core
+}
 public class RssServiceTests
 {
-    
+
     [Fact]
     public async Task GetNewsAsync_ReturnsEmpty()
     {
@@ -105,7 +125,7 @@ public class RssServiceTests
 
         Assert.Single(news);
     }
-    
+
     [Fact]
     public async Task GetNewsAsync_MapsNewsItemPropertiesCorrectly()
     {
@@ -128,27 +148,27 @@ public class RssServiceTests
             </rss>
             """;
 
-                var logger = new TestLogger();
-                var handler = new TestHttpMessageHandler(HttpStatusCode.OK, rss);
-                var http = new HttpClient(handler);
-                var feedUrl = "https://www.example.com/feed";
-                var categoryFromDict = "tecnologia";
-                CancellationToken ct = default;
-                var rssService = new RssService(logger, http);
+        var logger = new TestLogger();
+        var handler = new TestHttpMessageHandler(HttpStatusCode.OK, rss);
+        var http = new HttpClient(handler);
+        var feedUrl = "https://www.example.com/feed";
+        var categoryFromDict = "tecnologia";
+        CancellationToken ct = default;
+        var rssService = new RssService(logger, http);
 
-                // ACT
+        // ACT
 
-                var news = await rssService.GetNewsAsync(feedUrl, categoryFromDict, ct);
+        var news = await rssService.GetNewsAsync(feedUrl, categoryFromDict, ct);
 
-                // ASSERT
+        // ASSERT
 
-                var article = Assert.Single(news);
+        var article = Assert.Single(news);
 
-                Assert.Equal("Noticia de prueba", article.Title);
-                Assert.Equal("https://www.example.com/noticia", article.Link);
-                Assert.Equal("Descripción de la noticia", article.Description);
-                Assert.Equal("tecnologia", article.Category);
-                Assert.Equal("Fuente de prueba", article.Source);
+        Assert.Equal("Noticia de prueba", article.Title);
+        Assert.Equal("https://www.example.com/noticia", article.Link);
+        Assert.Equal("Descripción de la noticia", article.Description);
+        Assert.Equal("tecnologia", article.Category);
+        Assert.Equal("Fuente de prueba", article.Source);
     }
     [Fact]
     public async Task GetNewsAsync_ConvertsHttpLinksToHttps()
@@ -1284,9 +1304,9 @@ public class RssServiceTests
             () => rssService.GetNewsAsync(feedUrl, categoryFromDict, ct));
     }
 
-// SUMMARY:
-// These tests cover the main behavior of RssService, including RSS parsing,
-// HTTP error handling, cancellation, news item mapping, date and link fallbacks,
-// HTML cleaning, image extraction from different RSS formats, Hipertextual-specific
-// filtering rules, missing data handling, and the maximum number of returned articles.
+    // SUMMARY:
+    // These tests cover the main behavior of RssService, including RSS parsing,
+    // HTTP error handling, cancellation, news item mapping, date and link fallbacks,
+    // HTML cleaning, image extraction from different RSS formats, Hipertextual-specific
+    // filtering rules, missing data handling, and the maximum number of returned articles.
 }
