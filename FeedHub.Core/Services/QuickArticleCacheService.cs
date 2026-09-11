@@ -1,5 +1,6 @@
 using FeedHub_Core.Services;
 
+
 public class QuickArticleCacheService
 {
     private readonly Dictionary<string, CachedArticle> _cache = new();
