@@ -32,3 +32,6 @@ Thumbs.db
 
 # Local signing configuration
 Directory.Build.props.user
+
+# Testing
+TestResults/
