@@ -1,6 +1,6 @@
 using FeedHub_App.Converters;
 
-namespace FeedHub.App.Tests;
+namespace FeedHub.App.Tests.Converters;
 
 public class NullToBoolConverterTests
 {

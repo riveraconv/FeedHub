@@ -2,7 +2,7 @@ using FeedHub_App.Utilities;
 using Microsoft.Maui.Controls;
 using FeedHub_Core.Models;
 
-namespace FeedHub.App.Tests;
+namespace FeedHub.App.Tests.Utilities;
 
 public class NewsTemplateSelectorTests
 {

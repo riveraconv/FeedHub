@@ -3,7 +3,7 @@ using FeedHub_Core.Services;
 using FeedHub.App.Tests.Helpers;
 using FeedHub_Core.Models;
 
-namespace FeedHub.App.Tests.ViewModels;
+namespace FeedHub.App.Tests.ViewModels.News;
 
 public class FilterViewModelTests
 {

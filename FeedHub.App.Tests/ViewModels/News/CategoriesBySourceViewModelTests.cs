@@ -1,7 +1,7 @@
 using FeedHub_App.ViewModels.News;
 using FeedHub_Core.Services;
 
-namespace FeedHub.App.Tests;
+namespace FeedHub.App.Tests.ViewModels.News;
 
 public class CategoriesBySourceViewModelTests
 {
