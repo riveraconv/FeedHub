@@ -267,6 +267,49 @@ public class NewsBySourceViewModelTests
 
         // Verifies that LoadMore exits immediately when the main news load operation is in progress.
     }
+
+    [Fact]
+    public async Task LoadMore_WhenAlreadyLoadingMore_DoesNothing()
+    {
+        // ARRANGE
+        var aggregator = new TestNewsAggregatorService();
+        var preferences = new TestPreferencesService();
+        var filterService = new FilterPreferencesService(preferences);
+        var adInterleaveService = new AdInterleaveService();
+        var logger = new TestLogger();
+        var sourceCatalog = new SourceCatalogService();
+
+        var viewModel = new NewsBySourceViewModel(
+            aggregator,
+            filterService,
+            adInterleaveService,
+            logger,
+            sourceCatalog);
+
+        viewModel.IsLoading = false;
+        viewModel.IsLoadingMore = true;
+        viewModel.CanLoadMore = true;
+
+        viewModel.NewsItems.Add(new NewsItem
+        {
+            Title = "Noticia existente"
+        });
+
+        // ACT
+        await viewModel.LoadMoreCommand.ExecuteAsync(null);
+
+        // ASSERT
+        Assert.True(viewModel.IsLoadingMore);
+        Assert.Single(viewModel.NewsItems);
+        Assert.Equal("Noticia existente", ((NewsItem)viewModel.NewsItems[0]).Title);
+
+        // Verifies that LoadMore exits immediately when another LoadMore operation is already in progress.
+    }
+
+    // LoadMore execution paths after the initial guard clause depend directly on
+    // MAUI platform services (Connectivity.Current and MainThread.BeginInvokeOnMainThread).
+    // These paths cannot be unit-tested in the plain .NET test runner without modifying production code.
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -525,4 +568,130 @@ public class NewsBySourceViewModelTests
     // (Connectivity.Current and MainThread.BeginInvokeOnMainThread) cannot
     // be unit-tested in the plain .NET test runner without modifying production code.
     // CASO 1 and the error/state-reset paths remain covered by the tests above.
+
+    [Fact]
+    public async Task SelectNews_WhenItemIsNull_DoesNothing()
+    {
+        // ARRANGE
+        var aggregator = new TestNewsAggregatorService();
+        var preferences = new TestPreferencesService();
+        var filterService = new FilterPreferencesService(preferences);
+        var adInterleaveService = new AdInterleaveService();
+        var logger = new TestLogger();
+        var sourceCatalog = new SourceCatalogService();
+
+        var viewModel = new NewsBySourceViewModel(
+            aggregator,
+            filterService,
+            adInterleaveService,
+            logger,
+            sourceCatalog);
+
+        var existingItem = new NewsItem
+        {
+            Title = "Noticia existente",
+            Link = "https://example.com/existing"
+        };
+
+        viewModel.NewsItems.Add(existingItem);
+
+        // ACT
+        await viewModel.SelectNewsCommand.ExecuteAsync(null);
+
+        // ASSERT
+        Assert.Single(viewModel.NewsItems);
+        Assert.Same(existingItem, viewModel.NewsItems[0]);
+
+        // Verifies that SelectNews exits immediately when the selected news item is null.
+    }
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("   ")]
+    public async Task SelectNews_WhenItemLinkIsNullOrWhiteSpace_DoesNothing(string link)
+    {
+        // ARRANGE
+        var aggregator = new TestNewsAggregatorService();
+        var preferences = new TestPreferencesService();
+        var filterService = new FilterPreferencesService(preferences);
+        var adInterleaveService = new AdInterleaveService();
+        var logger = new TestLogger();
+        var sourceCatalog = new SourceCatalogService();
+
+        var viewModel = new NewsBySourceViewModel(
+            aggregator,
+            filterService,
+            adInterleaveService,
+            logger,
+            sourceCatalog);
+
+        var existingItem = new NewsItem
+        {
+            Title = "Noticia existente",
+            Link = "https://example.com/existing"
+        };
+
+        viewModel.NewsItems.Add(existingItem);
+
+        var invalidItem = new NewsItem
+        {
+            Title = "Noticia sin enlace",
+            Link = link
+        };
+
+        // ACT
+        await viewModel.SelectNewsCommand.ExecuteAsync(invalidItem);
+
+        // ASSERT
+        Assert.Single(viewModel.NewsItems);
+        Assert.Same(existingItem, viewModel.NewsItems[0]);
+
+        // Verifies that SelectNews exits immediately when the selected news item has no valid link.
+    }
+    [Fact]
+    public async Task SelectNews_WhenLoading_DoesNothing()
+    {
+        // ARRANGE
+        var aggregator = new TestNewsAggregatorService();
+        var preferences = new TestPreferencesService();
+        var filterService = new FilterPreferencesService(preferences);
+        var adInterleaveService = new AdInterleaveService();
+        var logger = new TestLogger();
+        var sourceCatalog = new SourceCatalogService();
+
+        var viewModel = new NewsBySourceViewModel(
+            aggregator,
+            filterService,
+            adInterleaveService,
+            logger,
+            sourceCatalog);
+
+        viewModel.IsLoading = true;
+
+        var existingItem = new NewsItem
+        {
+            Title = "Noticia existente",
+            Link = "https://example.com/existing"
+        };
+
+        viewModel.NewsItems.Add(existingItem);
+
+        var selectedItem = new NewsItem
+        {
+            Title = "Noticia seleccionada",
+            Link = "https://example.com/selected"
+        };
+
+        // ACT
+        await viewModel.SelectNewsCommand.ExecuteAsync(selectedItem);
+
+        // ASSERT
+        Assert.True(viewModel.IsLoading);
+        Assert.Single(viewModel.NewsItems);
+        Assert.Same(existingItem, viewModel.NewsItems[0]);
+
+        // Verifies that SelectNews exits immediately while the main news load operation is in progress.
+    }
+    // GoToSettings cannot be unit-tested in the plain .NET test runner because
+    // it depends directly on Shell.Current, a MAUI platform service.
 }
