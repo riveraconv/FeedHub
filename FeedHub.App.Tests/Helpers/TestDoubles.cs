@@ -75,6 +75,9 @@ public class TestNewsAggregatorService : INewsAggregatorService
 
     public List<string> GetAvailableCategories()
     {
+        if (ExceptionToThrow != null)
+            throw ExceptionToThrow;
+
         return AvailableCategories;
     }
 
