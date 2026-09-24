@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_App.Views.Settings;
-using FeedHub_Core.Services;
 
 namespace FeedHub_App.ViewModels.Settings;
 

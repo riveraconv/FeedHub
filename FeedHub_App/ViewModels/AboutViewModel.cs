@@ -5,7 +5,7 @@ namespace FeedHub_App.ViewModels;
 
 public partial class AboutViewModel : ObservableObject
 {
- 	[ObservableProperty]
+	[ObservableProperty]
 	private bool showApp = true;
 
 	[RelayCommand]

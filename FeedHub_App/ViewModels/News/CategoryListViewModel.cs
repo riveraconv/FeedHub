@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeedHub_Core.Utilities;
 using FeedHub_App.Views.Settings;
-using Microsoft.Maui.Networking;
 
 namespace FeedHub_App.ViewModels.News
 {

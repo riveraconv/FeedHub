@@ -35,3 +35,5 @@ Directory.Build.props.user
 
 # Testing
 TestResults/
+
+.coverage/

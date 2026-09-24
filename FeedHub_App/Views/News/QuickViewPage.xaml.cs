@@ -2,7 +2,6 @@
 using FeedHub_Core.Utilities;
 using FeedHub_App.ViewModels.News;
 using System.Net;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace FeedHub_App.Views.News
 {

@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;
-using CommunityToolkit.Maui.Core;
-using System.Diagnostics;
+﻿
 
 namespace FeedHub_App
 {

@@ -5,7 +5,6 @@ using FeedHub_Core.Services;
 using System.Collections.ObjectModel;
 using FeedHub_Core.Utilities;
 using FeedHub_App.Views.Settings;
-using Microsoft.Maui.Networking;
 
 
 namespace FeedHub_App.ViewModels.News
