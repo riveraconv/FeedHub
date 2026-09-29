@@ -9,5 +9,8 @@
                  android:supportsRtl="true"
                  android:enableOnBackInvokedCallback="false"
                  android:theme="@style/Maui.SplashTheme">
+
+                 <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+                            android:value="ca-app-pub-5247344820381249~2299519337" />
 	</application>
 </manifest>

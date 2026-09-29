@@ -6,9 +6,11 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:utils="clr-namespace:FeedHub_App.Utilities"
              xmlns:controls="clr-namespace:FeedHub_App.Controls"
+             xmlns:admob="clr-namespace:Plugin.AdMob;assembly=Plugin.AdMob"
              x:Class="FeedHub_App.Views.News.LatestNewsPage"
              x:Name="Page"
              Shell.NavBarIsVisible="False"
+             SafeAreaEdges="None"
              BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
     <ContentPage.Behaviors>
@@ -107,61 +109,88 @@
                         BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkCard}}"
                         StrokeShape="RoundRectangle 24"
                         Margin="10,10,10,10">
-                    <Grid RowDefinitions="200, Auto">
+                    <Grid RowDefinitions="Auto">
 
                         <!-- ZONA IMAGEN — mismo tamaño que las noticias -->
                         <Grid Grid.Row="0"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkSurfaceSecondary}}">
-                            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
-                                <Label Text="📢"
-                                       FontSize="48"
-                                       HorizontalOptions="Center"/>
-                                <Label Text="ESPACIO PUBLICITARIO"
-                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
-                                       FontSize="11"
-                                       FontAttributes="Bold"
-                                       CharacterSpacing="2"
-                                       HorizontalOptions="Center"/>
-                                <Label Text="Aquí aparecerá tu anuncio"
-                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
-                                       FontSize="12"
-                                       HorizontalOptions="Center"/>
-                            </VerticalStackLayout>
+                              BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2}, Dark={StaticResource FeedHubDarkSurfaceSecondary}}">
+                            <admob:NativeAdView
+                                AdUnitId="ca-app-pub-3940256099942544/2247696110"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Fill"
+                                Margin="8">
+
+                                <admob:NativeAdView.AdContent>
+                                    <ContentView>
+                                        <Grid RowDefinitions="Auto,*,Auto,Auto"
+                                              Padding="18, 16"
+                                              RowSpacing="10">
+
+                                            <!-- Advertiser -->
+                                            <Grid Grid.Row="0"
+                                                  ColumnDefinitions="Auto,*"
+                                                  ColumnSpacing="8">
+
+                                                <Image Grid.Column="0"
+                                                       Source="{Binding IconUri}"
+                                                       WidthRequest="32"
+                                                       HeightRequest="32"
+                                                       Aspect="AspectFit"/>
+
+                                                <Label Grid.Column="1"
+                                                       Text="{Binding Advertiser}"
+                                                       FontSize="12"
+                                                       VerticalOptions="Center"
+                                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"/>
+
+                                            </Grid>
+
+                                            <!-- Main media -->
+                                            <admob:MediaView Grid.Row="1"
+                                                             HeightRequest="140"
+                                                             Margin="0,4"/>
+
+                                            <!-- Headline -->
+                                            <Label Grid.Row="2"
+                                                   Text="{Binding Headline}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="18"
+                                                   LineBreakMode="WordWrap"/>
+
+                                            <!-- Body + CTA -->
+                                            <Grid Grid.Row="3"
+                                                  ColumnDefinitions="*,Auto"
+                                                  ColumnSpacing="12">
+
+                                                <Label Grid.Column="0"
+                                                       Text="{Binding Body}"
+                                                       FontSize="13"
+                                                       LineBreakMode="TailTruncation"
+                                                       MaxLines="2"
+                                                       VerticalOptions="Center"
+                                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"/>
+
+                                                <Button Grid.Column="1"
+                                                        Text="{Binding CallToAction}"
+                                                        FontSize="13"
+                                                        FontAttributes="Bold"
+                                                        Padding="12,6"
+                                                        VerticalOptions="Center"
+                                                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},
+                                                                            Dark={StaticResource FeedHubDarkAccent}}"
+                                                        TextColor="{AppThemeBinding Light=#FFFFFF, Dark={StaticResource FeedHubDarkTextPrimary}}"
+                                                        CornerRadius="8"/>
+
+                                            </Grid>
+
+                                        </Grid>
+                                    </ContentView>
+                                </admob:NativeAdView.AdContent>
+
+                            </admob:NativeAdView>
                         </Grid>
 
-                        <!-- ZONA CONTENIDO — mismo padding que las noticias -->
-                        <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
-                            <Grid ColumnDefinitions="Auto, *">
-                                <Border Grid.Column="0"
-                                        BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft}, Dark={StaticResource FeedHubDarkAccentSoft}}"
-                                        StrokeShape="RoundRectangle 4"
-                                        Padding="6,2"
-                                        StrokeThickness="0">
-                                    <Label Text="Anuncio"
-                                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}"
-                                           FontSize="10"
-                                           FontAttributes="Bold"/>
-                                </Border>
-                                <Label Grid.Column="1"
-                                       Text="Contenido patrocinado"
-                                       TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
-                                       FontSize="12"
-                                       VerticalOptions="Center"
-                                       Margin="8,0,0,0"/>
-                            </Grid>
-                            <Label Text="Tu anuncio aparecerá aquí"
-                                   FontAttributes="Bold"
-                                   FontSize="19"
-                                   TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary}, Dark={StaticResource FeedHubDarkTextPrimary}}"
-                                   LineBreakMode="WordWrap"
-                                   Opacity="0.3"/>
-                            <Label Text="Descripción del anuncio..."
-                                   FontSize="14"
-                                   TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}"
-                                   LineBreakMode="TailTruncation"
-                                   MaxLines="3"
-                                   Opacity="0.3"/>
-                        </VerticalStackLayout>
+                        
                     </Grid>
                 </Border>
             </DataTemplate>
@@ -173,7 +202,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid IgnoreSafeArea="True">
+    <Grid SafeAreaEdges="None">
         <BoxView IsEnabled="False"
          InputTransparent="True"
          HorizontalOptions="Fill"
