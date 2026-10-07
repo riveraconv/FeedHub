@@ -2,15 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET MAUI",
-            "type": "maui",
-            "request": "launch",
-            "preLaunchTask": "maui: Build"
-        },
-
-
-        {
-            "name": "FeedHub Android (Redmi 2312DRA50G)",
+            "name": "FeedHub_App (Redmi 2312DRA50G)",
             "type": "maui",
             "request": "launch",
             "project": "${workspaceFolder}/FeedHub_App/FeedHub_App.csproj"

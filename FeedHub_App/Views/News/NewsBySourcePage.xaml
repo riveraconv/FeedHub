@@ -10,6 +10,7 @@
              x:DataType="viewmodels:NewsBySourceViewModel"
              x:Name="thisPage"
              Shell.NavBarIsVisible="False"
+             SafeAreaEdges="None"
              BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
     <ContentPage.Behaviors>
@@ -195,7 +196,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid IgnoreSafeArea="True">
+    <Grid SafeAreaEdges="None">
         <BoxView IsEnabled="False"
                  InputTransparent="True"
                  HorizontalOptions="Fill"
@@ -220,7 +221,7 @@
     </BoxView.Background>
         </BoxView>
 
-        <Grid RowDefinitions="Auto,*" Padding="0,45,0,0">
+        <Grid RowDefinitions="Auto,*" Padding="0,45,0,0" SafeAreaEdges="None">
 
             <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
                 <Label Text="NOTICIAS POR FUENTE"
@@ -268,7 +269,7 @@
                 </BoxView>
 
             </Grid>
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" SafeAreaEdges="None">
                 <CollectionView x:Name="SourcesCollection"
                                 ItemsSource="{Binding NewsItems}"
                                 ItemTemplate="{StaticResource NewsTemplateSelector}"
@@ -363,7 +364,7 @@
                 <Grid IsVisible="{Binding IsLoading}"
                     VerticalOptions="Center"
                     HorizontalOptions="Center"
-                    TranslationY="-120">
+                    TranslationY="-80">
 
                     <VerticalStackLayout
                         HorizontalOptions="Fill"

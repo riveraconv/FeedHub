@@ -7,6 +7,7 @@
              x:DataType="viewmodels:CategoriesBySourceViewModel"
              x:Name="PageRoot"
              Shell.NavBarIsVisible="False"
+             SafeAreaEdges="None"
              BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
     <ContentPage.Behaviors>
@@ -14,7 +15,7 @@
                                    StatusBarStyle="{AppThemeBinding Light=DarkContent,Dark=LightContent}" />
     </ContentPage.Behaviors>
 
-    <Grid IgnoreSafeArea="True">
+    <Grid SafeAreaEdges="None">
                     <!-- GRADIENTE LIGHT -->
                 <BoxView
                     IsEnabled="False"
@@ -50,7 +51,7 @@
                     </BoxView.Background>
             </BoxView>
 
-        <Grid RowDefinitions="Auto,*" Padding="0,45,0,0">
+        <Grid RowDefinitions="Auto,*" Padding="0,45,0,0" SafeAreaEdges="None">
 
             <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,15">
                 <Label Text="FEEDHUB" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightMainBlue}, Dark={StaticResource FeedHubDarkAccent}}" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>

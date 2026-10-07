@@ -6,14 +6,15 @@
              x:Class="FeedHub_App.Views.AboutPage"
              x:DataType="vm:AboutViewModel"
              Shell.NavBarIsVisible="False"
+             SafeAreaEdges="None"
              BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
-    <ContentPage.Behaviors>
-            <toolkit:StatusBarBehavior StatusBarColor="Transparent" 
+<ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="Transparent" 
                                    StatusBarStyle="{AppThemeBinding Light=DarkContent,Dark=LightContent}" />
-        </ContentPage.Behaviors>
+    </ContentPage.Behaviors>
 
-    <Grid IgnoreSafeArea="True">
+    <Grid SafeAreaEdges="None">
                     <!-- GRADIENTE LIGHT -->
                 <BoxView
                     IsEnabled="False"
@@ -49,7 +50,7 @@
                     </BoxView.Background>
             </BoxView>
 
-        <Grid RowDefinitions="Auto, Auto, *" Padding="0,45,0,0">
+        <Grid RowDefinitions="Auto, Auto, *" Padding="0,10,0,0" SafeAreaEdges="None">
 
             <!-- HEADER -->
             <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
@@ -66,7 +67,7 @@
                     BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightSurfaceSecondary}, Dark={StaticResource FeedHubDarkSurface}}"
                     Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder}, Dark={StaticResource FeedHubDarkCardBorder}}"
                     StrokeShape="RoundRectangle 25" StrokeThickness="2">
-                <Grid ColumnDefinitions="*,*">
+                <Grid ColumnDefinitions="*,*" SafeAreaEdges="None">
                     <Button Text="LA APP"
                             Command="{Binding ChangeTabCommand}" CommandParameter="app"
                             CornerRadius="22" HeightRequest="45" FontSize="12" FontAttributes="Bold">
@@ -107,7 +108,7 @@
             </Border>
 
             <!-- CONTENT -->
-            <ScrollView Grid.Row="2" Padding="25,10,25,40">
+            <ScrollView Grid.Row="2" Padding="25,10,25,40" SafeAreaEdges="None">
                 <VerticalStackLayout Spacing="16">
 
                     <!-- PESTAÑA LA APP -->
@@ -217,6 +218,6 @@
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </ScrollView>
+            </Grid>
         </Grid>
-    </Grid>
 </ContentPage>

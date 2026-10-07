@@ -3,6 +3,7 @@ using Android.Content.PM;
 using Android.OS;
 using AndroidX.Core.View;
 using Android.Views;
+using Android.Util;
 
 namespace FeedHub_App.Platforms.Android
 {
@@ -13,38 +14,62 @@ namespace FeedHub_App.Platforms.Android
            ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
     {
+                private const string Tag = "FeedHubEdge";
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            LogTheme("OnResume");
+        }
+
+private void LogTheme(string origin)
+{
+    var window = Window;
+    if (window is null || Theme is null)
+        return;
+
+    var release = Build.VERSION.Release;
+    var sdk = (int)Build.VERSION.SdkInt;
+    var target = ApplicationInfo?.TargetSdkVersion.ToString() ?? "?";
+    var windowBackground = ResolveColor(global::Android.Resource.Attribute.WindowBackground);
+    var navBarTheme = ResolveColor(global::Android.Resource.Attribute.NavigationBarColor);
+    var statusBarTheme = ResolveColor(global::Android.Resource.Attribute.StatusBarColor);
+    var primaryTheme = ResolveColor(global::Android.Resource.Attribute.ColorAccent);
+    var primaryDarkTheme = ResolveColor(global::Android.Resource.Attribute.ColorPrimaryDark);
+    var navBarWindow = window.NavigationBarColor.ToString("X8");
+    var decorSystemUiVisibility = (int)window.DecorView.SystemUiVisibility;
+
+    Log.Info(Tag,
+        $"{origin}: android={release} (sdk {sdk}), target={target}, " +
+        $"theme.windowBackground={windowBackground}, " +
+        $"theme.navigationBarColor={navBarTheme}, " +
+        $"theme.statusBarColor={statusBarTheme}, " +
+        $"theme.colorAccent={primaryTheme}, " +
+        $"theme.colorPrimaryDark={primaryDarkTheme}, " +
+        $"window.navigationBarColor=0x{navBarWindow}, " +
+        $"decorSystemUiVisibility=0x{decorSystemUiVisibility:X8}");
+}
+
+        private string ResolveColor(int attribute)
+        {
+            var value = new TypedValue();
+            return Theme!.ResolveAttribute(attribute, value, true)
+                ? "0x" + value.Data.ToString("X8")
+                : "(sin definir)";
+        }
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            Window.SetBackgroundDrawable(
-                new global::Android.Graphics.Drawables.ColorDrawable(
-                    global::Android.Graphics.Color.ParseColor("#0F172A")));
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                Window.NavigationBarContrastEnforced = false;
 
             WindowCompat.SetDecorFitsSystemWindows(Window!, false);
-            Window!.SetNavigationBarColor(
-                global::Android.Graphics.Color.Transparent);
-            Window!.SetStatusBarColor(
-                global::Android.Graphics.Color.Transparent);
-            Window!.DecorView.SetBackgroundColor(
-                global::Android.Graphics.Color.ParseColor("#0F172A"));
 
-            var isDark = Microsoft.Maui.Controls.Application.Current?.RequestedTheme != AppTheme.Light;
-
-            // Iconos claros en ambas barras (para fondo oscuro)
-            var controller = WindowCompat.GetInsetsController(Window!, Window!.DecorView);
-            controller.AppearanceLightNavigationBars = !isDark;
-            controller.AppearanceLightStatusBars = !isDark;
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
-            {
-                Window!.NavigationBarContrastEnforced = false;
-                Window!.StatusBarContrastEnforced = false;
-            }
-        
-            ViewCompat.SetOnApplyWindowInsetsListener(Window!.DecorView, new KeyboardInsetsListener());
+            ViewCompat.SetOnApplyWindowInsetsListener(
+                Window!.DecorView,
+                new KeyboardInsetsListener());
         }
-
     }
     public class KeyboardInsetsListener : Java.Lang.Object, IOnApplyWindowInsetsListener
     {

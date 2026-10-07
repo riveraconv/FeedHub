@@ -6,6 +6,7 @@
              x:Class="FeedHub_App.Views.Settings.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              Shell.NavBarIsVisible="False"
+             SafeAreaEdges="None"
              BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
         <ContentPage.Behaviors>
@@ -13,7 +14,7 @@
                                    StatusBarStyle="{AppThemeBinding Light=DarkContent,Dark=LightContent}" />
         </ContentPage.Behaviors>
 
-    <Grid IgnoreSafeArea="True">
+    <Grid SafeAreaEdges="None">
                     <!-- GRADIENTE LIGHT -->
                 <BoxView
                     IsEnabled="False"
@@ -49,7 +50,7 @@
                     </BoxView.Background>
             </BoxView>
 
-        <Grid RowDefinitions="Auto, *" Padding="0,45,0,0">
+        <Grid RowDefinitions="Auto, *" Padding="0,10,0,0" SafeAreaEdges="None">
             
             <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="25,10,25,20">
                 <Label  Text="AJUSTES"
@@ -63,8 +64,8 @@
                          WidthRequest="40" HorizontalOptions="Start" Margin="0,8,0,0"/>
             </VerticalStackLayout>
 
-            <Grid Grid.Row="1" RowDefinitions="*, Auto" Padding="25,10,25,20">
-                <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never">
+            <Grid Grid.Row="1" RowDefinitions="*, Auto" Padding="25,10,25,20" SafeAreaEdges="None">
+                <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never" SafeAreaEdges="None">
                 <VerticalStackLayout Grid.Row="0" Spacing="15">
                     
                     <Border StrokeThickness="1"
@@ -152,15 +153,15 @@
                     </Border>
                 </VerticalStackLayout>
             </ScrollView>
-            
-                <Label Grid.Row="1" 
-                        Text="{Binding AppVersion}" 
-                        TextColor="#475569" 
-                        FontSize="12" 
-                        HorizontalOptions="Start"
-                        VerticalOptions="End"
-                        Margin="0,0,0,30"/>
-
+                
+                    <!-- VERSIÓN -->
+                        <Grid Grid.Row="1">
+                                <Label Text="{Binding AppVersion}"
+                                       TextColor="#475569"
+                                       FontSize="12"
+                                       HorizontalOptions="Start" VerticalOptions="End"
+                                       Margin="0,10,25,10"/>
+                        </Grid>
             </Grid>
         </Grid>
     </Grid>

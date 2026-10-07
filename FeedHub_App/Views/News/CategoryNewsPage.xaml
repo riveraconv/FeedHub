@@ -8,6 +8,7 @@
              xmlns:controls="clr-namespace:FeedHub_App.Controls"
              x:Class="FeedHub_App.Views.News.CategoryNewsPage"
              Shell.NavBarIsVisible="False"
+             SafeAreaEdges="None"
              BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightBackground}, Dark={StaticResource FeedHubDarkBackground}}">
 
     <ContentPage.Behaviors>
@@ -61,7 +62,7 @@
                                 </BoxView.Background>
                             </BoxView>
                         </Grid>
-                        <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10">
+                        <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="10" >
                             <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="19" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
                                                 Dark={StaticResource FeedHubDarkTextPrimary}}" LineBreakMode="WordWrap"/>
                             <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *" ColumnSpacing="6">
@@ -149,7 +150,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid>
+    <Grid SafeAreaEdges="None">
         <BoxView>
             <BoxView.Background>
         <RadialGradientBrush Center="0.8,0.2"
@@ -171,7 +172,7 @@
     </BoxView.Background>
         </BoxView>
 
-        <Grid RowDefinitions="Auto,*" Padding="0,45,0,0">
+        <Grid RowDefinitions="Auto,*" Padding="0,45,0,0" SafeAreaEdges="None">
 
             <VerticalStackLayout Grid.Row="0" Padding="25,10,25,20" Spacing="4">
                 <Label Text="FEEDHUB" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}" FontSize="12" FontAttributes="Bold"/>
@@ -208,7 +209,7 @@
                                     </BoxView.Background>
                                 </BoxView>
                                 </Grid>
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" SafeAreaEdges="None">
 
                 <CollectionView ItemsSource="{Binding Articles}"
                                 SelectionMode="Single"
@@ -300,7 +301,7 @@
                 <Grid IsVisible="{Binding IsLoading}"
                       VerticalOptions="Center"
                       HorizontalOptions="Center"
-                      TranslationY="-120">
+                      TranslationY="-80">
                     <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill" Padding="0,100,0,0" Spacing="15">
                         <ActivityIndicator IsRunning="{Binding IsLoading}" Color="{AppThemeBinding Light={StaticResource FeedHubLightAccent}, Dark={StaticResource FeedHubDarkAccent}}" HorizontalOptions="Center" HeightRequest="50" WidthRequest="50"/>
                         <Label Text="Preparando noticias..." HorizontalTextAlignment="Center" TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary}, Dark={StaticResource FeedHubDarkTextSecondary}}" FontSize="16"/>
