@@ -15,7 +15,7 @@ namespace FeedHub_App.Views.News
         private readonly ILogger _logger;
         
         public string? Link { get; set; }
-        public string Source { get; set; }
+        public string Source { get; set; } = string.Empty;
         private bool _articleLoaded = false;
         private bool _quickViewAvailable = false;
         private bool _fullWebAvailable = false;
@@ -55,29 +55,48 @@ namespace FeedHub_App.Views.News
 
 
         }
+        public static string NormalizeQueryValue(string? value, string fallback = "")
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return fallback;
+
+            var text = value.Trim();
+            try
+            {
+                return Uri.UnescapeDataString(text);
+            }
+            catch
+            {
+                return text;
+            }
+        }
+
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            if (query.TryGetValue("link", out var linkObj))
+            var newLink = NormalizeQueryValue(query.TryGetValue("link", out var linkObj) ? linkObj?.ToString() : null, string.Empty);
+            if (!string.IsNullOrWhiteSpace(newLink))
             {
-                var newLink = Uri.UnescapeDataString(linkObj.ToString() ?? string.Empty);
                 if (Link == newLink && _articleLoaded) return;
 
                 Link = newLink;
                 _articleLoaded = false; // Permitir recarga si la URL cambia
             }
+            else if (string.IsNullOrWhiteSpace(Link))
+            {
+                return;
+            }
 
             if (query.TryGetValue("source", out var sourceObj))
             {
-                Source = Uri.UnescapeDataString(sourceObj.ToString() ?? "DESCONOCIDA");
-                
-                // IMPORTANTE: Aseguramos que se actualice en el hilo principal
-                MainThread.BeginInvokeOnMainThread(() => {
-                    SourceLabel.Text = Source.ToUpper();
+                Source = NormalizeQueryValue(sourceObj?.ToString(), "FUENTE");
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    SourceLabel.Text = Source.ToUpperInvariant();
                 });
             }
 
-            // Evitar doble carga si Shell reinyecta parámetros
-            if (!_articleLoaded)
+            if (!_articleLoaded && !string.IsNullOrWhiteSpace(Link))
             {
                 _articleLoaded = true;
                 Task.Run(async () => await LoadArticleAsync());
@@ -86,6 +105,17 @@ namespace FeedHub_App.Views.News
 
         private async Task LoadArticleAsync()
         {
+            if (string.IsNullOrWhiteSpace(Link))
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ShowFullWeb();
+                    InfoBanner.IsVisible = true;
+                    InfoBannerText.Text = "La noticia no tiene enlace válido. Mostrando web original.";
+                });
+                return;
+            }
+
             ShowLoading();
 
             NoConnectionPanel.IsVisible = false;
@@ -107,14 +137,9 @@ namespace FeedHub_App.Views.News
                     {
                         ShowQuickView();
 
-                        TitleLabel.Text = cached.Title;
-
-                        if (!string.IsNullOrEmpty(cached.ImageUrl))
-                            ArticleImage.Source = cached.ImageUrl;
-
                         ArticleWebView.Source = new HtmlWebViewSource
                         {
-                            Html = ArticleHtmlContent(cached.Html)
+                            Html = ArticleHtmlContent(cached.Html, cached.Title, cached.ImageUrl)
                         };
 
                         if (BindingContext is QuickViewViewModel vm)
@@ -131,7 +156,7 @@ namespace FeedHub_App.Views.News
                 
             }
 
-            if (string.IsNullOrEmpty(Link))
+            if (string.IsNullOrWhiteSpace(Link))
                 return;
 
             try
@@ -180,10 +205,35 @@ namespace FeedHub_App.Views.News
                     break;
                 }
 
-                if (response == null)
-                    throw new Exception("No response received");
+                if (response is null)
+                {
+                    _logger?.Warn($"Respuesta nula al cargar el artículo '{Link}'.");
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        ShowFullWeb();
+                        InfoBanner.IsVisible = true;
+                        InfoBannerText.Text = "No se pudo cargar el artículo. Mostrando web original.";
+                        FullWebView.Source = new UrlWebViewSource { Url = Link };
+                    });
+                    return;
+                }
 
-                response.EnsureSuccessStatusCode();
+                try
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+                catch
+                {
+                    _logger?.Warn($"HTTP no válido al cargar '{Link}' (status {(int?)response.StatusCode}).");
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        ShowFullWeb();
+                        InfoBanner.IsVisible = true;
+                        InfoBannerText.Text = "El contenido no está disponible. Mostrando web original.";
+                        FullWebView.Source = new UrlWebViewSource { Url = Link };
+                    });
+                    return;
+                }
 
                 // 📥 3. OBTENER HTML
                 var bytes = await response.Content.ReadAsByteArrayAsync();
@@ -221,12 +271,7 @@ namespace FeedHub_App.Views.News
                         vm.NewsContent = result.Text;
                     }
 
-                    TitleLabel.Text = result.Title ?? "Sin título";
-
-                    if (!string.IsNullOrEmpty(result.ImageUrl))
-                        ArticleImage.Source = result.ImageUrl;
-
-                    string finalHtml = ArticleHtmlContent(result.Html);
+                    string finalHtml = ArticleHtmlContent(result.Html, result.Title, result.ImageUrl);
                     ArticleWebView.Source = new HtmlWebViewSource { Html = finalHtml };
 
                 });
@@ -255,6 +300,18 @@ namespace FeedHub_App.Views.News
                     FullWebView.Source = new UrlWebViewSource { Url = Link };
                 });
             }
+            catch (Exception ex)
+            {
+                _logger?.Error($"Error inesperado cargando artículo '{Link}': {ex.Message}");
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ShowFullWeb();
+                    InfoBanner.IsVisible = true;
+                    InfoBannerText.Text = "Se produjo un error al cargar este artículo. Mostrando web original.";
+                    if (!string.IsNullOrWhiteSpace(Link))
+                        FullWebView.Source = new UrlWebViewSource { Url = Link };
+                });
+            }
         }
         private void ShowLoading()
         {
@@ -267,16 +324,12 @@ namespace FeedHub_App.Views.News
                 SpeakButton.IsVisible = false;
                 ToggleViewButton.IsVisible = false;
 
-                ArticleImage.IsVisible = false;
-
-                TitleLabel.Text = "Cargando artículo...";
-
                 ArticleWebView.Source = new HtmlWebViewSource
                 {
                     Html = ArticleHtmlContent(@"
                         <div style='text-align:center; padding:40px 20px;'>
                             <p>Cargando contenido...</p>
-                        </div>")
+                        </div>", "Cargando artículo...")
                 };
             });
         }
@@ -317,7 +370,6 @@ namespace FeedHub_App.Views.News
                 NoConnectionPanel.IsVisible = false;
 
                 QuickViewContainer.IsVisible = true;
-                ArticleImage.IsVisible = true;
                 FullWebView.IsVisible = false;
 
                 ShareButton.IsVisible = true;
@@ -446,13 +498,17 @@ namespace FeedHub_App.Views.News
             NoConnectionPanel.IsVisible = true;
         }
 
-        public string ArticleHtmlContent(string ArticleContent)
+        public string ArticleHtmlContent(string articleContent, string? title = null, string? imageUrl = null)
         {
             var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
             var bgColor = isDark ? "#1E293B" : "#FFFFFF";
             var textColor = isDark ? "#F1F5F9" : "#1E293B";
             var linkColor = isDark ? "#60A5FA" : "#2563EB";
             var boldColor = isDark ? "#FFFFFF" : "#000000";
+            var safeTitle = System.Net.WebUtility.HtmlEncode(title ?? "Sin título");
+            var safeImageUrl = string.IsNullOrWhiteSpace(imageUrl)
+                ? string.Empty
+                : $"<img class='hero-image' src='{System.Net.WebUtility.HtmlEncode(imageUrl)}' />";
 
             return $@"<!DOCTYPE html>
             <html lang='es'>
@@ -471,7 +527,7 @@ namespace FeedHub_App.Views.News
                     body {{
                         text-align: justify;
                         text-justify: inter-word;
-                        padding: 15px 20px;
+                        padding: 0 0 120px;
                         word-break: break-word;
                         line-height: 1.5;
                         font-size: 14px;
@@ -492,14 +548,51 @@ namespace FeedHub_App.Views.News
                         margin: 15px 0;
                         display: block;
                     }}
+                    .hero {{ padding: 0 20px 16px; }}
+                    .hero-image {{
+                        width: calc(100% + 40px);
+                        max-width: none;
+                        height: 220px;
+                        object-fit: cover;
+                        margin: 0 -20px 24px;
+                        border-radius: 0;
+                    }}
+                    .eyebrow {{
+                        color: {linkColor} !important;
+                        font-size: 11px;
+                        font-weight: 700;
+                        letter-spacing: 1.5px;
+                        margin: 8px 5px 16px;
+                    }}
+                    h1 {{
+                        color: {textColor} !important;
+                        font-size: 20px;
+                        line-height: 1.2;
+                        margin: 0 5px 24px;
+                        text-align: left;
+                    }}
+                    .divider {{
+                        height: 2px;
+                        background: {linkColor} !important;
+                        opacity: .8;
+                        margin: 0 0 12px;
+                    }}
+                    .main-content {{ padding: 0 20px; }}
                     p {{ margin-bottom: 1.2em; }}
                     ul, ol {{ padding-left: 20px; }}
                     li {{ margin-bottom: 8px; }}
                 </style>
             </head>
             <body>
+                <header class='hero'>
+                    {safeImageUrl}
+                    <div class='eyebrow'>FEEDHUB // VISTA RÁPIDA</div>
+                    <h1>{safeTitle}</h1>
+                    <div class='divider'></div>
+                </header>
                 <div class='main-content'>
-                    {ArticleContent}
+                    {articleContent}
+                    <div class='divider' style='margin-top:24px'></div>
                 </div>
             </body>
             </html>";

@@ -11,6 +11,9 @@ using FeedHub_App.ViewModels;
 using CommunityToolkit.Maui;
 using Microsoft.Maui.Platform;
 using FeedHub_App.Services;
+#if MAUI_DEVFLOW
+using Microsoft.Maui.DevFlow.Agent;
+#endif
 
 
 
@@ -43,6 +46,9 @@ namespace FeedHub_App
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("fa-solid.otf", "FontAwesome");
                 });
+#if MAUI_DEVFLOW
+            builder.AddMauiDevFlowAgent();
+#endif
 #if ANDROID
 MainThread.BeginInvokeOnMainThread(() =>
 {

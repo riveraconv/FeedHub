@@ -182,9 +182,9 @@
             </VerticalStackLayout>
 
                 <!-- TRANSICIÓN DEL HEADER AL FEED -->
-                            <Grid Grid.Row="0"
-                                VerticalOptions="End"
-                                HeightRequest="5"
+                            <Grid Grid.Row="1"
+                                VerticalOptions="Start"
+                                HeightRequest="35"
                                 InputTransparent="True"
                                 ZIndex="10">
 
@@ -259,35 +259,7 @@
                     </CollectionView.Footer>
                 </CollectionView>
 
-                <!-- FADE SUPERIOR DEL FEED -->
-                <Grid HeightRequest="20"
-                      VerticalOptions="Start"
-                      HorizontalOptions="Fill"
-                      InputTransparent="True"
-                      ZIndex="10">
-
-                    <BoxView>
-                        <BoxView.Background>
-                            <LinearGradientBrush StartPoint="0,0"
-                                                 EndPoint="0,1">
-
-                                <GradientStop
-                                    Color="{AppThemeBinding
-                                        Light={StaticResource FeedHubLightBackground},
-                                        Dark={StaticResource FeedHubDarkBackground}}"
-                                    Offset="0.0"/>
-
-                                <GradientStop
-                                    Color="{AppThemeBinding
-                                        Light=#00F4F8FC,
-                                        Dark=#000F172A}"
-                                    Offset="1.0"/>
-
-                            </LinearGradientBrush>
-                        </BoxView.Background>
-                    </BoxView>
-                </Grid>
-
+                
                 <!-- EMPTY -->
                 <Grid IsVisible="{Binding NoResultsFound}" BackgroundColor="Transparent">
                     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10" Margin="0,0,0,100">

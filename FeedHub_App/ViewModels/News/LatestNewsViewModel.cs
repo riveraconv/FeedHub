@@ -168,13 +168,18 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         private async Task OpenNewsAsync(NewsItem item)
         {
-            if (item == null) return;
+            if (item == null || string.IsNullOrWhiteSpace(item.Link)) return;
+
+            var safeLink = Uri.EscapeDataString(item.Link.Trim());
+            var safeTitle = Uri.EscapeDataString(item.Title.Trim());
+            var safeImageUrl = Uri.EscapeDataString(item.ImageUrl ?? string.Empty);
+            var safeSource = Uri.EscapeDataString(item.Source ?? "Fuente");
 
             await Shell.Current.GoToAsync(
-                $"QuickViewPage?link={Uri.EscapeDataString(item.Link)}" +
-                $"&title={Uri.EscapeDataString(item.Title)}" +
-                $"&imageUrl={Uri.EscapeDataString(item.ImageUrl ?? string.Empty)}"+
-                $"&source={Uri.EscapeDataString(item.Source ?? "Fuente")}");
+                $"QuickViewPage?link={safeLink}" +
+                $"&title={safeTitle}" +
+                $"&imageUrl={safeImageUrl}" +
+                $"&source={safeSource}");
         }
         [RelayCommand]
         public async Task LoadMoreAsync()
