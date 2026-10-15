@@ -11,6 +11,13 @@ using FeedHub_App.ViewModels;
 using CommunityToolkit.Maui;
 using Microsoft.Maui.Platform;
 using FeedHub_App.Services;
+
+
+#if ANDROID
+using Plugin.AdMob;
+using Plugin.AdMob.Configuration;
+#endif
+
 #if MAUI_DEVFLOW
 using Microsoft.Maui.DevFlow.Agent;
 #endif
@@ -26,99 +33,105 @@ namespace FeedHub_App
 
             try
             {
-                
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            var builder = MauiApp.CreateBuilder();
-            builder
-                .UseMauiApp<App>()
-                .UseMauiCommunityToolkit()
-                .ConfigureMauiHandlers(handlers =>
-                {
+
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                var builder = MauiApp.CreateBuilder();
+                builder
+                    .UseMauiApp<App>()
+                    .UseMauiCommunityToolkit();
 
 #if ANDROID
-                    handlers.AddHandler<Microsoft.Maui.Controls.WebView, Platforms.Android.Handlers.CustomWebViewHandler>();
+                builder.UseAdMob();
+                AdConfig.UseTestAdUnitIds = true;
+#endif
 
+                builder.ConfigureMauiHandlers(handlers =>
+                {
+#if ANDROID
+
+                    handlers.AddHandler<Microsoft.Maui.Controls.WebView,
+                    Platforms.Android.Handlers.CustomWebViewHandler>();
 #endif
                 })
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    fonts.AddFont("fa-solid.otf", "FontAwesome");
-                });
+                    .ConfigureFonts(fonts =>
+                    {
+                        fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                        fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                        fonts.AddFont("fa-solid.otf", "FontAwesome");
+                    });
 #if MAUI_DEVFLOW
             builder.AddMauiDevFlowAgent();
 #endif
 #if ANDROID
-MainThread.BeginInvokeOnMainThread(() =>
-{
-    Microsoft.Maui.Handlers.SearchBarHandler.Mapper.AppendToMapping("CustomSearchVisuals", (handler, view) =>
-    {
-        var searchView = handler.PlatformView;
-        var editText = searchView.GetChildrenOfType<Android.Widget.EditText>().FirstOrDefault();
-        if (editText != null)
-            editText.TextCursorDrawable?.SetTint(Android.Graphics.Color.White);
-    });
-});
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Microsoft.Maui.Handlers.SearchBarHandler.Mapper.AppendToMapping("CustomSearchVisuals", (handler, view) =>
+                    {
+                        var searchView = handler.PlatformView;
+                        var editText = searchView.GetChildrenOfType<Android.Widget.EditText>().FirstOrDefault();
+                        if (editText != null)
+                            editText.TextCursorDrawable?.SetTint(Android.Graphics.Color.White);
+                    });
+                });
 #endif
 
-            // --- SERVICIOS ---
-            builder.Services.AddHttpClient<IRssService, RssService>()
-                    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-                    {
-                        AutomaticDecompression = System.Net.DecompressionMethods.All,
-                        AllowAutoRedirect = true,
-                        MaxAutomaticRedirections = 10,
-                    });
+                // --- SERVICIOS ---
+                builder.Services.AddHttpClient<IRssService, RssService>()
+                        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                        {
+                            AutomaticDecompression = System.Net.DecompressionMethods.All,
+                            AllowAutoRedirect = true,
+                            MaxAutomaticRedirections = 10,
+                        });
 
-            builder.Services.AddSingleton<IArticleReaderService, ArticleReaderService>();
-            builder.Services.AddSingleton<QuickArticleResult>();
-            builder.Services.AddSingleton<FeedHub_Core.Utilities.ILogger, PlatformLogger>();
-            builder.Services.AddSingleton<SourceCatalogService>();
-            builder.Services.AddSingleton<INewsAggregatorService, NewsAggregatorService>();
-            builder.Services.AddSingleton<IPreferencesService, MauiPreferencesService>();
-            builder.Services.AddSingleton<FilterPreferencesService>();
-            builder.Services.AddSingleton<QuickArticleCacheService>();
-            builder.Services.AddSingleton<AdInterleaveService>();
-            
-            
-            // --- VIEWMODELS ---
+                builder.Services.AddSingleton<IArticleReaderService, ArticleReaderService>();
+                builder.Services.AddSingleton<QuickArticleResult>();
+                builder.Services.AddSingleton<FeedHub_Core.Utilities.ILogger, PlatformLogger>();
+                builder.Services.AddSingleton<SourceCatalogService>();
+                builder.Services.AddSingleton<INewsAggregatorService, NewsAggregatorService>();
+                builder.Services.AddSingleton<IPreferencesService, MauiPreferencesService>();
+                builder.Services.AddSingleton<FilterPreferencesService>();
+                builder.Services.AddSingleton<QuickArticleCacheService>();
+                builder.Services.AddSingleton<AdInterleaveService>();
 
-            builder.Services.AddSingleton<MainViewModel>();
-            builder.Services.AddTransient<LatestNewsViewModel>();
-            builder.Services.AddTransient<CategoryListViewModel>();
-            builder.Services.AddTransient<CategoriesBySourceViewModel>();
-            builder.Services.AddTransient<QuickViewViewModel>();
-            builder.Services.AddSingleton<SettingsViewModel>();
-            builder.Services.AddTransient<CategoryNewsViewModel>();
-            builder.Services.AddTransient<NewsBySourceViewModel>();
-            builder.Services.AddTransient<FilterViewModel>();
-            builder.Services.AddTransient<AboutViewModel>();
 
-            // --- PAGES ---
+                // --- VIEWMODELS ---
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddTransient<LatestNewsPage>();
-            builder.Services.AddTransient<QuickViewPage>();
-            builder.Services.AddTransient<CategoryListPage>();
-            builder.Services.AddTransient<CategoriesNewsBySourcePage>();
-            builder.Services.AddTransient<CategoryNewsPage>();
-            builder.Services.AddSingleton<SettingsPage>();
-            builder.Services.AddTransient<NewsBySourcePage>();
-            builder.Services.AddTransient<SelectFilterPage>();
-            builder.Services.AddTransient<AboutPage>();
+                builder.Services.AddSingleton<MainViewModel>();
+                builder.Services.AddTransient<LatestNewsViewModel>();
+                builder.Services.AddTransient<CategoryListViewModel>();
+                builder.Services.AddTransient<CategoriesBySourceViewModel>();
+                builder.Services.AddTransient<QuickViewViewModel>();
+                builder.Services.AddSingleton<SettingsViewModel>();
+                builder.Services.AddTransient<CategoryNewsViewModel>();
+                builder.Services.AddTransient<NewsBySourceViewModel>();
+                builder.Services.AddTransient<FilterViewModel>();
+                builder.Services.AddTransient<AboutViewModel>();
+
+                // --- PAGES ---
+
+                builder.Services.AddSingleton<MainPage>();
+                builder.Services.AddTransient<LatestNewsPage>();
+                builder.Services.AddTransient<QuickViewPage>();
+                builder.Services.AddTransient<CategoryListPage>();
+                builder.Services.AddTransient<CategoriesNewsBySourcePage>();
+                builder.Services.AddTransient<CategoryNewsPage>();
+                builder.Services.AddSingleton<SettingsPage>();
+                builder.Services.AddTransient<NewsBySourcePage>();
+                builder.Services.AddTransient<SelectFilterPage>();
+                builder.Services.AddTransient<AboutPage>();
 
 
 
 #if DEBUG
-            builder.Logging.AddDebug();
+                builder.Logging.AddDebug();
 #endif
 
 
-            var app = builder.Build();
+                var app = builder.Build();
                 return app;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 System.IO.File.WriteAllText(
                     System.IO.Path.Combine(

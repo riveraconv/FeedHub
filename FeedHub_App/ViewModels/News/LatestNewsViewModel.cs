@@ -78,7 +78,7 @@ namespace FeedHub_App.ViewModels.News
                 ErrorMessage = string.Empty;
                 IsContentEmpty = false;
                 IsLatestEmpty = false;
-                isBlocked = false;
+                IsBlocked = false;
 
                 if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
                 {

@@ -79,7 +79,7 @@ public partial class NewsBySourceViewModel : ObservableObject
         ErrorMessage = string.Empty;
         IsContentEmpty = false;
         NoResultsFound = false;
-        isBlocked = false;
+        IsBlocked = false;
 
 
         try
