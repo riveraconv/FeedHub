@@ -38,13 +38,18 @@ namespace FeedHub_App.ViewModels.News
         private bool isContentEmpty = false;
         [ObservableProperty]
         private bool isLatestEmpty = false;
+
+        [ObservableProperty]
+        private bool isBlocked = false;
+
         [ObservableProperty]
         private NewsQueryStatus emptyStatus = NewsQueryStatus.Success;
 
         public bool HasContent =>
             !IsLoading &&
             !HasError &&
-            !IsContentEmpty;
+            !IsContentEmpty &&
+            !IsBlocked;
 
         private readonly AdInterleaveService _adService;
         private List<NewsItem> _fullListCache = new();
@@ -73,6 +78,7 @@ namespace FeedHub_App.ViewModels.News
                 ErrorMessage = string.Empty;
                 IsContentEmpty = false;
                 IsLatestEmpty = false;
+                isBlocked = false;
 
                 if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
                 {
@@ -89,6 +95,23 @@ namespace FeedHub_App.ViewModels.News
                     $"LATEST RESULT -> Status: {result.Status} | " +
                     $"Items: {result.Items?.Count ?? 0}");
 
+                if (result.Status == NewsQueryStatus.Blocked)
+                {
+                    News.Clear();
+                    _fullListCache.Clear();
+
+                    CanLoadMore = false;
+                    IsContentEmpty = false;
+                    IsLatestEmpty = false;
+                    IsBlocked = true;
+
+                    EmptyStatus = NewsQueryStatus.Blocked;
+
+                    _logger?.Warn(
+                        "Latest News: todos los feeds activos están bloqueados.");
+
+                    return;
+                }
                 if (result.Status == NewsQueryStatus.FilteredOut)
                 {
                     News.Clear();
@@ -247,7 +270,7 @@ namespace FeedHub_App.ViewModels.News
         [RelayCommand]
         public async Task GoBack()
         {
-            await Shell.Current.GoToAsync("//MainPage");
+            await Shell.Current.GoToAsync("..");
         }
         [RelayCommand]
         public async Task GoToSettings()
@@ -265,6 +288,10 @@ namespace FeedHub_App.ViewModels.News
             OnPropertyChanged(nameof(HasContent));
         }
         partial void OnIsContentEmptyChanged(bool value)
+        {
+            OnPropertyChanged(nameof(HasContent));
+        }
+        partial void OnIsBlockedChanged(bool value)
         {
             OnPropertyChanged(nameof(HasContent));
         }

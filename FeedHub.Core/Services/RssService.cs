@@ -1,5 +1,6 @@
 ﻿using FeedHub_Core.Interfaces;
 using FeedHub_Core.Models;
+using FeedHub_Core.Services;
 using FeedHub_Core.Utilities;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
@@ -41,6 +42,23 @@ public class RssService : IRssService
             {
                 _logger.Warn($"403 Forbidden: {feedUrl}");
                 return news;
+            }
+
+            // 202 Accepted con reto anti-bots (AWS WAF / CloudFront): el servidor no sirve el feed.
+            if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
+            {
+                bool hasWafHeader = response.Headers.TryGetValues("x-amzn-waf-action", out var wafValues);
+                bool emptyBody = response.Content.Headers.ContentLength == 0;
+
+                if (hasWafHeader || emptyBody)
+                {
+                    var wafAction = hasWafHeader ? string.Join(",", wafValues!) : "n/a";
+                    _logger.Warn($"202 sin contenido (WAF: {wafAction}): {feedUrl}");
+
+                    throw new FeedBlockedException(
+                        $"El servidor ha respondido 202 sin contenido (WAF: {wafAction})",
+                        feedUrl);
+                }
             }
 
             response.EnsureSuccessStatusCode();
@@ -107,12 +125,16 @@ public class RssService : IRssService
             _logger.Error($"Error HTTP en {feedUrl}: {ex.Message}");
             throw;
         }
+        catch (FeedBlockedException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             _logger.Error($"Error en {feedUrl}: {ex.Message}");
             throw;
         }
-
+        
         return news;
     }
 

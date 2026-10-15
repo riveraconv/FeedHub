@@ -37,6 +37,8 @@ public partial class NewsBySourceViewModel : ObservableObject
     private bool canLoadMore;
     [ObservableProperty]
     private bool isContentEmpty;
+    [ObservableProperty]
+    private bool isBlocked;
 
     [ObservableProperty]
     private bool hasError;
@@ -77,6 +79,8 @@ public partial class NewsBySourceViewModel : ObservableObject
         ErrorMessage = string.Empty;
         IsContentEmpty = false;
         NoResultsFound = false;
+        isBlocked = false;
+
 
         try
         {
@@ -119,6 +123,24 @@ public partial class NewsBySourceViewModel : ObservableObject
             // La fuente seleccionada se consulta independientemente
             // de que esté activa o no en los filtros.
             var result = await _newsService.GetBySourceAsync(SourceId, 100);
+
+            // CASO excepcional: el servidor bloquea todos los feeds de esta fuente.
+            if (result.Status == NewsQueryStatus.Blocked)
+            {
+                _fullListCache.Clear();
+                NewsItems.Clear();
+
+                CanLoadMore = false;
+                HasError = false;
+                IsContentEmpty = false;
+                NoResultsFound = false;
+                IsBlocked = true;
+
+                _logger?.Info(
+                    $"Fuente '{SourceId}': acceso bloqueado por el servidor.");
+
+                return;
+            }
 
             // CASO 2:
             // Hay categorías activas, pero la fuente no tiene contenido
@@ -317,6 +339,11 @@ public partial class NewsBySourceViewModel : ObservableObject
     private async Task GoToSettings()
     {
         await Shell.Current.GoToAsync(nameof(SettingsPage));
+    }
+    [RelayCommand]
+    private async Task GoBack()
+    {
+        await Shell.Current.GoToAsync("..");
     }
     public async Task OnAppearingAsync()
     {

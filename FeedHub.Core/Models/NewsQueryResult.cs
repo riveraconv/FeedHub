@@ -11,5 +11,6 @@ public enum NewsQueryStatus
     Success,
     NoContent,
     FilteredOut,
-    NoFeedsConfigured
+    NoFeedsConfigured,
+    Blocked
 }

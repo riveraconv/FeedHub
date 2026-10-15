@@ -45,6 +45,7 @@ namespace FeedHub_Core.Services;
             var tempList = new ConcurrentBag<NewsItem>();
             var options = new ParallelOptions { MaxDegreeOfParallelism = 3 };
             int successfulFeeds = 0;
+            int blockedFeeds = 0;
 
             var allFeeds = _catalogSources
                 .SelectMany(source => source.Feeds.Select(feed => new
@@ -174,14 +175,32 @@ namespace FeedHub_Core.Services;
 
                     
                 }
+                catch (FeedBlockedException ex)
+                {
+                    Interlocked.Increment(ref blockedFeeds);
+                    _logger.Warn($"Feed bloqueado en mixto {x.Source.Id}: {ex.Message}");
+                }
                 catch (Exception ex)
                 {
                     _logger.Warn($"Fallo en feed mixto {x.Source.Id}: {ex.Message}");
                 }
+                
             });
 
             if(successfulFeeds == 0)
                     {
+                        // Todos los feeds han fallado y todos por bloqueo del servidor
+                        if (blockedFeeds == filteredFeeds.Count)
+                        {
+                            _logger?.Info("Latest News: todos los feeds activos están bloqueados por el servidor.");
+
+                            return new NewsQueryResult
+                            {
+                                Status = NewsQueryStatus.Blocked,
+                                Items = new List<NewsItem>()
+                            };
+                        }
+
                         throw new HttpRequestException("No se pudo acceder a ningún feed RSS");
                     }
                     
@@ -217,6 +236,7 @@ namespace FeedHub_Core.Services;
         {
             var allItems = new ConcurrentBag<NewsItem>();
             int successfulFeeds = 0;
+            int blockedFeeds = 0;
 
             DateTime cutOffDate =
                 category == "ciencia" ||
@@ -331,6 +351,12 @@ foreach (var feed in categoryFeeds)
                             allItems.Add(item);
                         }
                     }
+                    catch (FeedBlockedException ex)
+                    {
+                        Interlocked.Increment(ref blockedFeeds);
+                        _logger?.Warn(
+                            $"Feed bloqueado en categoría {x.Feed.Url}: {ex.Message}");
+                    }
                     catch (Exception ex)
                     {
                         _logger?.Warn(
@@ -342,6 +368,19 @@ foreach (var feed in categoryFeeds)
             // pero ninguno pudo devolver noticias correctamente
             if (successfulFeeds == 0)
             {
+                // Todos los feeds han fallado y todos por bloqueo del servidor
+                if (blockedFeeds == filteredFeeds.Count)
+                {
+                    _logger?.Info(
+                        $"Categoría '{category}': todos los feeds activos están bloqueados por el servidor.");
+
+                    return new NewsQueryResult
+                    {
+                        Status = NewsQueryStatus.Blocked,
+                        Items = new List<NewsItem>()
+                    };
+                }
+
                 throw new HttpRequestException(
                     "No se pudo cargar ningún feed RSS");
             }
@@ -443,6 +482,7 @@ foreach (var feed in categoryFeeds)
         {
             var allItems = new ConcurrentBag<NewsItem>();
             int successfulFeeds = 0;
+            int blockedFeeds = 0;
 
             var source = _catalogSources.FirstOrDefault(source =>
                 string.Equals(
@@ -494,16 +534,33 @@ foreach (var feed in categoryFeeds)
                         allItems.Add(item);
                     }
                 }
+                catch (FeedBlockedException ex)
+                {
+                    Interlocked.Increment(ref blockedFeeds);
+                    _logger?.Warn($"Feed bloqueado en fuente {feed.Url}: {ex.Message}");
+                }
                 catch (Exception ex)
                 {
                     _logger?.Warn($"Fallo en feed de fuente {feed.Url}: {ex.Message}");
                 }
             });
 
-            if (successfulFeeds == 0)
-            throw new HttpRequestException("No se pudo acceder a ningún feed RSS");
+        if (successfulFeeds == 0)
+        {
+            if (blockedFeeds == sourceFeeds.Count)
+            {
+                _logger?.Info($"Fuente '{sourceId}': bloqueada por el servidor.");
 
-            var result = allItems
+                return new NewsQueryResult
+                {
+                    Status = NewsQueryStatus.Blocked,
+                    Items = new List<NewsItem>()
+                };
+            }
+            throw new HttpRequestException("No se pudo acceder a ningún feed RSS");
+        }
+
+        var result = allItems
                 .OrderByDescending(x => x.PublishDate)
                 .Take(limit)
                 .ToList();

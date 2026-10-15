@@ -72,7 +72,7 @@
 	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
 	<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
-	<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.90" />
+	<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.100" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" /> 
 	<PackageReference Include="Plugin.AdMob" Version="10.0.90" Condition="'$(TargetFramework)' != 'net10.0'" />
  

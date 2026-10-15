@@ -80,7 +80,7 @@
                                 <Label Text="Modo oscuro" FontSize="18" FontAttributes="Bold" 
                                         TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
                                                     Dark={StaticResource FeedHubDarkTextPrimary}}"/>
-                                <Label Text="Forzar tema oscuro para la vista rápida" FontSize="13" 
+                                <Label Text="Fuerza el tema oscuro para la aplicación" FontSize="13" 
                                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
                                                                             Dark={StaticResource FeedHubDarkTextSecondary}}"/>
                             </VerticalStackLayout>

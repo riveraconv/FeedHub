@@ -360,6 +360,29 @@
 
                 </Grid>
 
+                <!-- Fuente bloqueada por el servidor -->
+                <Grid IsVisible="{Binding IsBlocked}"
+                      VerticalOptions="Center"
+                      HorizontalOptions="Center"
+                      TranslationY="-80"
+                      ZIndex="2">
+
+                    <VerticalStackLayout
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Spacing="15"
+                        Padding="40">
+
+                        <controls:StatusMessageView
+                            Icon="🛡️"
+                            Title="Fuente temporalmente inaccesible"
+                            Message="Los servidores están bloqueando las solicitudes de FeedHub. No podemos cargar las noticias en este momento."
+                            ButtonText="Volver"
+                            Command="{Binding GoBackCommand}"/>
+
+                    </VerticalStackLayout>
+                </Grid>
+
                 <!-- Sin contenido para esta categoría -->
                 <Grid IsVisible="{Binding NoResultsFound}"
                     VerticalOptions="Center"
