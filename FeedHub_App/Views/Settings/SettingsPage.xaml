@@ -151,7 +151,51 @@
                                 Margin="10,0,10,0"/>
                         </Grid>
                     </Border>
-                </VerticalStackLayout>
+
+
+                        <!-- PRIVACIDAD Y ANUNCIOS -->
+                        <Border x:Name="PrivacyOptionsCard"
+                                IsVisible="False"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 24"
+                                Stroke="{AppThemeBinding Light={StaticResource FeedHubLightCardBorder},
+                                 Dark={StaticResource FeedHubDarkCardBorder}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource FeedHubLightCard2},
+                                         Dark={StaticResource FeedHubDarkCard}}"
+                                Padding="20">
+
+                            <Grid ColumnDefinitions="*,Auto"
+                                    ColumnSpacing="12">
+                                <VerticalStackLayout Spacing="4"
+                                                     VerticalOptions="Center">
+                                    <Label Text="Privacidad y anuncios"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextPrimary},
+                                               Dark={StaticResource FeedHubDarkTextPrimary}}"/>
+
+                                    <Label Text="Revisa tus opciones de privacidad y consentimiento"
+                                           FontSize="13"
+                                           TextColor="{AppThemeBinding Light={StaticResource FeedHubLightTextSecondary},
+                                               Dark={StaticResource FeedHubDarkTextSecondary}}"/>
+                                </VerticalStackLayout>
+
+                                <Button Grid.Column="1"
+                                        Text="GESTIONAR"
+                                        FontSize="11"
+                                        FontAttributes="Bold"
+                                        HeightRequest="40"
+                                        WidthRequest="105"
+                                        CornerRadius="20"
+                                        Background="{AppThemeBinding Light={StaticResource FeedHubLightAccentSoft},
+                                             Dark={StaticResource FeedHubDarkAccentSoft}}"
+                                        TextColor="{AppThemeBinding Light={StaticResource FeedHubLightAccent},
+                                            Dark={StaticResource FeedHubDarkAccent}}"
+                                        Clicked="OnPrivacyOptionsClicked"/>
+                            </Grid>
+                        </Border>
+
+                    </VerticalStackLayout>
             </ScrollView>
                 
                     <!-- VERSIÓN -->
